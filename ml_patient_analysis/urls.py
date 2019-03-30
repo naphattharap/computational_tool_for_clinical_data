@@ -1,0 +1,34 @@
+"""ml_patient_analysis URL Configuration
+
+The `urlpatterns` list routes URLs to views. For more information please see:
+    https://docs.djangoproject.com/en/2.1/topics/http/urls/
+Examples:
+Function views
+    1. Add an import:  from my_app import views
+    2. Add a URL to urlpatterns:  path('', views.home, name='home')
+Class-based views
+    1. Add an import:  from other_app.views import Home
+    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
+Including another URLconf
+    1. Import the include() function: from django.urls import include, path
+    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
+"""
+from django.contrib import admin
+from django.urls import path, include
+
+from vis_brain import urls as vis_brain_urls
+from main_menu import urls as main_menu_urls
+from dataset_management import urls as dataset_management_urls
+from model_mgt import urls as model_mgt_urls
+from pca_tech import urls as pca_tech_urls
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    # go to main page
+    # our project app urls path
+    path("", include(vis_brain_urls)),
+    path("", include(main_menu_urls)),
+    path("", include(dataset_management_urls)),
+    path("", include(model_mgt_urls)),
+    path("", include(pca_tech_urls)),
+]

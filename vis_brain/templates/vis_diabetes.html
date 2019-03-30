@@ -1,0 +1,67 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Test</title>
+    {% include "main_menu/global_script.html" %}
+ 	{% include "core_bokeh/bokeh_script.html" %}
+	{% block javascript %}
+	<script>
+		$(document).ready(function() {
+		    $('#pca_form').on('submit', function(e){
+		        e.preventDefault();
+		        var form = e.target;
+		        var data = new FormData(form);
+		        $.ajax({
+		          url: form.action,
+		          method: form.method,
+		          processData: false,
+		          contentType: false, 
+		          data: data,
+		          success: function(data){
+		        	
+		        	var obj = jQuery.parseJSON(data);
+		        	alert(obj.eigenvalue);
+		        	$("#pca_result").text(data.eigenvalue);
+		          	//alert(data.msg);
+		          	//$("#result-msg-success").text(data.msg);
+		          	//$(".alert.alert-success").show();
+		          },
+		          error: function(data){
+			         //alert(data.msg);
+			         $("#result-msg-error").text(data.msg);
+			         $(".alert.alert-success").show();
+			      }
+		        }); // ajax
+		      }); // form
+		});
+	</script>
+	{% endblock %}
+ </head>
+ <body>
+  {% include "main_menu/nav_bar.html" %}
+  {{ dataset_file_path | safe }}
+  {{ div | safe }}
+  {{ script | safe }}
+	<div class="container-fluid">
+		<div class="form-inline">
+			<form id="pca_form" method="post" 
+				  action="{% url 'pca_tech_process' %}">
+				   {% csrf_token %}
+	    	<label for="pca_n_component">Number of components</label>
+	    	<input id="pca_n_component" name="pca_n_component" type="text" 
+	    			class="form-control"  
+	    			placeholder="Number of components">
+	    	<input id="dataset_file_path" name="dataset_file_path" type="hidden" value="{{ dataset_file_path | safe }}"/>
+	  		<button id="btn_pca" type="submit" class="btn btn-primary">PCA</button>
+	  		</form>
+  		</div>
+	</div>
+	
+	<!-- Eigenvalues block -->
+	<div class="container-fluid">
+		<div id="pca_result"></div>
+	</div>
+{% include "main_menu/alert_msg.html" %}
+</body>
+</html>

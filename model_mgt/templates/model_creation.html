@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Model Management: Model Creation</title>
+<meta charset="utf-8" />
+{% load static %}
+{% include "main_menu/global_script.html" %} 
+{% block javascript %}
+<script>
+	$(document).ready(function() {
+	});
+</script>
+{% endblock %}
+</head>
+<body>
+	{% include "main_menu/nav_bar.html" %}
+	<div class="container-fluid">
+		<div id="model_creation_form">
+			<form>
+				<div class="form-group row">
+					<label for="dataset" class="col-sm-2 col-form-label">Dataset</label>
+					<div class="col-sm-10">
+						<input type="text" class="form-control" id="dataset" placeholder="Dataset">
+					</div>
+				</div>
+				<div class="form-group row">
+					<div class="form-row align-items-cente">
+					<label for="train_percent" class="col-sm-2 col-form-label">Train : Test</label>
+					<div class="col-sm-10">
+						<input id="train_percent" type="text" class="form-control" style="width: 100px; display:inline;" placeholder="Train">
+						: <input id="test_percent" type="text" class="form-control" style="width: 100px; display:inline;"   placeholder="Test">
+						%
+					</div>
+					</div>
+				</div>
+				<fieldset id="validation_tech" class="form-group">
+					<div class="row">
+						<label for="inputEmail3" class="col-sm-2 col-form-label">Validation Technique</label>
+						<div class="col-sm-10">
+							<div class="form-check">
+								<input class="form-check-input" type="radio" name="validation_techniques"
+									id="gridRadios1" value="option1" checked> <label
+									class="form-check-label" for="gridRadios1">K-Fold
+								</label>
+							</div>
+							<div class="form-check">
+								<input class="form-check-input" type="radio" name="validation_techniques"
+									id="gridRadios2" value="option2"> <label
+									class="form-check-label" for="gridRadios2">Leave One Out</label>
+							</div>
+						</div>
+					</div>
+				</fieldset>
+				<fieldset id="dim_reduction"  class="form-group">
+					<div class="row">
+						<label for="pca" class="col-sm-2 col-form-label">Dimensionality Reduction</label>
+						<div class="col-sm-10">
+							<div class="form-check">
+								<input class="form-check-input" type="radio" name="dim_techniques"
+									id="dim_pca" value="pca" checked> <label
+									class="form-check-label" for="dim_pca">Principle Component Analysis
+								</label>
+							</div>
+							<div class="form-check">
+								<input class="form-check-input" type="radio" name="dim_techniques"
+									id="dim_lda" value="lda"> <label
+									class="form-check-label" for="dim_lda">Linear Discriminant Analysis</label>
+							</div>
+						</div>
+					</div>
+				</fieldset>
+
+
+				<fieldset id="training_algo"  class="form-group">
+					<div class="row">
+						<label for="pca" class="col-sm-2 col-form-label">Training Algorithms</label>
+						<div class="col-sm-10">
+							<div class="form-check">
+								<input class="form-check-input" type="radio" name="algorithms"
+									id="mlr_algo" value="mlr" checked> 
+									<label class="form-check-label" for="mlr_algo">Multiclass Classification</label>
+							</div>
+							<div class="form-check">
+								<input class="form-check-input" type="radio" name="algorithms"
+									id="xxx_algo" value="xxx"> <label
+									class="form-check-label" for="xxx_algo">XXX Algorithm</label>
+							</div>
+						</div>
+					</div>
+				</fieldset>
+								
+				<div class="form-group row">
+					<div class="col-sm-10">
+						<button type="submit" class="btn btn-primary">Start Training</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</body>
+</html>

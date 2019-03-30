@@ -1,0 +1,13 @@
+.form-group-border{ 
+    border-style: solid;
+    border-color: #e7e7e7;
+    border-radius: 1em;
+    padding: 10px;
+    border-width: 2px;
+    margin: 10px;
+}
+
+#upload_dataset{
+	margin: 20px;
+	width: 150px;
+}

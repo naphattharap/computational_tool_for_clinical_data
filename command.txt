@@ -1,0 +1,18 @@
+# new project
+django-admin startproject mysite
+
+#======= Steps when create a new module ====
+python manage.py startapp dataset
+
+# create url.py
+# set link in ml_patient_analysis/settings.py at INSTALLED_APPS
+# set linkage in ml_patient_analysis/urls.py at urlpatterns
+
+
+# register to url
+# convention for controller
+
+
+
+# Main page
+http://127.0.0.1:8000/home/

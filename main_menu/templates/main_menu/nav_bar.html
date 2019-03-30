@@ -1,0 +1,77 @@
+	<nav class="navbar navbar-default">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle collapsed"
+					data-toggle="collapse" data-target="#navbar" aria-expanded="false"
+					aria-controls="navbar">
+					<span class="sr-only">Toggle navigation</span> <span
+						class="icon-bar"></span> <span class="icon-bar"></span> <span
+						class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="#">XXX System</a>
+			</div>
+			<div id="navbar" class="navbar-collapse collapse">
+				<ul class="nav navbar-nav">
+					<li class="active"><a href="{%url 'home' %}">Home</a></li>
+					
+					<li class="dropdown">
+						<a href="#" class="dropdown-toggle"
+							data-toggle="dropdown" role="button" aria-haspopup="true"
+							aria-expanded="false">Dataset<span class="caret"></span>
+						</a>
+						
+						<ul class="dropdown-menu">
+							<li><a id="report1" href="{%url 'dataset_management_upload' %}">Upload</a></li>
+							<!-- <li><a id="report1" href="{%url 'dataset_management_upload' %}">Download</a></li>
+							<li><a id="report1" href="{%url 'dataset_management_upload' %}">Delete</a></li> -->
+						</ul>
+					</li>
+					
+					<li class="dropdown">
+						<a href="#" class="dropdown-toggle"
+							data-toggle="dropdown" role="button" aria-haspopup="true"
+							aria-expanded="false">Model<span class="caret"></span></a>
+						<ul class="dropdown-menu">
+							<li><a id="" href="{%url 'model_mgt_create' %}">Create Model</a></li>
+							<li><a id="" href="{%url 'model_mgt_list' %}">List Model</a></li>
+							<li><a id="" href="{%url 'model_mgt_update' %}">Update Model</a></li>
+							<li><a id="" href="{%url 'model_mgt_delete' %}">Delete Model</a></li>
+						</ul>
+					</li>
+					
+					<li class="dropdown">
+						<a href="#" class="dropdown-toggle"
+							data-toggle="dropdown" role="button" aria-haspopup="true"
+							aria-expanded="false">Dim Reduction<span class="caret"></span></a>
+						<ul class="dropdown-menu">
+							<li><a id="" href="{%url 'pca_tech_home' %}">PCA & LDA</a></li>
+						</ul>
+					</li>
+					
+					<li><a href="#">Train</a></li>
+					<li><a href="#">Model</a></li>
+					<li class="dropdown"><a href="#" class="dropdown-toggle"
+						data-toggle="dropdown" role="button" aria-haspopup="true"
+						aria-expanded="false">Report<span class="caret"></span></a>
+						<ul class="dropdown-menu">
+							<li><a id="vis_diabetes_class" href="{%url 'vis_diabetes_class' %}">Data Table</a></li>
+							<li><a id="radiomic_brain" href="{%url 'radiomic_brain' %}">Lasso Tool</a></li>
+							<li><a id="vis_multi_tabs" href="{%url 'vis_multi_tabs' %}">Multi-tab</a></li>
+							<li><a id="vis_call_back" href="{%url 'vis_call_back' %}">Callback</a></li>
+							<li role="separator" class="divider"></li>
+							<li class="dropdown-header">Nav header</li>
+							<li><a href="#">Separated link</a></li>
+							<li><a href="#">One more separated link</a></li>
+						</ul>
+					</li>
+				</ul>
+				<ul class="nav navbar-nav navbar-right">
+					<li class="active"><a href="./">Default <span
+							class="sr-only">(current)</span></a></li>
+					<li><a href="../navbar-static-top/">Static top</a></li>
+					<li><a href="../navbar-fixed-top/">Fixed top</a></li>
+				</ul>
+			</div>
+			<!--/.nav-collapse -->
+		</div>
+	</nav>

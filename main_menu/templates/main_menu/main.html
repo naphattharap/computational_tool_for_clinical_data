@@ -1,0 +1,44 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Main Page</title>
+<meta charset="utf-8"/>
+{% include "main_menu/global_script.html" %}
+<script src="{% static "main_menu/main_menu_action.js" %}"></script>
+<link rel="stylesheet" type="text/css" href="{% static "theme/common.css" %}"></link>
+<script>
+$(document).ready(function() {
+/* 	console.log("main page has been loaded.");
+	src_nav_bar = "{% static "theme/nav_bar.html" %}";
+	$("#nav_bar").load(src_nav_bar);
+	{% url 'radiomic_brain' %} */
+});
+</script>
+</head>
+<body>
+{% include "main_menu/nav_bar.html" %}
+<!-- <nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">WebSiteName</a>
+    </div>
+    <ul class="nav navbar-nav">
+      <li class="active"><a href="#">Home</a></li>
+      <li><a href="#">Link</a></li>
+      <li><a href="#">Link</a></li>
+    </ul>
+    <button class="btn btn-danger navbar-btn">Button</button>
+  </div>
+</nav>
+
+<div class="container">
+  <h2>Navbar Button</h2>
+  <p>Use the navbar-btn class on a button to vertically align (same padding as links) it inside the navbar.</p>
+</div>
+ -->
+<!-- <div id="nav_bar"></div> -->
+		<!--/.container-fluid -->
+
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Report#1</title>
+    {% include "main_menu/global_script.html" %}
+ 	{% include "core_bokeh/bokeh_script.html" %}
+ 	<script>
+ 		$(document).ready(function(){
+ 			//Compose template string
+ 			String.prototype.compose = (function (){
+ 			    var re = /\%%(.+?)\%%/g;
+ 			    return function (o){
+ 			        return this.replace(re, function (_, k){
+ 			            return typeof o[k] != 'undefined' ? o[k] : '';
+ 			        });
+ 			    }
+ 			}());
+ 			
+
+
+ 			
+ 		});
+ 	</script>
+ </head>
+ <body>
+ {% include "main_menu/nav_bar.html" %}
+     {{ div | safe }}
+<!--     <div id="text" class="text">
+    </div> -->
+     {{ script | safe }}
+     
+     <table id="tbl_selected_items" class="table table-hover">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Patient ID</th>
+      <th scope="col">Info X</th>
+      <th scope="col">Info Y</th>
+
+    </tr>
+  </thead>
+  <tbody>
+  </tbody>
+</table>
+</body>  
+</html>
