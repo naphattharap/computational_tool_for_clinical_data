@@ -1,0 +1,90 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Principle Component Analysis</title>
+<meta charset="utf-8" />
+{% include "main_menu/global_script.html" %}
+{% include "core_bokeh/common_bokeh_script.html" %}
+<!-- Jquery UI for autocomplete -->
+<script src="{% static "jquery/ui/1.12.1/jquery-ui.js"%}"></script>
+<link rel="stylesheet" type="text/css" href="{% static "jquery/ui/1.12.1/jquery-ui.min.css"%}"></link>
+
+<script type="text/javascript" src="{% static "dynatable/jquery.dynatable.js"%}"></script>
+<link rel="stylesheet" type="text/css" href="{% static "dynatable/jquery.dynatable.css"%}"></link>
+
+<!-- JExcel Scripts -->
+<script src="{% static "jexcel/2.0.2/js/jquery.jexcel.js"%}"></script>
+<link rel="stylesheet" href="{% static "jexcel/2.0.2/css/jquery.jexcel.css"%}" type="text/css" />
+
+
+<script type="text/javascript" src="{% static "dimreduction/dimreduction.js"%}"></script>
+<link rel="stylesheet" type="text/css" href="{% static "dimreduction/dimreduction.css"%}"></link>
+
+</head>
+<body>
+	{% include "main_menu/nav_bar.html" %}
+	
+	
+	<!-- Hidden URL used in javascript -->
+	<input type="hidden" id="url_list_all_file" data-url="{%url 'db_list_all_files' %}" />
+	<input type="hidden" id="url_get_file_data" data-url="{%url 'get_file_data' %}" />
+	<input type="hidden" id="url_pca_elbow_plot" data-url="{%url 'pca_elbow_plot' %}" />
+	
+	
+	<h2>Principle Component Analysis</h2>
+	{% include "main_menu/alert_msg.html" %}
+	<div class="container-fluid">
+		<div id="pca_dataset_search_section">
+			<!-- <form id="pca_form" method="post" action="{%url 'dimreduction_pca_search_dataset' %}"> -->
+				
+				<!-- Search dataset section -->
+				<div id="search_section" class="form-group-border">
+					<p>
+						<a id="search_title" href="#">Search Dataset</a>
+					</p>
+					<div id="seach_criterion_section" class="form-group row">
+						<label  for="label_file" class="col-sm-2">Data File</label>
+						<div class="col-sm-10">
+							<input id="inp_dataset_name" name="inp_dataset_name" placeholder="Enter dataset file name"/>
+							<button id="btn_load_data" class="btn btn-primary">View data</button>
+							<button id="btn_elbow" name="btn_elbow" class="btn btn-primary">View Elbow Plot</button>
+						</div>
+					</div>
+				</div>
+			<!-- </form> -->
+			<div id="data_table_section" class="form-group-border">
+				<p>
+					<a id="data_table_title" href="#">File Data</a>
+				</p>
+				<div id="data_table"></div>
+			</div>
+			
+			<!-- =========== Buttons ============== -->
+			<div id="button_group" class="form-group row">
+				<label for="col_header_index" class="col-sm-2">Column Header Row</label>
+				<div class="col-sm-10">
+					<input id="col_header_index" name="col_header_index" type="text" placeholder="Ex. 1, 2" value="1"/>
+					<p>If file data contains header, header row must be specified.</p>
+				</div>
+				
+				<label for="inp_exc_col_index" class="col-sm-2">Exclude Column Index</label>
+				<div class="col-sm-10">
+					<input id="inp_exc_col_index" name="inp_exc_col_index" type="text" placeholder="Ex. 1, 2"/>
+					
+				</div>
+			</div>
+			
+			<div id="elbow">
+				{{ script | safe }}
+			</div>
+			
+			<div id="pca_setting"></div>
+			
+			
+			<div id="pc_plot"></div>
+			
+		</div>
+	</div>
+</body>
+</html>

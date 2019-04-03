@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Data Management: Upload train and test data</title>
+<meta charset="utf-8" />
+{% load static %}
+{% include "main_menu/global_script.html" %} 
+
+<!-- JExcel Scripts -->
+<script src="{% static "jexcel/2.0.2/js/jquery.jexcel.js"%}"></script>
+<link rel="stylesheet" href="{% static "jexcel/2.0.2/css/jquery.jexcel.css"%}" type="text/css"></link>
+
+<!-- Custom Scripts -->
+<link rel="stylesheet" type="text/css" href="{% static "dataset_management/data_cleanup.css"%}"></link>
+<script type="text/javascript" src="{% static "dataset_management/data_cleanup.js"%}"></script>
+
+{% block javascript %}
+{% endblock %}
+</head>
+<body>
+	{% include "main_menu/nav_bar.html" %}
+	
+	
+	<input type="hidden" id="url_data_cleanup_process" data-url="{%url 'data_cleanup_process' %}" />
+	<input type="hidden" id="url_data_cleanup_save" data-url="{%url 'data_cleanup_save' %}" />
+	<input type="hidden" id="download_file" data-download-name="-"  data-url="{%url 'data_cleanup_download' %}"/>
+	
+	<h2>Clean up Data</h2>
+	{% include "main_menu/alert_msg.html" %}
+	<!-- use container-fluid for full width -->
+	<div class="container">
+		<div id="upload_file">
+			<form id="form_upload_file" method="post"
+				action="{% url 'data_cleanup_upload' %}" enctype="multipart/form-data">
+				{% csrf_token %}
+				
+				<!-- Upload file section -->
+				<div id="upload_file_section" class="form-group-border">
+					<p>
+						<a id="upload_file_title" href="#">Upload File</a>
+					</p>
+					<div id="data_file" class="form-group row">
+						<label for="label_file" class="col-sm-2">Data File</label>
+						<div class="col-sm-10">
+							<input id="data_file" name="data_file" type="file" />
+							
+							<div>
+							<button id="upload_dataset" class="btn btn-primary"
+							type="submit">Upload</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</form>
+				<!-- View uploaded data table -->
+				<div id="preprocess_section" class="form-group-border">
+					<p>
+						<a id="preprocess_title" href="#">Clean up data</a>
+					</p>
+					<div id="data_check_result_section" class="analyze_data_result">
+						<strong>Data checking result</strong>
+						<table class="data_info">
+							<tr>
+								<td>Number of columns:</td>
+								<td><span id="n_columns">-</span></td>
+								<td>Number of rows:</td>
+								<td><span id="n_rows"></span></td>
+							</tr>
+							<tr>
+								<td>Column(s) with NaN:</td>
+								<td><span id="columns_nan">-</span></td>
+								<td>Number of NaN row:</td>
+								<td><span id="n_rows_nan"></span></td>
+							</tr>
+							<tr>
+								<td>Column(s) with Null:</td>
+								<td><span id="columns_null">-</span></td>
+								<td>Number of Null row:</td>
+								<td><span id="n_rows_null"></span></td>
+							</tr>
+						</table>
+						<!-- <div class="result-row">Number of columns:<p id="n_columns">-</p></div>
+						<div class="result-row">Number of rows:<p id="n_rows">-</p></div>
+						<div class="result-row">Column(s) with NaN:<p id="columns_nan">-</p></div>
+						<div class="result-row">Number of NaN row:<p id="n_rows_nan">-</p></div>
+						<div class="result-row">Column(s) with Null:<p id="columns_null">-</p></div>
+						<div class="result-row">Number of Null row:<p id="n_rows_null">-</p></div> -->
+					</div> 
+					<br/>
+					<div id="preprocess_spec">
+						<div class="form-group row">
+							<label for="preprocess_cleanup" class="col-sm-2">Clean data</label>
+							<div class="col-sm-10">
+								<!-- Default checked -->
+								<div class="custom-control custom-checkbox">
+								  <input type="checkbox" id="column_header"  name="column_header" class="custom-control-input" checked>
+								  <label class="custom-control-label" for="defaultChecked2">Data file contains header</label>
+								</div>
+								
+								<div class="radio-inline">
+									<label><input id="choice_cleanup_del" type="radio"
+										name="choice_cleanup" value="delete" checked>Delete row data contains NaN</label>
+								</div>
+								<br>
+								<div class="radio-inline">
+									<label><input id="choice_cleanup_mean" type="radio"
+										name="choice_cleanup" value="mean">Replace NaN with Mean</label>
+								</div>
+								<br>
+								<div class="radio-inline">
+									<label><input id="nan_cleanup" type="radio"
+										name="choice_cleanup" value="median">Replace NaN with
+										Median</label>
+								</div>
+								<div class="">
+									<label for="exclude_columns">Drop column(s)</label>
+									<input type="text" id="exclude_columns" name="exclude_columns" placeholder="Ex. 1,2,3">
+								</div>
+								<br/><br/>
+								<div>
+									<button id="process_dataset" class="btn btn-primary">Process Data</button>
+									<button id="save_dataset" class="btn btn-primary">Save as...</button>
+									<button id="dowload_dataset" class="btn btn-primary">Download File</button>
+								</div>
+							</div>
+							
+						</div>
+					</div>
+				</div>
+			
+		</div>
+		<div id="data_table"></div>
+	</div>
+
+</body>
+</html>

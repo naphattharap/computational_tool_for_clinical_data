@@ -21,9 +21,9 @@
 						</a>
 						
 						<ul class="dropdown-menu">
-							<li><a id="report1" href="{%url 'dataset_management_upload' %}">Upload</a></li>
-							<!-- <li><a id="report1" href="{%url 'dataset_management_upload' %}">Download</a></li>
-							<li><a id="report1" href="{%url 'dataset_management_upload' %}">Delete</a></li> -->
+							<li><a id="menu-upload" href="{%url 'data_upload' %}">Upload</a></li>
+							<li><a id="menu-data-cleanup" href="{%url 'data_cleanup' %}">Data Cleanup</a></li>
+							
 						</ul>
 					</li>
 					
@@ -44,7 +44,8 @@
 							data-toggle="dropdown" role="button" aria-haspopup="true"
 							aria-expanded="false">Dim Reduction<span class="caret"></span></a>
 						<ul class="dropdown-menu">
-							<li><a id="" href="{%url 'pca_tech_home' %}">PCA & LDA</a></li>
+							<li><a id="" href="{%url 'dimreduction_pca_home' %}">PCA</a></li>
+							
 						</ul>
 					</li>
 					
@@ -74,4 +75,4 @@
 			</div>
 			<!--/.nav-collapse -->
 		</div>
-	</nav>
+	</nav> 

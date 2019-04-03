@@ -9,7 +9,7 @@ from .views import MainMenuView
 # after adding url here, go to add it in config/urls.py
 urlpatterns = [
     # path("home/", MainMenuView.as_view(), name="home"),
-    # Set default URL for application
+    # Set r'' to redirect to main page as initial startup server.
     path(r'', MainMenuView.as_view(), name="home"),
     
 ]

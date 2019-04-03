@@ -4,9 +4,10 @@
 <head>
 <title>Data Management: Upload train and test data</title>
 <meta charset="utf-8" />
-{% include "main_menu/global_script.html" %} {% block javascript %}
+{% include "main_menu/global_script.html" %} 
+{% block javascript %}
 <link rel="stylesheet" type="text/css" href="{% static "theme/custom.css"%} "></link>
-<script type="text/javascript" src="{% static "dataset_management/event_handlers.js"%}"/>
+<script type="text/javascript" src="{% static "dataset_management/upload_dataset.js"%}"/>
 
 <script>
 	$(document).ready(function() {
@@ -39,7 +40,7 @@
 	<div class="container">
 		<div id="upload_file">
 			<form id="form_upload_file" method="post"
-				action="{% url 'dataset_management_upload' %}"
+				action="{% url 'data_upload' %}"
 				
 				enctype="multipart/form-data">
 				{% csrf_token %}
@@ -66,11 +67,7 @@
 										name="upload_type" value="data_only">Data only (unsupervised)</label>
 								</div>
 								<br>
-								<!-- <div class="radio-inline">
-									<label><input id="rdo_data_separator" type="radio"
-										name="file_data_label" value="label">Label only</label>
-								</div> -->
-								
+	
 							</div>
 					</div>
 					<div id="file_spec_elements">

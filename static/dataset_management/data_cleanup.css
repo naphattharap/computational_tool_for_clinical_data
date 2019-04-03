@@ -1,0 +1,51 @@
+.form-group-border {
+	border-style: solid;
+	border-color: #e7e7e7;
+	border-radius: 1em;
+	padding: 10px;
+	border-width: 2px;
+	margin: 10px;
+}
+
+#data_table {
+	width: 100%;
+	height: 500px;
+	overflow: scroll;
+	border: gray;
+	border-width: thin;
+	padding: 5px;
+}
+
+#upload_dataset {
+	margin-top: 20px;
+	width: 150px;
+}
+
+.analyze_data_result{
+	/* margin-left: 15px; */
+}
+
+.analyze_data_result > div.result-row {
+	margin-left: 20px;
+	display: flex;
+}
+
+.analyze_data_result > div.result-row > p{
+	padding-left: 5px;
+}
+
+.data_info{
+	width: 100%;
+	margin-left: 15px;
+}
+
+.data_info > tbody > tr > td{
+	width: 50px;
+}
+
+.data_info > td > p{
+	margin-top: 5px;
+    margin-bottom: 5px;
+    margin-left: 20px;
+    margin-right: 20px;
+}

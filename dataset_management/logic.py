@@ -4,9 +4,9 @@ Created on Feb 6, 2019
 @author: naphatthara
 '''
 from django.core.files.storage import FileSystemStorage
-from utils.dataframe import DataFrameUtil as df_util
+from naphyutils.dataframe import DataFrameUtil as df_util
+from services.naphyutils.file import FileStorage
 from config.constant import UploadFileConst
-from utils.file import FileStorage
 
 
 class ProcessDataset():
@@ -33,7 +33,8 @@ class ProcessDataset():
         elif form.upload_type == UploadFileConst.UPLOAD_DATA_ONLY:
             pass
         
-        file_name = FileStorage.save_file(dataset_file)
+        fs = FileStorage()
+        file_name = fs.save_file(dataset_file)
         # ProcessDataset.process_data(file_name, form)
         file_url = "temp"
         
