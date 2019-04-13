@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Supervised Learning: Model Creation</title>
+<meta charset="utf-8" />
+{% include "main_menu/global_script.html" %} 
+{% include "core_bokeh/common_bokeh_script.html" %} {% load static %}
+<!-- Jquery UI for autocomplete -->
+<script src="{% static "jquery/ui/1.12.1/jquery-ui.js"%}"></script>
+<link rel="stylesheet" type="text/css" href="{% static "jquery/ui/1.12.1/jquery-ui.min.css"%}"></link>
+
+<script type="text/javascript" src="{% static "model_mgt/supervised_learning.js"%}"></script>
+<link rel="stylesheet" type="text/css" href="{% static "model_mgt/supervised_learning.css"%}"></link>
+
+</head>
+<body>
+	<!-- Navigation Bar -->
+	{% include "main_menu/nav_bar.html" %}
+
+	<!-- Hidden URL used in javascript -->
+	<input type="hidden" id="supervised_train_test" data-url="{%url 'supervised_train_test' %}" />
+	<input type="hidden" id="url_list_all_file" data-url="{%url 'db_list_all_files' %}" />
+	
+	<!-- Page Title -->
+	<h3 class="page_title">Unsupervised Learning</h3>
+
+	<!-- Alert Message -->
+	{% include "main_menu/alert_msg.html" %}
+
+	<!-- Content -->
+	<div class="container-fluid">
+		<!-- Dataset and Parameter Settings -->
+		<div id="settings_group" class="form-group-border">
+		<div class="form-horizontal">
+			<p>
+				<a id="settings_section_title" href="#">Model Creation Settings</a>
+			</p>
+			<div id="settings_section">
+				<div class="form-group ">
+					<label for="dataset_file_name" class="col-sm-2 control-label">Dataset File Name</label>
+					<div class="col-sm-5">
+						<input id="dataset_file_name" type="text" class="form-control" 
+							placeholder="Enter dataset file name">
+						<div class="custom-control custom-checkbox">
+						  <input type="checkbox" id="column_header"  name="column_header" class="custom-control-input">
+						  <label class="custom-control-label" for="defaultChecked2">Data file contains header</label>
+					</div>
+					</div>
+					
+				</div>
+				<div class="form-group">
+					<label for="label_file_name" class="col-sm-2 control-label">Label File Name</label>
+					<div class="col-sm-5">
+						<input type="text" class="form-control" id="label_file_name"
+							placeholder="Enter label file name">
+						<div class="custom-control custom-checkbox">
+						  <input type="checkbox" id="label_column_header"  name="label_column_header" class="custom-control-input">
+						  <label class="custom-control-label" for="defaultChecked2">Label file contains header</label>
+						</div>
+					</div>
+				</div>	
+				<!-- <hr style="border: 0.5px solid #61a5d5;"/> -->
+				
+					<div class="form-group">
+						<label for="sel_dim_reduction" class="col-sm-2 control-label">Dimensionality Reduction</label>
+						<div class="col-sm-5">
+							<select id="sel_dim_reduction" class="form-control">
+								<option value="none" selected>&lt;None&gt;</option>
+								<option value="pca">Principal Component Analysis (PCA)</option>
+								<option value="lda">Linear Discriminant Analysis (LDA)</option>
+								<option value="lda">t-Distributed Stochastic Neighbor Embedding (t-SNE)</option>
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="n_components" class="col-sm-2 control-label">Number of Components</label>
+						<div class="col-sm-5">
+							<input type="text" class="form-control" id="n_components" placeholder="Enter number of components">
+						</div>
+					</div>
+					<!-- <hr style="border: 0.5px solid #61a5d5;"/> -->
+					<div class="form-group">
+						<label for="sel_algorithm" class="col-sm-2 control-label">Classification
+							Method</label>
+						<div class="col-sm-5">
+							<select id="sel_algorithm" class="form-control">
+								<option value="svm_ovo">Support Vector Machine (SVM): One vs One</option>
+								<option value="svm_ovr">Support Vector Machine (SVM): One vs All</option>
+							</select>
+						</div>
+					</div>
+					
+					
+					<div class="form-group">
+						<label for="test_size" class="col-sm-2 control-label">Test Size</label>
+						<div class="col-sm-5">
+							<input id="test_size" type="text" class="form-control" 
+								placeholder="Enter ratio of test data. Ex. 0.2">
+						</div>
+					</div>			
+					
+					
+					<div class="form-group">
+						<label for="sel_test_method" class="col-sm-2 control-label">Test Method</label>
+						<div class="col-sm-5">
+							<select id="sel_test_method" class="form-control">
+								<option value="cv">Cross Validation</option>
+								<option value="leaveoneout">Leave One Out</option>
+							</select>
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label for="n_folds" class="col-sm-2 control-label">Number of Folds</label>
+						<div class="col-sm-5">
+							<input type="text" class="form-control" id="n_folds"
+								placeholder="Enter number of folds. Ex. 5">
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label for="btn_start" class="col-sm-2 control-label"></label>
+						<div class="col-sm-10">
+							<button id="btn_create" name="btn_create" class="btn btn-primary">Train/Test Model</button>
+							<button id="btn_create_save" name="btn_create_save" class="btn btn-primary">Train/Test and Save Model</button>
+						</div>
+					</div>					
+				
+			</div>
+		</div>
+	</div>
+		<!--  Train/Test Result -->
+		<div id="results">
+			<h4>Train and Test Model Result</h4>
+			<div id="result_detail">
+				<div class="form-horizontal">
+					<div class="form-group">
+							<div class="col-sm-3">Scores</div>
+							<div class="col-sm-7">
+								<span id="scores">-</span>
+							</div>
+							
+						</div>
+					<div class="form-group">
+						<div class="col-sm-3">Accuracy Mean</div>
+						<div class="col-sm-7">
+							<span id="accuracy_mean">-</span>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-3">Model</div>
+						<div class="col-sm-7">
+							<span id="model_desc">-</span>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-3">Model Parameters</div>
+						<div class="col-sm-7">
+							<span id="params" style="overflow-wrap: break-word;">-</span>
+						</div>
+					</div>
+<!-- 					<div class="form-group">
+							<label for="btn_start" class="col-sm-2 control-label"></label>
+							<div class="col-sm-10">
+								<button id="btn_save_as" name="btn_save_as" class="btn btn-primary">Save Model</button>
+							</div>
+					</div> -->	
+				</div>
+			</div>
+		</div>
+	
+	</div>
+	<!-- End of container -->
+</body>
+</html>

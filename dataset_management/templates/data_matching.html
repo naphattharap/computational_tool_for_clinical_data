@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Data: Keys Matching</title>
+<meta charset="utf-8" />
+{% load static %}
+{% include "main_menu/global_script.html" %} 
+
+<!-- JExcel Scripts -->
+<script src="{% static "jexcel/2.0.2/js/jquery.jexcel.js"%}"></script>
+<link rel="stylesheet" href="{% static "jexcel/2.0.2/css/jquery.jexcel.css"%}" type="text/css"></link>
+
+<!-- Custom Scripts -->
+<script type="text/javascript" src="{% static "dataset_management/data_matching.js"%}"></script>
+
+{% block javascript %}
+{% endblock %}
+</head>
+<body>
+	{% include "main_menu/nav_bar.html" %}
+	
+	<!-- Temporary Data used in JS -->
+	<input type="hidden" id="data_matching" 
+				data-url-process="{%url 'data_matched_keys' %}" 
+				data-url-download="{%url 'data_matched_keys_download' %}"/>
+	
+	
+	<h3 class="page_title">Data Matching</h3>
+	
+	<!-- use container-fluid for full width -->
+	<div class="container-fluid">
+	
+		{% include "main_menu/alert_msg.html" %}
+		
+		<div id="upload_file">
+			<form id="form_upload_file" method="post"
+				action="{% url 'data_matched_keys' %}" enctype="multipart/form-data">
+				{% csrf_token %}
+				
+				<!-- Upload file section -->
+				<div id="upload_file_group" class="form-group-border">
+					<p>
+						<a id="upload_file_title" href="#">Upload File</a>
+					</p>
+					<div id="upload_file_section">
+						<div id="label_key_file_group" class="form-group row">
+							<label for="label_key_file" class="col-sm-2">Key File</label>
+							<div class="col-sm-10">
+								<input id="key_file" name="key_file" type="file" />
+							</div>
+						</div>
+						<div id="data_file_group" class="form-group row">
+							<label for="data_file" class="col-sm-2">Data File</label>
+							<div class="col-sm-10">
+								<input id="data_file" name="data_file" type="file" />
+								<div>
+								<button id="upload_files" class="btn btn-primary" type="submit">Process</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</form>
+				<!-- View uploaded data table -->
+				<div id="preprocess_section" class="form-group-border">
+					<p>
+						<a id="preprocess_title" href="#">Data</a>
+					</p>
+					<div id="preprocess_group_section">
+						<div id="data_check_result_section" class="analyze_data_result">
+							<strong>Data Checking Result</strong>
+							<table class="data_info">
+								<tr>
+									<td>Number of Columns:</td>
+									<td><span id="n_columns">-</span></td>
+									<td>Number of Rows:</td>
+									<td><span id="n_rows"></span></td>
+								</tr>
+								<!-- <tr>
+									<td>Column(s) with NaN:</td>
+									<td><span id="columns_nan">-</span></td>
+									<td>Number of NaN row:</td>
+									<td><span id="n_rows_nan"></span></td>
+								</tr> -->
+								<!-- <tr>
+									<td>Column(s) with Null:</td>
+									<td><span id="columns_null">-</span></td>
+									<td>Number of Null Row:</td>
+									<td><span id="n_rows_null"></span></td>
+								</tr> -->
+							</table>
+						</div> 
+						<br/>
+						<div class="form-group row">
+							<label for="dowload_result" class="col-sm-2"></label>
+							<div class="col-sm-10">
+								<button id="dowload_result" class="btn btn-primary">Download Result File</button>
+							</div>
+						</div>
+				</div>
+			
+		</div>
+		<div id="data_table"></div>
+	</div>
+
+</body>
+</html>

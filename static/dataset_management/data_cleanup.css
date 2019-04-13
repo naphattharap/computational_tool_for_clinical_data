@@ -1,11 +1,11 @@
-.form-group-border {
+/* .form-group-border {
 	border-style: solid;
 	border-color: #e7e7e7;
 	border-radius: 1em;
 	padding: 10px;
 	border-width: 2px;
 	margin: 10px;
-}
+} */
 
 #data_table {
 	width: 100%;
@@ -48,4 +48,13 @@
     margin-bottom: 5px;
     margin-left: 20px;
     margin-right: 20px;
+}
+
+.break_words{
+	word-break: break-word;
+}
+.td_columns_nan{
+	padding-right: 10px; 
+	max-height: 200px; 
+	overflow-y: scroll;
 }

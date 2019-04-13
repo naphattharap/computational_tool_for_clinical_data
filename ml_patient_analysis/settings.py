@@ -45,7 +45,9 @@ INSTALLED_APPS = [
     'core_bokeh.apps.CoreBokehConfig',
     'model_mgt.apps.ModelMgtConfig',
     'dimreduction.apps.DimreductionConfig',
-    'db.apps.DbConfig'
+    'db.apps.DbConfig',
+    'visualization.apps.VisualizationConfig',
+    'cluster.apps.ClusterConfig'
 ]
 
 MIDDLEWARE = [

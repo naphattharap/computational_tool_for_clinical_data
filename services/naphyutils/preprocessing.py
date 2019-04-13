@@ -23,3 +23,11 @@ class PreProcess:
         """
         """
         return self.std_scaler.transform(data)
+    
+    def check_std(self, X):
+        """
+        After doing pre-processing by X_scaled = preprocessing.scale(X).
+        The std can
+        """
+        
+        return X.std(X)

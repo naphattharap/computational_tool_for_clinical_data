@@ -1,0 +1,72 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Principle Component Analysis</title>
+<meta charset="utf-8" />
+{% include "main_menu/global_script.html" %}
+{% include "core_bokeh/common_bokeh_script.html" %}
+<!-- Jquery UI for autocomplete -->
+<script src="{% static "jquery/ui/1.12.1/jquery-ui.js"%}"></script>
+<link rel="stylesheet" type="text/css" href="{% static "jquery/ui/1.12.1/jquery-ui.min.css"%}"></link>
+
+<!-- JExcel Scripts -->
+<script src="{% static "jexcel/2.0.2/js/jquery.jexcel.js"%}"></script>
+<link rel="stylesheet" href="{% static "jexcel/2.0.2/css/jquery.jexcel.css"%}" type="text/css" />
+
+
+<script type="text/javascript" src="{% static "dimreduction/dimreduction.js"%}"></script>
+<link rel="stylesheet" type="text/css" href="{% static "dimreduction/dimreduction.css"%}"></link>
+
+<script type="text/javascript" src="{% static "theme/common-jexcel-ext.js"%}"></script>
+</head>
+<body>
+	{% include "main_menu/nav_bar.html" %}
+	
+	
+	<!-- Hidden URL used in javascript -->
+	<input type="hidden" id="url_list_all_file" data-url="{%url 'db_list_all_files' %}" />
+
+
+	<h3 class="page_title">t-Distributed Stochastic Neighbor Embedding</h3>
+	{% include "main_menu/alert_msg.html" %}
+	<div class="container-fluid">
+		<div id="pca_dataset_search_section">
+			
+				
+				<!-- Search dataset section -->
+				<div id="search_section" class="form-group-border">
+					<p>
+						<a id="search_title" href="#">Search Dataset</a>
+					</p>
+					<div id="seach_criterion_section" class="form-group row">
+						<label  for="label_file" class="col-sm-2">Data File</label>
+						<div class="col-sm-10">
+							<input id="inp_dataset_name" name="inp_dataset_name" class="form-control" placeholder="Enter dataset file name"/>
+							<!-- Default checked -->
+							<div class="custom-control custom-checkbox">
+							  	<input type="checkbox" id="column_header"  name="column_header" class="custom-control-input" checked>
+							  	<label class="custom-control-label" for="defaultChecked2">Data file contains table header</label>
+							</div>
+							<button id="btn_load_data" class="btn btn-primary">View data</button>
+						</div>
+					</div>
+				</div>
+		</div>
+		<div id="data_table_section" class="form-group-border">
+			<p>
+				<a id="data_table_title" href="#">File Data</a>
+			</p>
+			<div id="data_table"></div>
+		</div>
+			
+		<!-- =========== Plot ============== -->
+		<div align="center" style="padding:10px;">
+			<div id="bokeh_plot">
+				{{ script | safe }}
+			</div>
+		</div>
+
+	</div>
+</body>
+</html>

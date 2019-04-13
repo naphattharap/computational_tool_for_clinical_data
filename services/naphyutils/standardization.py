@@ -1,8 +1,8 @@
 from sklearn import preprocessing
-from sklearn.preprocessing import OneHotEncoder
+from sklearn.preprocessing import OneHotEncoder, StandardScaler, Binarizer
 
 
-class Standardization:
+class PreProcessingUtil:
     """
     Standardization / Mean Removal / Variance Scaling
     Mean is removed.
@@ -14,10 +14,22 @@ class Standardization:
     @staticmethod
     def standardize(X):
         """
-        Transform data to normal distributed data.
-        Mean zero
+        Scale/Transform data to normal distributed data.
+        Mean zero [-3, 3]
         """
         X_scaled = preprocessing.scale(X)
+        return X_scaled
+    
+    @staticmethod
+    def fit_transform(X):
+        """
+        Transform data to standard normal distributed data.
+            Mean zero, unit variance
+
+        Need to transform both of X and y for supervised learning
+        """
+        scaler = preprocessing.StandardScaler()
+        X_scaled = scaler.fit_transform(X)
         return X_scaled
 
     @staticmethod
@@ -25,11 +37,17 @@ class Standardization:
         """
         Scale train data and return the object of scalar.
         Test data must use this object to scale data before predicting
-        
+        Default:
+            StandardScaler(copy=True, with_mean=True, with_std=True)
+            After .fit(X), use scaler.mean_, scaler.scale_ to see data description.
         How to transform test data.
-        scaler.transform(X_test)
+            scaler.transform(X_test)
+            
+        Train vs Test:
+            Train:perform fit to scaler and transform or use fit_transform
+            Test: transform
         """
-        scaler = preprocessing.StandardScaler().fit(X)
+        scaler = StandardScaler().fit(X)
         return  scaler
     
     @staticmethod
@@ -47,9 +65,28 @@ class Standardization:
         """
         Scales in a way that the training data lies within the range [-1, 1]
         by dividing maximum value in each feature.
+        Useful for sparse data.
         """
         scaler = preprocessing.MaxAbsScaler(X)
         return scaler
+    
+    @staticmethod
+    def std(X):
+        """
+        After doing pre-processing by X_scaled = preprocessing.scale(X).
+
+        """
+        X_scaled = X.std(X)
+        return X_scaled
+
+    @staticmethod
+    def mean(X):
+        """
+        For data pre-processing, the input X here should be X_scaled.
+        We can confirm that all means of each feature has become zero 
+        """
+        X_mean = X.mean(axis=0)
+        return X_mean
 
     
 class Normalization:
@@ -78,9 +115,20 @@ class Normalization:
 
     
 class Binarization:
+    """
+    Process of thresholding to get boolean value as 0,1.
+    Common used in text procesing for binaray feature value.
+    """
 
-    def __init__(self):
-        pass
+    def fit_binarizer(self, X):
+        """
+        Usage:
+            Transform by calling binarizer.transform(X).
+            By default threshold value is 0.0 then the value that less than 0 becomes 0 
+            and the greater values become 1. 
+        """
+        binarizer = Binarizer().fit(X)
+        return binarizer
     
     
 class EncodingCategoricalFeatures:
@@ -111,4 +159,4 @@ class EncodingCategoricalFeatures:
         src = src.reshape(len(src), 1)
         one_hot = one_hot_enc.fit_transform(src)
         # print(one_hot)
-        
+ 

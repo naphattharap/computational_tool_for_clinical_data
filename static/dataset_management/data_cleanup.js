@@ -1,6 +1,9 @@
 var current_last_row_idx = 0;
 var len_data = 0;
-var len_load = 50; // Render every 500 row.
+var len_load = 20; // Render every 500 row.
+var lim_scroll_top = 100; // 20 rows
+var upload_data;
+var columns;
 $(document).ready(function() {
 	
 	// ======== Initial Display ========
@@ -12,95 +15,103 @@ $(document).ready(function() {
 	// Download data button will be available after user saves the data.
 	$("#dowload_dataset").hide();
 	
-
+	// Reload dataset button will be available after data has been uploaded.
+	$("#reload_dataset").hide();
+	
+	
+	//Toggle upload file area.
+	$("#upload_file_title").click(function(e) {
+		$("#upload_file_section").toggle();
+	});
+	
+	//Toggle preprocess area
+	$("#preprocess_title").click(function(e) {
+		$("#preprocess_group_section").toggle();
+	});
+	
 	//based on: http://stackoverflow.com/a/9622978
 	$('#form_upload_file').on('submit', function(e) {
 		e.preventDefault();
 		var form = e.target;
-		var data = new FormData(form);
-		// console.log("upload");
+		// form.append('csrfmiddlewaretoken', $("csrfmiddlewaretoken").val())
 		$.ajax({
 			url : form.action,
 			method : form.method,
-			processData : false,
+			processData : false, // important
 			contentType : false,
 			data : data,
-			processData : false,
+			beforeSend: function(e){
+				$(".spinner").show();
+			},
+			complete:function(){
+				$(".spinner").hide();
+			},
 			success : function(resp) {
-				//alert(data.msg);
-				$("#result-msg-success").text(resp.msg);
-				$(".alert.alert-success").show();
-				//console.log(resp.table_columns);
-				//console.log(res_data.table_data);
-				//render_jexcel(data.table_columns, data.table_data);
-				
-				// Calculate column width
-				var upload_data = JSON.parse(resp.table_data);
-				if(upload_data != undefined){
-					current_last_row_idx = 0;
-					len_data = upload_data.length;
-					var columns = resp.table_columns;
-					render_by_jexcel(columns, upload_data);
-					// auto-toggle upload file section
-					$("#data_file").toggle();
-					// show preprocess area
-					$("#preprocess_section").show();
-					render_analysis_result(resp.analysis);
-					$("#data_check_result_section").show();
+				if(resp.msg_error == undefined){
+					upload_data = JSON.parse(resp.table_data);
+					if(upload_data != undefined){
+						current_last_row_idx = 0;
+						len_data = upload_data.length;
+						columns = resp.table_columns;
+						current_last_row_idx = render_by_jexcel(columns, upload_data, current_last_row_idx, len_data);
+						// auto-toggle upload file section
+						$("#data_file").toggle();
+						// show preprocess area
+						$("#preprocess_section").show();
+						render_analysis_result(resp.analysis);
+						$("#data_check_result_section").show();
+						
+						$("#reload_dataset").show();
+						
+						$(".spinner").hide();
+						alert_message(resp);
+					}else{
+						upload_data = null;
+					}
+				}else{
+					alert_error_message(resp);
 				}
-				
+			},
+			error : function(resp) {
+				alert_error_message(resp);
 			}
+			
 		})
 	});
-	
-	//Toggle upload file area.
-	$("#upload_file_title").click(function(e) {
-		$("#data_file").toggle();
-	});
-	
-
-	//Toggle preprocess area
-	$("#preprocess_title").click(function(e) {
-		$("#preprocess_spec").toggle();
-	});
-	
-	
-	// When table is scrolled
-	$("#data_table").scroll(function(){
-		if($("#data_table").scrollTop < 50){
-			if (current_last_row_idx != (len_data -1)) {
-				//render_by_jexcel(upload_data);
-			}
-		}	
-	});
-	
 	
 	// When user clicks on process button.
 	// Process data from current file name and show analysis result.
 	var url_data_cleanup_process = $("#url_data_cleanup_process").attr("data-url");
 	$("#process_dataset").bind("click", function(){
-		var data = get_process_data_settings();
+		var formData = get_form_process_data();
 		$.ajax({
-			type: "GET",
-			dataType : "json",
+			type: "POST",
+	        enctype: 'multipart/form-data',
+			processData : false,
+			contentType : false,
+			data : formData,
 			url : url_data_cleanup_process,
-			data : data,
+			beforeSend: function(e){
+				$(".spinner").show();
+			},
+			complete:function(){
+				$(".spinner").hide();
+			},
 			success : function(resp) {
-				var process_data = JSON.parse(resp.table_data);
-				current_last_row_idx = 0;
-				len_data = process_data.length;
-				var columns = resp.table_columns;
-				render_by_jexcel(columns, process_data);
-				render_analysis_result(resp.analysis);
-				
-				if (resp.msg != undefined && resp.msg != ""){
-					$("#result-msg-success").text(resp.msg);
-					$(".alert.alert-success").show();
+				if(resp.msg_error == undefined){
+					upload_data = JSON.parse(resp.table_data);
+					columns = resp.table_columns;
+					current_last_row_idx = 0;
+					len_data = upload_data.length;
+					current_last_row_idx = render_by_jexcel(columns, upload_data, current_last_row_idx, len_data);
+					render_analysis_result(resp.analysis);
+					
+					
 				}
+				alert_message(resp);
 			},
 			error : function(resp) {
-				$("#result-msg-error").text(resp.statusText);
-				$("div.alert.alert-danger").show();
+				alert_error_message(resp);
 			}
 		});
 	});
@@ -113,13 +124,21 @@ $(document).ready(function() {
 			// Send settings information to process original data and save as a new file.
 			// then enable download button.
 			var url_data_cleanup_save = $("#url_data_cleanup_save").attr("data-url");
-			var data = get_process_data_settings();
-			data['save_as_name'] = save_as_name;
+			var formData = get_form_process_data();
+			formData.append('save_as_name', save_as_name);
 			$.ajax({
-				type: "GET",
-				dataType : "json",
+				type: "POST",
+		        enctype: 'multipart/form-data',
+				processData : false,
+				contentType : false,
+				data : formData,
 				url : url_data_cleanup_save,
-				data : data,
+				beforeSend: function(e){
+					$(".spinner").show();
+				},
+				complete:function(){
+					$(".spinner").hide();
+				},
 				success : function(resp) {
 					// Set download file name to be able to refer later.
 					$("#download_file").attr("data-download-name", save_as_name);
@@ -128,18 +147,16 @@ $(document).ready(function() {
 					current_last_row_idx = 0;
 					len_data = process_data.length;
 					var columns = resp.table_columns;
-					render_by_jexcel(columns, process_data);
+					current_last_row_idx = render_by_jexcel(columns, process_data, current_last_row_idx, len_data);
 					render_analysis_result(resp.analysis);
 					
 					// Enable Download Data button.
 					$("#dowload_dataset").show();
 					
-					$("#result-msg-success").text(resp.msg);
-					$(".alert.alert-success").show();
+					alert_message(resp);
 				},
 				error : function(resp) {
-					$("#result-msg-error").text(resp.statusText);
-					$("div.alert.alert-danger").show();
+					alert_error_message(resp);
 				}
 			});
 		}
@@ -147,6 +164,7 @@ $(document).ready(function() {
 	
 	$("#dowload_dataset").bind("click", function(){
 		// Check if the file does exist.
+		//$('#data_table').jexcel('download');
 		var download_file_name = $("#download_file").attr("data-download-name");
 		if(download_file_name != undefined && download_file_name != ""){
 			var url_download_file = $("#download_file").attr("data-url");
@@ -158,6 +176,12 @@ $(document).ready(function() {
 		        xhrFields: {
 		            responseType: 'blob'
 		        },
+		        beforeSend: function(e){
+					$(".spinner").show();
+				},
+				complete:function(){
+					$(".spinner").hide();
+				},
 		        success: function (data) {
 		            var a = document.createElement('a');
 		            var url = window.URL.createObjectURL(data);
@@ -169,75 +193,35 @@ $(document).ready(function() {
 		    });
 		}
 	});
-	
-	
-	
-	$('#GetFile').on('click', function () {
-	    $.ajax({
-	        url: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/172905/test.pdf',
-	        method: 'GET',
-	        xhrFields: {
-	            responseType: 'blob'
-	        },
-	        success: function (data) {
-	            var a = document.createElement('a');
-	            var url = window.URL.createObjectURL(data);
-	            a.href = url;
-	            a.download = 'myfile.pdf';
-	            a.click();
-	            window.URL.revokeObjectURL(url);
-	        }
-	    });
+
+	var scrollBottom = Math.max($('.jexcel-content').height() - $('#jexcel-content').height(), 0);
+    $('#jexcel-content').scrollTop(scrollBottom);
+	// When table is scrolled
+	$("#data_table").scroll(function(e){
+		var lim_scroll = Math.max($('.jexcel-content').height() - $('#data_table').height() + 20, 0);
+		//console.log("scoll is fired" + $("#data_table").scrollTop() + "lim: "+ lim_scroll);
+		if($("#data_table").scrollTop() > lim_scroll){
+			if (current_last_row_idx != (len_data -1)) {
+				$(".spinner").show();
+				current_last_row_idx = render_more_data(columns, upload_data, current_last_row_idx, len_data, len_load);
+				$(".spinner").hide();
+				lim_scroll += lim_scroll;
+			}
+		}	
 	});
 	
 	
-	
-	
-	
-	
-//	$('#data_table').jexcel('updateSettings', {
-//	    cells: function (cell, col, row) {
-//	        // If the column is number 4 or 5
-//	        if (row == 2 && col == 2) {
-//	            $(cell).addClass('readonly');
-//	        }
-//	    }
-//	});
-});
-
-/**
- * Render content in table when scroll down.
- * @returns
- */
-function render_by_jexcel(columns, data) {
-	//Slice object based on current last row index and length of row data.
-	if(data != undefined && (current_last_row_idx != len_data)){
-		
-		//Find then end of slice
-		var temp_end_row_idx = 0;
-		if(current_last_row_idx+len_load > len_data){
-			temp_end_row_idx = len_data;
-		}else{
-			temp_end_row_idx = current_last_row_idx + len_load;
-		}
-		// Clear previous rendered data
-		$('#data_table div').html('');
-		
-		$('#data_table').jexcel({
-			data : data.slice(current_last_row_idx, temp_end_row_idx),
-			colHeaders : columns
-	//			    colWidths: [ 300, 80, 100, 100 ],
-	//			    columns: [
-	//			        { type: 'text' },
-	//			        { type: 'numeric' },
-	//			        { type: 'numeric' },
-	//			        { type: 'calendar', options: { format:'DD/MM/YYYY' } },
-	//			    ]
+	$("#reset_form").bind("click",function(e){
+		$("input[name='choice_cleanup']:checked").each(function(e){
+			$(this).prop('checked', false);
 		});
 		
-		current_last_row_idx = temp_end_row_idx; 
-	}
-}
+		$("#exclude_columns").val("");
+		$("#remain_columns").val("");
+		$("#split_row_from").val("");
+		$("#split_row_to").val("");
+	});
+});
 
 /**
  * Set value of analysis result to target fields.
@@ -254,13 +238,6 @@ function render_analysis_result(analysis){
 	
 }
 
-function get_text_width(){
-	var fontSize = 12;
-	test.style.fontSize = fontSize;
-	//var height = (test.clientHeight + 1) + "px";
-	var width = (test.clientWidth + 1); // + "px"
-	return width;
-}
 /**
  * Read all input data that related to settings for processing dataset file.
  * @returns An object contains selected settings' value. 
@@ -268,11 +245,33 @@ function get_text_width(){
 function get_process_data_settings(){
 	var chioce_cleanup = $("input[name='choice_cleanup']:checked"). val();
 	var column_header = $("input[name='column_header']:checked"). val();
-	var file_name = $("input[name='data_file']").val().replace("C:\\fakepath\\","").replace("C:\/fakepath\/","")
+	//var data_file = $("input[name='data_file']").val().replace("C:\\fakepath\\","").replace("C:\/fakepath\/","")
 	var exclude_columns = $("#exclude_columns").val();
+	var remain_columns = $("#remain_columns").val();
+	var split_row_from = $("#split_row_from").val();
+	var split_row_to = $("#split_row_to").val();
 	var data = {choice_cleanup: chioce_cleanup, 
 				column_header: column_header, 
-				file_name: file_name,
-				exclude_columns: exclude_columns};
+				//data_file: data_file,
+				exclude_columns: exclude_columns,
+				remain_columns: remain_columns,
+				split_row_from: split_row_from,
+				split_row_to: split_row_to};
+	
 	return data;
+}
+
+function get_form_process_data(){
+	var formData = new FormData();
+	var data_file = document.getElementById('data_file').files[0];
+	formData.append('data_file', data_file);
+	var data = get_process_data_settings();
+	formData.append('choice_cleanup', data['choice_cleanup']);
+	formData.append('column_header', data['column_header']);
+	formData.append('exclude_columns', data['exclude_columns']);
+	formData.append('remain_columns', data['remain_columns']);
+	formData.append('split_row_from', data['split_row_from']);
+	formData.append('split_row_to', data['split_row_to']);
+
+	return formData;
 }

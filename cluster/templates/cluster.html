@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Cluster Analysis</title>
+<meta charset="utf-8" />
+{% include "main_menu/global_script.html" %}
+{% include "core_bokeh/common_bokeh_script.html" %}
+
+{% load static %}
+<!-- Jquery UI for autocomplete -->
+<script src="{% static "jquery/ui/1.12.1/jquery-ui.js"%}"></script>
+<link rel="stylesheet" type="text/css" href="{% static "jquery/ui/1.12.1/jquery-ui.min.css"%}"></link>
+
+
+<!--  Plotly -->
+<script type="text/javascript" src="{% static "plotly/plotly-1.47.0.min.js"%}"></script>
+
+<script type="text/javascript" src="{% static "cluster/cluster.js"%}"></script>
+</head>
+<body>
+	{% include "main_menu/nav_bar.html" %}
+	
+	<!-- Hidden URL used in javascript -->
+	<input type="hidden" id="suggest_files" data-url="{%url 'db_list_all_files' %}" />
+	<input type="hidden" id="hierarchical_analysis" data-url="{%url 'hierarchical_analysis' %}" />
+	<input type="hidden" id="mean_shift_analysis" data-url="{%url 'mean_shift_analysis' %}" />
+	<input type="hidden" id="silhouette_analysis" data-url="{%url 'silhouette_analysis' %}" />
+	<input type="hidden" id="kmean_analysis" data-url="{%url 'kmean_analysis' %}" />
+	<input type="hidden" id="elbow_method" data-url="{%url 'elbow_method' %}" />
+
+
+	<h3 class="page_title">Cluster Analysis</h3>
+	<!-- Alert message -->
+	{% include "main_menu/alert_msg.html" %}
+	
+	<!-- Container for content -->
+	<div class="container-fluid">
+		<div id="dataset_search_section">
+			<!-- Lookup dataset section -->
+			<div id="search_section" class="form-group-border">
+				<p>
+					<a id="search_title" href="#">Dataset</a>
+				</p>
+				<div id="seach_criterion_section" class="form-group row">
+					<label  for="label_file" class="col-sm-2">Data File</label>
+					<div class="col-sm-10">
+						<input type="text"  id="data_file_name" name="data_file_name" class="form-control" placeholder="Enter dataset file name"/>
+						<!-- Default checked -->
+						<div class="custom-control custom-checkbox">
+						  	<input type="checkbox" id="column_header"  name="column_header" class="custom-control-input" checked>
+						  	<label class="custom-control-label" for="defaultChecked2">Data file contains table header</label>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="container-fluid">
+		<!-- <h2>Dynamic Tabs</h2> -->
+		<ul class="nav nav-tabs">
+			<li class="active"><a data-toggle="tab" href="#hierarchy">Hierarchical Analysis</a></li>
+			<li><a data-toggle="tab" href="#mean_shift">Mean Shift</a></li>
+			<li><a data-toggle="tab" href="#kmean">K-Mean</a></li>
+			<li><a data-toggle="tab" href="#silhouette">Silhouette Analysis</a></li>
+			<li><a data-toggle="tab" href="#elbow">Elbow Method</a></li>
+		</ul>
+
+		<div class="tab-content">
+			<div id="hierarchy" class="tab-pane fade in active">
+				<!-- <h3>Hierarchical Analysis</h3> -->
+				<br/>
+				<button id="btn_load_hierarchy" class="btn btn-primary">Load Graph</button>
+				<!-- =========== Plot ============== -->
+				<div align="center" style="padding:10px;">
+					<div id="plot_hierarchy">
+					</div>
+				</div>
+			</div>
+			<div id="mean_shift" class="tab-pane fade">
+				<br/>
+				<button id="btn_load_mean_shift" class="btn btn-primary">Load Graph</button>
+				<div align="center" style="padding:10px;">
+					<div id="plot_mean_shift">
+					</div>
+				</div>
+			</div>
+			<div id="kmean" class="tab-pane fade">
+				<br/>
+				<div class="form-group row">
+					<label for="n_clusters" class="col-sm-1">Number of Clusters</label>
+					<div class="col-sm-3" >
+						<input id="n_clusters" name="n_clusters" style="margin-top: 0px;" 
+							class="form-control" placeholder="Enter number of cluster"/>
+					</div>
+					<div class="col-sm-1">
+						<button id="btn_load_kmean" class="btn btn-primary">Load Graph</button>
+					</div>
+				</div> 
+				
+				<div align="center" style="padding:10px;">
+					<div id="plot_kmean">
+					</div>
+				</div>
+			</div>
+			<div id="silhouette" class="tab-pane fade">
+				<br/>
+				<label for="n_cluster_range" class="col-sm-1" style="width: fit-content;">Clusters range</label>
+				<div class="col-sm-1" style="padding: 0;" >
+					<input id="silhouette_n_cluster_from" name="n_cluster_from" style="margin-top: 0px;" class="form-control"/>
+				</div> 
+				<p class="text-center col-sm-1" style="width: 5px;">-</p>
+				<div class="col-sm-1" style="padding: 0;" >
+					<input id="silhouette_n_cluster_to" name="n_cluster_to" style="margin-top: 0px;" class="form-control"/>
+				</div>
+				<button id="btn_load_silhouette" class="btn btn-primary" style="margin-left: 10px;">Load Graph</button>
+				<div align="center" style="padding:10px;">
+					<div id="plot_silhouet">
+					</div>
+				</div>
+			</div>
+			<div id="elbow" class="tab-pane fade">
+				<br/>
+				<label for="n_cluster_range" class="col-sm-1" style="width: fit-content;">Clusters range</label>
+				<div class="col-sm-1" style="padding: 0;" >
+					<input id="elbow_n_cluster_from" name="n_cluster_from" style="margin-top: 0px;" class="form-control"/>
+				</div> 
+				<p class="text-center col-sm-1" style="width: 5px;">-</p>
+				<div class="col-sm-1" style="padding: 0;" >
+					<input id="elbow_n_cluster_to" name="n_cluster_to" style="margin-top: 0px;" class="form-control"/>
+				</div>
+				<button id="btn_load_elbow" class="btn btn-primary" style="margin-left: 10px;">Load Graph</button>
+				<div align="center" style="padding:10px;">
+					<div id="plot_elbow">
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

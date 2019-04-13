@@ -22,6 +22,8 @@ from dataset_management import urls as dataset_management_urls
 from model_mgt import urls as model_mgt_urls
 from dimreduction import urls as dimreduction_urls
 from db import urls as db_urls
+from visualization import urls as vis_urls
+from cluster import urls as cluster_urls
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -33,4 +35,6 @@ urlpatterns = [
     path("", include(model_mgt_urls)),
     path("", include(dimreduction_urls)),
     path("", include(db_urls)),
+     path("", include(vis_urls)),
+    path("", include(cluster_urls)),
 ]

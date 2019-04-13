@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Flexible View</title>
+<meta charset="utf-8" />
+{% include "main_menu/global_script.html" %}
+{% include "core_bokeh/common_bokeh_script.html" %}
+
+{% load static %}
+<!-- Jquery UI for autocomplete -->
+<script src="{% static "jquery/ui/1.12.1/jquery-ui.js"%}"></script>
+<link rel="stylesheet" type="text/css" href="{% static "jquery/ui/1.12.1/jquery-ui.min.css"%}"></link>
+
+<!-- JExcel Scripts -->
+<script src="{% static "jexcel/2.0.2/js/jquery.jexcel.js"%}"></script>
+<link rel="stylesheet" href="{% static "jexcel/2.0.2/css/jquery.jexcel.css"%}" type="text/css" />
+
+<script type="text/javascript" src="{% static "visualization/flex_vis.js"%}"></script>
+<link rel="stylesheet" type="text/css" href="{% static "visualization/flex_vis.css"%}"></link>
+
+</head>
+<body>
+	{% include "main_menu/nav_bar.html" %}
+	
+	<!-- Hidden URL used in javascript -->
+	<input type="hidden" id="model_info" data-url="{%url 'db_list_all_files' %}" />
+	<input type="hidden" id="data_info" data-url="{%url 'db_list_all_files' %}" />
+	<input type="hidden" id="data_detail_info" data-url="{%url 'db_list_all_files' %}" />
+	<input type="hidden" id="flex_vis_2d" data-url="{%url 'flex_vis_2d' %}" />
+	
+	<h3 class="page_title">Flexible View</h3>
+	{% include "main_menu/alert_msg.html" %}
+	<div class="container-fluid">
+		<div id="pca_dataset_search_section">
+
+			<!-- Search dataset section -->
+			<div id="group1" class="form-group-border">
+				<p>
+					<a id="section1_title" href="#">Model and Dataset</a>
+				</p>
+				<div id="section1" class="form-group row">
+					<label  for="inp_model_file_name" class="col-sm-2 control-label">Model File</label>
+					<div class="col-sm-10">
+						<input id="inp_model_file_name" name="inp_model_file_name" class="form-control" placeholder="Enter model file name"/>
+						<!-- <button id="btn_load_data" class="btn btn-primary">View data</button>
+						<button id="btn_elbow" name="btn_elbow" class="btn btn-primary">View Elbow Plot</button> -->
+					</div>
+
+					
+					<label for="inp_data_file_name" class="col-sm-2 control-label">Data file</label>
+					<div class="col-sm-10">
+						<input id="inp_data_file_name" name="inp_data_file_name"  class="form-control" 
+								type="text" placeholder="Enter data file name" />
+					</div>
+					
+					<label for="inp_data_detail" class="col-sm-2 control-label">Data Detail</label>
+					<div class="col-sm-10">
+						<input id="inp_data_detail" name="inp_data_detail" class="form-control" 
+								type="text" placeholder="Enter detail of data"/>
+					</div>
+					
+					
+					<label for="btn_vis_2d" class="col-sm-2 control-label"></label>
+					<div class="col-sm-10">
+						<button id="btn_vis_2d" class="btn btn-primary">View 2D</button>
+					</div>
+					
+				</div>
+			</div>
+			
+		</div>
+			
+		<!-- =========== Plot ============== -->
+		<div align="center" style="padding:10px;">
+			<div id="bokeh_plot">
+				{{ script | safe }}
+			</div>
+		</div>
+
+	</div>
+</body>
+</html>

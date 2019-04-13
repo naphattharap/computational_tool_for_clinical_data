@@ -11,32 +11,7 @@ from pathlib import Path
 # TODO move to config
 FILE_DB = '/Volumes/Work/UPF/thesis/FILE_DB/' 
 
-
-class ProcessDatasetFile():
-    
-    def __init__(self, file):
-        self._file = file
-    
-    def save_file(self):
-        pass
-    
-    def data_label_mapping(self):
-        pass
-    
-    # Process NaN
-    def delete_nan_row(self):
-        pass
-    
-    def replace_nan_by_mean(self):
-        pass
-    
-    def replace_nan_by_median(self):
-        pass
-
-    def split_data(self):
-        pass
-
-    
+  
 class FileStorage():
 
     def __init__(self):
@@ -49,6 +24,10 @@ class FileStorage():
         filename = self.fss.save(file.name, file)
         return filename
     
+    def save_file_as(self, file, name):
+        filename = self.fss.save(name, file)
+        return filename
+    
     def is_file(self, file_full_path):
         config = Path(file_full_path) 
         if config.is_file(): 
@@ -56,15 +35,32 @@ class FileStorage():
         else:
             return False
         
-    def list_all_files(self):
+    def is_file_in_base_location(self, file_name):
+        """
+        Return True when the file name is in the base storage, otherwise return false.
+        """
+        file_full_path = self.get_base_location() + file_name
+        config = Path(file_full_path) 
+        if config.is_file(): 
+            return True
+        else:
+            return False
+        
+    def list_all_files(self, filter_file_name):
         """
         List all files in FILE DB, also in sub-directory
         """
-        # List all folder in root
-#         folders = [f for f in glob.glob(FILE_DB + "*", recursive=True)]
-#         file_names = []
-#         for f in folders:
-#             file_names.append(f)
-#         file_names = os.path.basename(FILE_DB)
-        file_names = [os.path.basename(x) for x in glob.glob(FILE_DB + "*.*")]
+        # Ex. "/dir1/dir2/[abc]*.tx?"
+        filter_file = FILE_DB + "*" + filter_file_name + "*.*"
+        print(filter_file)
+        file_names = [os.path.basename(x) for x in glob.glob(filter_file)]
         return file_names
+    
+    def get_full_path(self, file_name):
+        """
+        Return file full path if it does exist in storage
+        """
+        if self.is_file_in_base_location(file_name):
+            return self.get_base_location() + file_name
+        else:
+            return None

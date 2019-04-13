@@ -3,11 +3,13 @@ from django.shortcuts import render
 # Create your views here.
 from django.urls import path
 
-from .views import ModelMgt
-
+from . import views, views_unsupervised 
 urlpatterns = [
-    path("model_mgt/model/create", ModelMgt.as_view(), name="model_mgt_create"),
-    path("model_mgt/model/list", ModelMgt.as_view(), name="model_mgt_list"),
-    path("model_mgt/model/update", ModelMgt.as_view(), name="model_mgt_update"),
-    path("model_mgt/model/delete", ModelMgt.as_view(), name="model_mgt_delete"),
+    path("model_mgt/model/supervised/home", views.supervised_learning_home_handler, name="supervised_home"),
+    path("model_mgt/model/supervised/traintest", views.supervised_learning_train_test_handler, name="supervised_train_test"),
+    path("model_mgt/model/unsupervised/home", views_unsupervised.unsupervised_learning_home_handler, name="unsupervised_home"),
+    path("model_mgt/model/unsupervised/traintest", views_unsupervised.unsupervised_learning_train_test_handler, name="unsupervised_train_test"),
+#     path("model_mgt/model/update", ModelMgt.as_view(), name="model_mgt_update"),
+#     path("model_mgt/model/delete", ModelMgt.as_view(), name="model_mgt_delete"),
+
 ]

@@ -1,46 +1,61 @@
 from sklearn.decomposition import PCA
 
 
-class PcaHelper:
+class PcaUtil:
     """
     This class contains functions that useful for PCA.
     e.g. analyze elbow by explain eigenvalues of each PC, 
     perform dimensionality reduction for input data.
+    
+    fit_transform - joins step of calculating mean and STD
+    and is used for the initial fitting of parameters on the training set X 
+    but it also returns a transformed X'. 
+    Internally, it just calls first fit() and then transform() on the same data.
     """
 
-    def __init__(self):
-        pass
-
-    def get_pc(self, X, n_components):
+    @staticmethod
+    def reduce_dimension(X, n_components=None):
         """
         Get principle components
         """
-        pca = PCA(n_components)
-        pc = pca.fit_transform(X)
-        return pc
-        
-    def get_explain_variance_ratio(self, X):
+        pca = PCA(n_components=n_components)
+        new_X = pca.fit_transform(X)
+        return new_X
+    
+    @staticmethod
+    def get_fit_transfrom_pca(X, n_components=None):
+        """
+        Get principle components
+        """
+        pca = PCA(n_components=n_components)
+        pca.fit_transform(X)
+        return pca
+    
+    @staticmethod  
+    def get_explain_variance_ratio(X):
         """
         Return array of ratio of each PC
         """
         pca = PCA()
         pca.fit_transform(X)
-        
         return pca.explained_variance_ratio_
     
-    def get_explain_variance(self, X):
+    @staticmethod
+    def get_explain_variance(X):
         """
         Return array of variance of each PC
         """
         pca = PCA()
         pca.fit_transform(X)
         return pca.explained_variance_
-
-    def reduce_dimension_input(self, n_components, X):
-        pca = PCA(n_components)
-        return pca.fit_transform(X)
     
-    def reduce_dimension_dataset(self, n_components, inputX, y):
-        pca = PCA(n_components)
-        return pca.fit_transform(inputX, y)
+#     @staticmethod
+#     def reduce_dimension_input(n_components, X):
+#         pca = PCA(n_components)
+#         return pca.fit_transform(X)
+    
+#     @staticmethod
+#     def reduce_dimension_dataset(n_components, X, y):
+#         pca = PCA(n_components)
+#         return pca.fit_transform(X, y)
 
