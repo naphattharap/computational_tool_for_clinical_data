@@ -150,7 +150,7 @@ def process_clean_up_data_handler(request):
             file_json_data = df.to_json(orient='values')
             columns_value = df.columns.tolist()
                 
-            analyze_results = DataFrameUtil.analyze_dataframe(df, header_row=column_header_idx)
+            analyze_results = DataFrameUtil.analyze_dataframe(df)
             
             resp_data = {  # msg.SUCCESS:'The file has been uploaded successfully.', \
             'table_data': file_json_data, \
@@ -216,7 +216,7 @@ def save_data_handler(request):
         
             columns_value = df.columns.tolist()
             file_json_data = df.to_json(orient='values') 
-            analyze_results = DataFrameUtil.analyze_dataframe(df, header_row=column_header_idx)
+            analyze_results = DataFrameUtil.analyze_dataframe(df)
             
             resp_data = {msg.SUCCESS:'The file has been save as ' + save_as_name, \
             'table_data': file_json_data, \
@@ -310,7 +310,7 @@ def download_matched_key_handler(request):
 
 def extract_matched_key(key_file, data_file):
     # Process matching between keys from both file and write a new file for result.
-    df_keys = DataFrameUtil.file_to_dataframe(key_file)
+    df_keys = DataFrameUtil.file_to_dataframe(key_file, header=0)
     df_data = DataFrameUtil.file_to_dataframe(data_file, header=0)
     # TODO change ix 0 to user define
     df_result = df_data.loc[df_data.ix[:, 0].isin(df_keys.values.astype('int').ravel())]
@@ -344,6 +344,7 @@ def dataframe_remain_columns(df, remain_columns):
     remain_columns - A string array of column entered by user from 1, 2, ...
     """
     if remain_columns:
+        remain_columns = remain_columns.split(",")
         column_indexs = [int(i) - 1 for i in remain_columns]
         return df.iloc[:, column_indexs]
 

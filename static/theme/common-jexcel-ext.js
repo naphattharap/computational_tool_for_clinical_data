@@ -23,7 +23,7 @@ function render_by_jexcel(columns, data, current_last_row_idx, len_data) {
 			temp_end_row_idx = current_last_row_idx + len_load;
 		}
 		// Clear previous rendered data
-		$('#data_table div').html('');
+		$('#data_table div').remove();
 		
 		$('#data_table').jexcel({
 			data : data.slice(current_last_row_idx, temp_end_row_idx),
@@ -103,5 +103,31 @@ function render_more_data(columns, data, current_last_row_idx, len_data, len_loa
 	}
 	
 	return current_last_row_idx;
+}
+
+
+
+/**
+ * Render content in table when scroll down.
+ * @returns
+ */
+function render_table(target_div_id, columns, data) {
+	if(data != undefined){
+		// Clear previous rendered data
+		$('#'+target_div_id+' div').remove();
+		
+		var colWidths = [];
+		for(var idx in columns){
+			var column_text = columns[idx];
+			// refer to column width in common.js
+			colWidths.push(Math.ceil(column_text.width()));
+		}
+		$('#'+target_div_id).jexcel({
+			data : data,
+			colHeaders : columns,
+			colWidths: colWidths
+		});
+		
+	}
 }
 

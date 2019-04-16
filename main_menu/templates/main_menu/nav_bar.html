@@ -24,14 +24,14 @@
 						<ul class="dropdown-menu">
 							<li><a id="menu-upload" href="{%url 'data_upload_init' %}">Upload</a></li>
 							<li><a id="menu-data-cleanup" href="{%url 'data_cleanup' %}">Data Preparation</a></li>
-							<li><a id="menu-data-matching" href="{%url 'data_matching_home' %}">Data Matching</a></li>
+							<li><a id="menu-data-matching" href="{%url 'data_matching_home' %}">Data Selection by Matched Keys</a></li>
 						</ul>
 					</li>
 					
 					<li class="dropdown">
 						<a href="#" class="dropdown-toggle"
 							data-toggle="dropdown" role="button" aria-haspopup="true"
-							aria-expanded="false">Dimensionality Reduction<span class="caret"></span></a>
+							aria-expanded="false">Dimensionality Reduction Analysis<span class="caret"></span></a>
 						<ul class="dropdown-menu">
 							<li><a id="" href="{%url 'pca_home' %}">Principal Component Analysis</a></li>
 							<li><a id="" href="{%url 'lda_home' %}">Linear Discriminant Analysis</a></li>
@@ -42,11 +42,19 @@
 					<li class="dropdown">
 						<a href="#" class="dropdown-toggle"
 							data-toggle="dropdown" role="button" aria-haspopup="true"
-							aria-expanded="false">Model Training<span class="caret"></span></a>
+							aria-expanded="false">Supervised Learning<span class="caret"></span></a>
 						<ul class="dropdown-menu">
-							<li><a id="" href="{%url 'supervised_home' %}">Supervised Learning</a></li>
-							<li><a id="" href="{%url 'unsupervised_home' %}">Unsupervised Learning</a></li>
+							<li><a id="" href="{%url 'supervised_home' %}">Model Creation</a></li>
+							
+						</ul>
+					</li>
+					<li class="dropdown">
+						<a href="#" class="dropdown-toggle"
+							data-toggle="dropdown" role="button" aria-haspopup="true"
+							aria-expanded="false">Unsupervised Learning<span class="caret"></span></a>
+						<ul class="dropdown-menu">
 							<li><a id="" href="{%url 'cluster_analysis_home' %}">Cluster Analysis</a></li>
+							<li><a id="" href="{%url 'unsupervised_home' %}">Model Creation</a></li>
 						</ul>
 					</li>
 					<li class="dropdown"><a href="#" class="dropdown-toggle"
@@ -54,16 +62,18 @@
 						aria-expanded="false">Visualization<span class="caret"></span></a>
 						<ul class="dropdown-menu">
 							<li><a id="flex_model_analysis" href="{%url 'flex_vis_home' %}">Flexible View</a></li>
-							<li><a id="vis_diabetes_class" href="{%url 'vis_diabetes_class' %}">Data Table</a></li>
-							<li><a id="radiomic_brain" href="{%url 'radiomic_brain' %}">Lasso Tool</a></li>
-							<li><a id="vis_multi_tabs" href="{%url 'vis_multi_tabs' %}">Multi-tab</a></li>
-							<li><a id="vis_call_back" href="{%url 'vis_call_back' %}">Callback</a></li>
+							<li><a id="radiomic_result" href="{%url 'vis_radiomic_result_home' %}">Radiomic Result Analysis</a></li>
+							<!-- <li><a id="vis_diabetes_class" href="%url 'vis_diabetes_class' %">Data Table</a></li>
+							<li><a id="radiomic_brain" href="%url 'radiomic_brain' %">Lasso Tool</a></li>
+							<li><a id="vis_multi_tabs" href="%url 'vis_multi_tabs' %">Multi-tab</a></li>
+							<li><a id="vis_call_back" href="%url 'vis_call_back' %">Callback</a></li>
 							<li role="separator" class="divider"></li>
 							<li class="dropdown-header">Nav header</li>
 							<li><a href="#">Separated link</a></li>
-							<li><a href="#">One more separated link</a></li>
+							<li><a href="#">One more separated link</a></li> -->
 						</ul>
 					</li>
+					
 				</ul>
 				<!-- <ul class="nav navbar-nav navbar-right">
 					<li class="active"><a href="./">Default <span

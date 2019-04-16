@@ -1,6 +1,9 @@
 var current_last_row_idx = 0;
 var len_data = 0;
-var len_load = 50; // Render every 500 row.
+var len_load = 20; // Render every 20 row.
+var lim_scroll_top = 100; // 20 rows
+var upload_data;
+var columns;
 $(document).ready(function() {
 	
 	// ======== Initial Display (Hide/Show) ========
@@ -10,6 +13,10 @@ $(document).ready(function() {
 	//Toggle upload file area.
 	$("#upload_file_title").click(function(e) {
 		$("#upload_file_section").toggle();
+	});
+	
+	$("#data_info_title").click(function(e) {
+		$("#data_info_section").toggle();
 	});
 	
 
@@ -36,11 +43,11 @@ $(document).ready(function() {
 				// Calculate column width
 				
 				if(resp.table_data != undefined){
-					var upload_data = JSON.parse(resp.table_data);
-					current_last_row_idx = 0;
+					upload_data = JSON.parse(resp.table_data);
+					columns = resp.table_columns;
 					len_data = upload_data.length;
-					var columns = resp.table_columns;
-					render_by_jexcel(columns, upload_data);
+					current_last_row_idx = render_by_jexcel(columns, upload_data, current_last_row_idx, len_data);
+					
 					// auto-toggle upload file section
 					$("#upload_file_section").toggle();
 					render_analysis_result(resp.analysis);
@@ -65,6 +72,23 @@ $(document).ready(function() {
 				$("div.alert.alert-danger").show();
 			}
 		})
+	});
+	
+	
+	var scrollBottom = Math.max($('.jexcel-content').height() - $('#jexcel-content').height(), 0);
+    $('#jexcel-content').scrollTop(scrollBottom);
+	// When table is scrolled
+	$("#data_table").scroll(function(e){
+		var lim_scroll = Math.max($('.jexcel-content').height() - $('#data_table').height() + 20, 0);
+		//console.log("scoll is fired" + $("#data_table").scrollTop() + "lim: "+ lim_scroll);
+		if($("#data_table").scrollTop() > lim_scroll){
+			if (current_last_row_idx != (len_data -1)) {
+				$(".spinner").show();
+				current_last_row_idx = render_more_data(columns, upload_data, current_last_row_idx, len_data, len_load);
+				$(".spinner").hide();
+				lim_scroll += lim_scroll;
+			}
+		}	
 	});
 	
 	$("#dowload_result").bind("click", function(){
@@ -113,71 +137,7 @@ $(document).ready(function() {
 		})
 	});
 
-	
-//	$("#dowload_result").bind("click", function(){
-//		$("#form_upload_file").submit();
-//		var url_download_file = $("#data_matching").attr("data-url-download");
-//	    $.ajax({
-//	        url: url_download_file,
-//	        method: 'GET',
-//	        data: {},
-//	        xhrFields: {
-//	            responseType: 'blob'
-//	        },
-//	        beforeSend: function(e){
-//				$(".spinner").show();
-//			},
-//			complete:function(){
-//				$(".spinner").hide();
-//			},
-//	        success: function (data) {
-//	            var a = document.createElement('a');
-//	            var url = window.URL.createObjectURL(data);
-//	            a.href = url;
-//	            a.download = download_file_name;
-//	            a.click();
-//	            window.URL.revokeObjectURL(url);
-//	        }
-//	    });
-//	});
-
-
 });
-
-/**
- * Render content in table when scroll down.
- * @returns
- */
-function render_by_jexcel(columns, data) {
-	//Slice object based on current last row index and length of row data.
-	if (len_data == 0){
-		// Clear previous rendered data
-		$('#data_table div').html('');
-		$('#data_table').jexcel({
-			data : {},
-			colHeaders : columns
-		});
-		
-	}else if(data != undefined && (current_last_row_idx != len_data)){
-		
-		//Find then end of slice
-		var temp_end_row_idx = 0;
-		if(current_last_row_idx+len_load > len_data){
-			temp_end_row_idx = len_data;
-		}else{
-			temp_end_row_idx = current_last_row_idx + len_load;
-		}
-		// Clear previous rendered data
-		$('#data_table div').html('');
-		
-		$('#data_table').jexcel({
-			data : data.slice(current_last_row_idx, temp_end_row_idx),
-			colHeaders : columns
-		});
-		
-		current_last_row_idx = temp_end_row_idx; 
-	}
-}
 
 /**
  * Set value of analysis result to target fields.

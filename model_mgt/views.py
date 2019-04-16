@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.views import View
 from django.http import JsonResponse
+from django.utils.html import escape
 
 from .forms import SupervisedLearningTrainTestForm
 from naphyutils.pca import PcaUtil
@@ -8,7 +9,7 @@ from naphyutils.dataframe import DataFrameUtil
 from naphyutils.file import FileStorage
 from naphyutils.model import ModelUtils
 from naphyutils.standardization import PreProcessingUtil
-
+import constants.const_msg as msg 
 from sklearn import svm
 from sklearn.model_selection import train_test_split, cross_val_score
 import pandas as pd
@@ -76,10 +77,10 @@ def supervised_learning_train_test_handler(request):
             X = None;  
             if sel_dim_reduction == "pca":
                 logger.debug("Dimensionality Reduction by PCA...")
-                pca_helper = PcaHelper()
+                pca_helper = PcaUtil()
                 # Standardize data, reduce dimensions and return as X.
                 X_scaled = PreProcessingUtil.fit_transform(df)
-                X = pca_helper.get_pc(X_scaled, n_components)
+                X = pca_helper.reduce_dimension(X_scaled, n_components)
                 logger.debug("PCA Done")
             
             # Label data
@@ -116,13 +117,13 @@ def supervised_learning_train_test_handler(request):
                 clf.fit(X, y)
                 logger.debug("Save model as %s", model_file_name)
                 saved_model_file_name = ModelUtils.save_model(clf, model_file_name);
-                resp_data["msg"] = "Model has been saved succuessfully as " + saved_model_file_name
+                resp_data[msg.SUCCESS] = "Model has been saved successfully as " + saved_model_file_name
         else:
             # File dataset file is not found. 
             msg.append("File name is not found in storage.")
         
     else:
-        resp_data['msg'] = form._errors
+        resp_data[msg.ERROR] = escape(form._errors)
     
     return JsonResponse(resp_data)
 

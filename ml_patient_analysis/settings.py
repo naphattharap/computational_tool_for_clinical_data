@@ -47,7 +47,10 @@ INSTALLED_APPS = [
     'dimreduction.apps.DimreductionConfig',
     'db.apps.DbConfig',
     'visualization.apps.VisualizationConfig',
-    'cluster.apps.ClusterConfig'
+    'cluster.apps.ClusterConfig',
+    'vis_radiomic.apps.VisRadiomicConfig',
+    # Django
+#     'django_plotly_dash.apps.DjangoPlotlyDashConfig'
 ]
 
 MIDDLEWARE = [

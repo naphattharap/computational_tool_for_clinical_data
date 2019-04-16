@@ -80,7 +80,7 @@ def process_model_data(model_file_name, data_file_name, data_detail_file_name):
     # TODO!!!!!! change to DB and dynamic
     # Do PCA
     logger.debug("Dimensionality Reduction by PCA...")
-    pca_helper = PcaHelper()
+    pca_helper = PcaUtil()
     # Standardize data, reduce dimensions and return as X.
     X_scaled = PreProcessingUtil.fit_transform(df_data)
     

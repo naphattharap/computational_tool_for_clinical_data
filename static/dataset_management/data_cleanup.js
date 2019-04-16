@@ -31,8 +31,13 @@ $(document).ready(function() {
 	
 	//based on: http://stackoverflow.com/a/9622978
 	$('#form_upload_file').on('submit', function(e) {
+		// Hide Download Data button.
+		$("#dowload_dataset").hide();
 		e.preventDefault();
 		var form = e.target;
+		var data = new FormData(form);
+		//var data_file = document.getElementById('data_file').files[0];
+		//formData.append('data_file', data_file);
 		// form.append('csrfmiddlewaretoken', $("csrfmiddlewaretoken").val())
 		$.ajax({
 			url : form.action,
@@ -55,7 +60,7 @@ $(document).ready(function() {
 						columns = resp.table_columns;
 						current_last_row_idx = render_by_jexcel(columns, upload_data, current_last_row_idx, len_data);
 						// auto-toggle upload file section
-						$("#data_file").toggle();
+						$("#upload_file_section").toggle();
 						// show preprocess area
 						$("#preprocess_section").show();
 						render_analysis_result(resp.analysis);
@@ -199,7 +204,7 @@ $(document).ready(function() {
 	// When table is scrolled
 	$("#data_table").scroll(function(e){
 		var lim_scroll = Math.max($('.jexcel-content').height() - $('#data_table').height() + 20, 0);
-		//console.log("scoll is fired" + $("#data_table").scrollTop() + "lim: "+ lim_scroll);
+		console.log("scoll is fired" + $("#data_table").scrollTop() + "lim: "+ lim_scroll);
 		if($("#data_table").scrollTop() > lim_scroll){
 			if (current_last_row_idx != (len_data -1)) {
 				$(".spinner").show();

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>Data: Keys Matching</title>
+<title>Data Selection by Matched Keys</title>
 <meta charset="utf-8" />
 {% load static %}
 {% include "main_menu/global_script.html" %} 
@@ -12,9 +12,8 @@
 
 <!-- Custom Scripts -->
 <script type="text/javascript" src="{% static "dataset_management/data_matching.js"%}"></script>
-
-{% block javascript %}
-{% endblock %}
+<link rel="stylesheet" href="{% static "dataset_management/data_matching.css"%}" type="text/css"></link>
+<script type="text/javascript" src="{% static "theme/common-jexcel-ext.js"%}"></script>
 </head>
 <body>
 	{% include "main_menu/nav_bar.html" %}
@@ -25,7 +24,7 @@
 				data-url-download="{%url 'data_matched_keys_download' %}"/>
 	
 	
-	<h3 class="page_title">Data Matching</h3>
+	<h3 class="page_title">Data Selection by Matched Keys</h3>
 	
 	<!-- use container-fluid for full width -->
 	<div class="container-fluid">
@@ -53,8 +52,9 @@
 							<label for="data_file" class="col-sm-2">Data File</label>
 							<div class="col-sm-10">
 								<input id="data_file" name="data_file" type="file" />
+								<p>Key to match must be at the first column</p>
 								<div>
-								<button id="upload_files" class="btn btn-primary" type="submit">Process</button>
+								<button id="upload_files" class="btn btn-primary" style="margin-top: 10px;" type="submit">Process</button>
 								</div>
 							</div>
 						</div>
@@ -62,32 +62,20 @@
 				</div>
 			</form>
 				<!-- View uploaded data table -->
-				<div id="preprocess_section" class="form-group-border">
+				<div id="data_info_group" class="form-group-border">
 					<p>
-						<a id="preprocess_title" href="#">Data</a>
+						<a id="data_info_title" href="#">Data information</a>
 					</p>
-					<div id="preprocess_group_section">
+					<div id="data_info_section">
 						<div id="data_check_result_section" class="analyze_data_result">
-							<strong>Data Checking Result</strong>
+							
 							<table class="data_info">
 								<tr>
 									<td>Number of Columns:</td>
 									<td><span id="n_columns">-</span></td>
 									<td>Number of Rows:</td>
-									<td><span id="n_rows"></span></td>
+									<td><span id="n_rows">-</span></td>
 								</tr>
-								<!-- <tr>
-									<td>Column(s) with NaN:</td>
-									<td><span id="columns_nan">-</span></td>
-									<td>Number of NaN row:</td>
-									<td><span id="n_rows_nan"></span></td>
-								</tr> -->
-								<!-- <tr>
-									<td>Column(s) with Null:</td>
-									<td><span id="columns_null">-</span></td>
-									<td>Number of Null Row:</td>
-									<td><span id="n_rows_null"></span></td>
-								</tr> -->
 							</table>
 						</div> 
 						<br/>

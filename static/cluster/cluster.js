@@ -50,6 +50,9 @@ $(document).ready(function() {
 
 function load_graph(event) {
 	// var formData = new FormData();
+	if (!validate_required_fields()){
+		return false;
+	}
 	var data_file_name = $('#data_file_name').val().trim();
 	if (data_file_name != "") {
 		var column_header = $('#column_header').val();
@@ -94,5 +97,16 @@ function load_graph(event) {
 				alert_error_message(resp);
 			}
 		});
+	}
+}
+
+function validate_required_fields(){
+	if($('#data_file_name').val().trim() == ""){
+		error_html = add_required_field_messages("Data File");
+		var msg = {msg_error: error_html};
+		alert_message(msg);
+		return false;
+	}else{
+		return true;
 	}
 }

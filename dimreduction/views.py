@@ -62,7 +62,7 @@ def elbow_plot_handler(request):
             X_scaled = PreProcessingUtil.standardize(df)
             
             # Get explain variance ratio
-            pca_helper = PcaHelper()
+            pca_helper = PcaUtil()
             pca = pca_helper.get_fit_transfrom_pca(X_scaled)
             arr_variance_ratio = pca.explained_variance_ratio_
             

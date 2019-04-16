@@ -1,9 +1,10 @@
-{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>Linear Discriminant Analysis</title>
+<title>Principal Component Analysis (PCA)</title>
 <meta charset="utf-8" />
+{% load static %}
 {% include "main_menu/global_script.html" %}
 {% include "core_bokeh/common_bokeh_script.html" %}
 <!-- Jquery UI for autocomplete -->
@@ -30,7 +31,7 @@
 	<input type="hidden" id="url_pca_elbow_plot" data-url="{%url 'pca_elbow_plot' %}" />
 	
 	
-	<h3 class="page_title">Linear Discriminant Analysis (LDA)</h3>
+	<h3 class="page_title">Principal Component Analysis (PCA)</h3>
 	{% include "main_menu/alert_msg.html" %}
 	<div class="container-fluid">
 		<div id="pca_dataset_search_section">

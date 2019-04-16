@@ -70,7 +70,8 @@ def view_mean_shift_analysis_handler(request):
             # Do mean shift on data X
             X_redueced = PcaUtil.reduce_dimension(df, n_components=2)
             kmeans = MeanShiftUtil.mean_shift(X_redueced)
-            
+            res = kmeans.__dict__
+            print(res['cluster_centers_'])
             p = draw_mean_shift(kmeans, X_redueced)
             resp_data['plot'] = escape(p)
         else:
@@ -120,6 +121,12 @@ def view_kmean_analysis_handler(request):
         X_redueced = PcaUtil.reduce_dimension(df, n_components=2)
         kmeans = KMeanUtil.get_kmean_model(X_redueced, n_clusters)
         label = kmeans.predict(X_redueced)
+        
+        # TODO delete later
+        res = kmeans.__dict__
+        print(res['cluster_centers_'])
+        
+#         X_redueced = PcaUtil.reduce_dimension(X_redueced, n_components=2)
         df = pd.DataFrame(data=X_redueced, columns=["x", "y"])
         df_label = pd.DataFrame(data=kmeans.labels_, columns=['label'])
         df = df.join(df_label)
@@ -202,13 +209,43 @@ def draw_mean_shift(kmeans, X):
     df = pd.DataFrame(data=X, columns=["x", "y"])
     df_label = pd.DataFrame(data=kmeans.labels_, columns=['label'])
     df = df.join(df_label)
-    traces = [
-        {
-            'x': df[df['label'] == label]['x'],
-            'y': df[df['label'] == label]['y'],
-            # 'name': label, 
-            'mode': 'markers',
-        } for label in np.unique(kmeans.labels_)]
+    
+    # TODO delete
+    temp = np.arange(0, df['x'].size)
+    temp_key = pd.DataFrame(data=temp, columns=['Patient ID'])
+    df = df.join(temp_key)
+        
+    df_label = pd.DataFrame(data=kmeans.labels_, columns=['label'])
+    
+    traces = []
+    for label in range(0, n_labels):
+#         trace = dict()
+#         trace['x'] = df[df['label'] == label]['x']
+#         trace['y'] = df[df['label'] == label]['y']
+#         trace['text'] = df[df['label'] == label]['Patient ID']
+#         traces.append(trace)
+        
+        key = df[df['label'] == label]['Patient ID']
+        texts = []
+        for id in key:
+            text = "Patient ID: " + str(id)
+            texts.append(text)
+            
+        trace = go.Scatter(
+            x=df[df['label'] == label]['x'],
+            y=df[df['label'] == label]['y'],
+            text=texts,
+            mode='markers',
+        )
+        traces.append(trace) 
+    
+#     traces = [
+#         {
+#             'x': df[df['label'] == label]['x'],
+#             'y': df[df['label'] == label]['y'],
+#             'text': df[df['label'] == label]['Patient ID'],  # temp
+#             'mode': 'markers',
+#         } for label in np.unique(kmeans.labels_)]
    
     layout = {"title": "Mean Shift",
           "xaxis": {"title": "", },
