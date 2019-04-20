@@ -1,5 +1,7 @@
 # from sklearn.externals import joblib
 from joblib import dump, load
+from sklearn.exceptions import NotFittedError
+import inspect
 
 """
 For saving and loading model
@@ -52,4 +54,16 @@ class ModelUtils:
             return False
         
         return True
+    
+    @staticmethod
+    def is_fitted(model):
+        """Checks if model object has any attributes ending with an underscore"""
+        return 0 < len([k for k, v in inspect.getmembers(model) if k.endswith('_') and not k.startswith('__')])
 
+#    @staticmethod
+#     def is_fitted(model):
+#         for model in models:
+#             try:
+#                 model.predict(some_test_data)
+#                 except NotFittedError as e:
+#         print(repr(e))

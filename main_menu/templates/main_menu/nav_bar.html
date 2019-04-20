@@ -27,7 +27,6 @@
 							<li><a id="menu-data-matching" href="{%url 'data_matching_home' %}">Data Selection by Matched Keys</a></li>
 						</ul>
 					</li>
-					
 					<li class="dropdown">
 						<a href="#" class="dropdown-toggle"
 							data-toggle="dropdown" role="button" aria-haspopup="true"
@@ -39,15 +38,24 @@
 							
 						</ul>
 					</li>
+					
 					<li class="dropdown">
 						<a href="#" class="dropdown-toggle"
 							data-toggle="dropdown" role="button" aria-haspopup="true"
 							aria-expanded="false">Supervised Learning<span class="caret"></span></a>
 						<ul class="dropdown-menu">
-							<li><a id="" href="{%url 'supervised_home' %}">Model Creation</a></li>
-							
+							<li><a id="" href="{%url 'pipeline_home' %}">Model Selection</a></li>
 						</ul>
 					</li>
+					<!-- <li class="dropdown">
+						<a href="#" class="dropdown-toggle"
+							data-toggle="dropdown" role="button" aria-haspopup="true"
+							aria-expanded="false">Supervised Learning<span class="caret"></span></a>
+						<ul class="dropdown-menu">
+							<li><a id="" href="%url 'supervised_home' %">Model Creation</a></li>
+							
+						</ul>
+					</li> -->
 					<li class="dropdown">
 						<a href="#" class="dropdown-toggle"
 							data-toggle="dropdown" role="button" aria-haspopup="true"
@@ -59,10 +67,18 @@
 					</li>
 					<li class="dropdown"><a href="#" class="dropdown-toggle"
 						data-toggle="dropdown" role="button" aria-haspopup="true"
+						aria-expanded="false">Visualization Settings<span class="caret"></span></a>
+						<ul class="dropdown-menu">
+							<li><a id="flex_model_analysis" href="{%url 'flex_vis_home' %}">Data and Model Setting</a></li>
+						</ul>
+					</li>
+					<li class="dropdown"><a href="#" class="dropdown-toggle"
+						data-toggle="dropdown" role="button" aria-haspopup="true"
 						aria-expanded="false">Visualization<span class="caret"></span></a>
 						<ul class="dropdown-menu">
 							<li><a id="flex_model_analysis" href="{%url 'flex_vis_home' %}">Flexible View</a></li>
 							<li><a id="radiomic_result" href="{%url 'vis_radiomic_result_home' %}">Radiomic Result Analysis</a></li>
+							<li><a id="radiomic_stratified" href="{%url 'vis_stratified_radiomic_home' %}">Radiomic#2</a></li>
 							<!-- <li><a id="vis_diabetes_class" href="%url 'vis_diabetes_class' %">Data Table</a></li>
 							<li><a id="radiomic_brain" href="%url 'radiomic_brain' %">Lasso Tool</a></li>
 							<li><a id="vis_multi_tabs" href="%url 'vis_multi_tabs' %">Multi-tab</a></li>

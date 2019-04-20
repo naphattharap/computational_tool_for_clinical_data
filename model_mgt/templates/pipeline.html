@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Model Creation</title>
+<meta charset="utf-8" />
+{% include "main_menu/global_script.html" %} 
+{% include "core_bokeh/common_bokeh_script.html" %} {% load static %}
+<!-- Jquery UI for autocomplete -->
+<script src="{% static "jquery/ui/1.12.1/jquery-ui.js"%}"></script>
+<link rel="stylesheet" type="text/css" href="{% static "jquery/ui/1.12.1/jquery-ui.min.css"%}"></link>
+<script type="text/javascript" src="{% static "theme/auto_complete_file.js"%}"></script>
+
+<script type="text/javascript" src="{% static "model_mgt/pipeline.js"%}"></script>
+<link rel="stylesheet" type="text/css" href="{% static "model_mgt/pipeline.css"%}"></link>
+
+<!--  Plotly -->
+<script type="text/javascript" src="{% static "plotly/plotly-1.47.0.min.js"%}"></script>
+
+<!-- JExcel Scripts -->
+<script src="{% static "jexcel/2.0.2/js/jquery.jexcel.js"%}"></script>
+<link rel="stylesheet" href="{% static "jexcel/2.0.2/css/jquery.jexcel.css"%}" type="text/css"></link>
+<script type="text/javascript" src="{% static "theme/common-jexcel-ext.js"%}"></script>
+</head>
+<body>
+	<!-- Navigation Bar -->
+	{% include "main_menu/nav_bar.html" %}
+
+	<!-- Hidden URL used in javascript -->
+	<input type="hidden" id="data_pipeline" data-url="{%url 'pipeline_run' %}" />
+	<input type="hidden" id="url_list_all_file" data-url="{%url 'db_list_all_files' %}" />
+	
+	<!-- Page Title -->
+	<h3 class="page_title">Model Creation Pipeline</h3>
+
+	<!-- Alert Message -->
+	<div style="width:90%; margin: auto;">
+	{% include "main_menu/alert_msg.html" %}
+	</div>
+	<!-- Content -->
+	<div class="container-fluid"  style="display: -webkit-inline-box;  width: 100%;">
+	<!--  Template -->
+	<div id="component_template" style="display:none">
+	<!-- Feature Selection -->
+	
+	  <!-- parameters: 
+  			 k_features=3, forward=True, floating=False, verbose=2, scoring='accuracy', cv=0
+  	  -->
+  	  	<div id="t_scale" class="pipeline alert-dismissible">
+  			<a href="#" class="close" data-dismiss="alert" aria-label="close" onclick="$(this).parent().remove()">&times;</a>
+ 			<p class="pw_name">StandardScaler</p>
+ 			<!-- <div class="input_row">
+  			<div class="txt_label">N Components</div>
+  			<div class="input_field">
+  				<input type="text" id="pca_n_components" name="pca_n_components" class="form-control">
+  			</div>
+ 			</div> -->
+ 		</div>
+  		<div id="t_sfs" class="pipeline alert-dismissible">
+  			<a href="#" class="close" data-dismiss="alert" aria-label="close" onclick="$(this).parent().remove()">&times;</a>
+ 			<p class="pw_name">SFS</p>
+ 			<div class="input_row">
+	  			<div class="txt_label">K Features</div>
+	  			<div class="input_field">
+	  				<input type="text" id="sfs_k_features" name="sfs_k_features" value="1" class="form-control">
+	  			</div>
+ 			</div>
+ 			<div class="input_row">
+	  			<div class="txt_label">Forward</div>
+	  			<div class="input_field">
+	  				<select id="sfs_forward" name="sfs_forward" class="form-control">
+	  					<option value="True" selected>True</option>
+	  					<option value="False">False</option>
+	  				</select>
+	  			</div>
+	  		</div>
+	  		<div class="input_row">
+	  			<div class="txt_label">Floating</div>
+	  			<div class="input_field">
+	  				<select id="sfs_floating" name="sfs_floating" class="form-control">
+	  					<option value="True">True</option>
+	  					<option value="False" selected>False</option>
+	  				</select>
+	  			</div>
+	  		</div>
+	  		<div class="input_row">
+	  			<div class="txt_label">Scoring</div>
+	  			<div class="input_field">
+	  				<select id="sfs_scoring" name="sfs_scoring" class="form-control">
+	  					<option value="accuracy" selected>accuracy (default)</option>
+	  					<option value="r2">r2 (sklearn regressors)</option>
+	  				</select>
+	  			</div>
+	  		</div>
+	  		<div class="input_row">
+	  			<div class="txt_label">CV</div>
+	  			<div class="input_field">
+	  				<input type="text" id="sfs_cv" name="sfs_cv" class="form-control" value="5">
+	  			</div>
+	  		</div>
+	  		<div class="input_row">
+	  			<div class="txt_label">N Jobs</div>
+	  			<div class="input_field">
+	  				<input type="text" id="sfs_n_jobs" name="sfs_n_jobs" class="form-control" value="1">
+	  			</div>
+	  		</div>
+ 		</div>	
+	
+		<div id="t_select_k_best" class="pipeline alert-dismissible">
+  			<a href="#" class="close" data-dismiss="alert" aria-label="close" onclick="$(this).parent().remove()">&times;</a>
+ 			<p class="pw_name">Select KBest</p>
+ 			<div class="input_row">
+	 			<div class="txt_label">N K</div>
+	  			<div class="input_field">
+	  				<input type="text" id="select_k_best_n_k" name="select_k_best_n_k" class="form-control">
+	  			</div>
+  			</div>
+ 		</div>
+ 		
+
+ 		
+  		<div id="t_pca" class="pipeline alert-dismissible">
+  			<a href="#" class="close" data-dismiss="alert" aria-label="close" onclick="$(this).parent().remove()">&times;</a>
+ 			<p class="pw_name">PCA</p>
+ 			<div class="input_row">
+  			<div class="txt_label">N Components</div>
+  			<div class="input_field">
+  				<input type="text" id="pca_n_components" name="pca_n_components" class="form-control">
+  			</div>
+ 			</div>
+ 		</div>
+ 		
+ 		 <div id="t_kernel_pca" class="pipeline alert-dismissible">
+  			<a href="#" class="close" data-dismiss="alert" aria-label="close" onclick="$(this).parent().remove()">&times;</a>
+ 			<p class="pw_name">Kernel PCA</p>
+ 			<div class="input_row">
+  			<div class="txt_label">N Components</div>
+  			<div class="input_field">
+  				<input type="text" id="kernel_pca_n_components" name="kernel_pca_n_components" class="form-control">
+  			</div>
+ 			</div>
+ 		</div>
+ 		
+ 		<div id="t_lda" class="pipeline alert-dismissible">
+ 			<a href="#" class="close" data-dismiss="alert" aria-label="close" onclick="$(this).parent().remove()">&times;</a>
+ 			<p class="pw_name">LDA</p>
+ 			<div class="input_row">
+  			<div class="txt_label">N Components</div>
+  			<div class="input_field">
+  				<input type="text" id="lda_n_components" name="lda_n_components" class="form-control">
+  			</div>
+ 			</div>
+ 		</div>
+ 		
+ 		<div id="t_tsne" class="pipeline alert-dismissible">
+ 			<a href="#" class="close" data-dismiss="alert" aria-label="close" onclick="$(this).parent().remove()">&times;</a>
+ 			<p class="pw_name">t-SNE</p>
+ 			<div class="input_row">
+	  			<div class="txt_label">N Components</div>
+	  			<div class="input_field">
+	  				<input type="text" id="tsne_n_components" name="tsne_n_components" class="form-control">
+	  			</div>
+  			</div>
+ 		</div>
+ 		
+ 		<div id="t_svmovo" class="pipeline alert-dismissible">
+ 			<a href="#" class="close" data-dismiss="alert" aria-label="close" onclick="$(this).parent().remove()">&times;</a>
+ 			<p class="pw_name">SVM - One VS One</p>
+ 		</div>
+ 		
+ 		<div id="t_svmovr" class="pipeline alert-dismissible">
+ 			<a href="#" class="close" data-dismiss="alert" aria-label="close" onclick="$(this).parent().remove()">&times;</a>
+ 			<p class="pw_name">SVM - One VS Rest</p>
+ 		</div>
+ 		
+ 		<div id="t_kfold" class="pipeline alert-dismissible">
+ 			<a href="#" class="close" data-dismiss="alert" aria-label="close" onclick="$(this).parent().remove()">&times;</a>
+ 			<p class="pw_name">K-Fold</p>
+ 			<div class="input_row">
+  			<div class="txt_label">N Fold</div>
+  			<div class="input_field">
+  				<input type="text" id="n_folds" name="n_folds" value="5" class="form-control">
+  			</div>
+ 			</div>
+ 		</div>
+ 		
+ 		<div id="t_stratified_kfold" class="pipeline alert-dismissible">
+ 			<a href="#" class="close" data-dismiss="alert" aria-label="close" onclick="$(this).parent().remove()">&times;</a>
+ 			<p class="pw_name">Stratified K-Fold</p>
+ 			<div class="input_row">
+  			<div class="txt_label">N Split</div>
+  			<div class="input_field">
+  				<input type="text" id="stratified_kfold_n_split" name="stratified_kfold_n_split" value="5" class="form-control">
+  			</div>
+ 			</div>
+ 			<div class="input_row">
+	  			<div class="txt_label">Shuffle</div>
+	  			<div class="input_field">
+	  				<select id="stratified_kfold_shuffle" name="stratified_kfold_shuffle" class="form-control">
+	  					<option value="False" selected>False)</option>
+	  					<option value="True">True</option>
+	  				</select>
+	  			</div>
+ 			</div>
+ 			<div class="input_row">
+	  			<div class="txt_label">Shuffle</div>
+	  			<div class="input_field">
+	  				<input type="text" id="n_folds" name="n_folds" class="form-control">
+	  			</div>
+ 			</div>
+ 		</div>
+ 		
+ 		<div id="t_handout" class="pipeline alert-dismissible">
+ 			<a href="#" class="close" data-dismiss="alert" aria-label="close" onclick="$(this).parent().remove()">&times;</a>
+ 			<p class="pw_name">Handout</p>
+ 			<div class="input_row">
+	  			<div class="txt_label">Test Size</div>
+	  			<div class="input_field">
+	  				<input type="text" id="test_size" name="test_size" value="0.2" class="form-control">
+	  			</div>
+ 			</div>
+ 		</div>
+	
+ 		<!-- <div id="t_leaveoneout" class="pipeline alert-dismissible">
+ 			<a href="#" class="close" data-dismiss="alert" aria-label="close" onclick="$(this).parent().remove()">&times;</a>
+ 			<p class="pw_name">Leave One Out</p>
+ 			<div class="input_row">
+	  			<div class="txt_label">Test Size</div>
+	  			<div class="input_field">
+	  				<input type="text" id="test_size" name="test_size" class="form-control">
+	  			</div>
+ 			</div>
+ 		</div> -->
+	
+	</div>
+	
+	<!--  End of Template -->
+	
+	
+	<div class="panel_wrapper">
+    <!-- Sidebar -->
+    
+   <!--  <nav id="sidebar"> -->
+   		<div>
+   			<a id="panel_sec1_title" href="#">Collapese&nbsp;&lt;&nbsp;&gt;</a>
+   		</div>
+        <div id="panel_sec1">
+            <h5 class="section_title">Dataset</h5>
+            <hr class="section_split_line"/>
+	       	<div id="dataset_group">
+	       		<div class="">
+	       			<div class="input_header">
+					<label for="dataset_file_name" class="">Data File</label>
+					<div class="">
+						  <input type="checkbox" id="column_header"  name="column_header" style="margin-left: 10px;" checked>
+						  <label class="" for="defaultChecked2">with column header row</label>
+						</div>
+					</div>
+					<div class="">
+						<input id="dataset_file_name" type="text" class="form-control" 
+						placeholder="Enter uploaded data file name">
+					</div>
+					
+				</div>
+				<div class="">
+					<div class="input_header">
+						<label for="label_file_name" class="">Label File</label>
+						<div class="">
+						  <input type="checkbox" id="label_column_header"  name="label_column_header" style="margin-left: 10px;" checked>
+						  <label class="custom-control-label" for="defaultChecked2">with column header row</label>
+						</div>
+					</div>
+					<div class="">
+						<input type="text" class="form-control" id="label_file_name"
+							placeholder="Enter uploaded label file name">
+					</div>
+				</div>
+	       	</div>
+	       	
+
+            <h5 class="section_title">Standardization</h5>
+	       	<hr class="section_split_line"/>
+            <div id="widgets_feature_selection_group" class="widgets_group">
+	            <div id="scale" class="widget">STD Scaler</div>
+            </div>
+            	       	
+	       	
+	        <h5 class="section_title">Feature Selections</h5>
+	       	<hr class="section_split_line"/>
+            <div id="widgets_feature_selection_group" class="widgets_group">
+	            <div id="sfs" class="widget">SFS</div>
+	            <div id="select_k_best" class="widget">Select KBest</div>
+            </div>
+            
+
+	       	
+	       	<h5 class="section_title">Algorithms</h5>
+	       	<hr class="section_split_line"/>
+            <div id="widgets_algo_group" class="widgets_group">
+	            <div id="pca" class="widget">PCA
+	            	<img class="ico_img" src="{% static "images/ico_pca.png"%}"/>
+	            </div>
+	            <div id="kernel_pca" class="widget">Kernel PCA
+	            </div>
+	            <div id="lda" class="widget">LDA</div>
+	            <div id="tsne" class="widget">t-SNE</div>
+	            <div id="svmovo" class="widget">SVM (OVO)</div>
+	            <div id="svmovr" class="widget">SVM (OVR)</div>
+            </div>
+            
+            <h5 class="section_title">Test</h5>
+            <hr class="section_split_line"/>
+            <div id="widgets_algo_group" class="widgets_group">
+	            <div id="kfold" class="widget">K-Fold</div>
+	            <div id="stratified_kfold" class="widget">Stratified K-Fold</div>
+	            <div id="handout" class="widget">Handout</div>
+	            <!-- <div id="leaveoneout" class="widget">Leave One Out</div> -->
+            </div>
+           
+        </div>
+        <p class="header_section">Execution Pipeline >></p>
+        <div class="pipline_wrapper">
+        	<div id="pipeline">
+        	</div>
+        </div>
+        <div class="center_button">
+			<!-- <div id="btn_run" > -->
+			<div>
+				<!-- <p>Train
+				<img class="ico_img" src="{% static "images/ico_play_arrow.png"%}"/>
+				</p> -->
+				<button id="btn_train" name="btn_train" class="btn btn-primary">Train</button>
+				
+			</div>
+       </div>
+        
+   <!--  </nav> -->
+
+	</div>
+
+		<!-- Dataset and Parameter Settings -->
+		<!-- <div id="settings_group" class="form-group-border">
+		<div class="form-horizontal">
+			<p>
+				<a id="settings_section_title" href="#">Model Creation Settings</a>
+			</p>
+			<div id="settings_section">
+	
+				
+					<div class="form-group">
+						<label for="sel_dim_reduction" class="col-sm-2 control-label">Dimensionality Reduction</label>
+						<div class="col-sm-5">
+							<select id="sel_dim_reduction" class="form-control">
+								<option value="none" selected>&lt;None&gt;</option>
+								<option value="pca">Principal Component Analysis (PCA)</option>
+								<option value="lda">Linear Discriminant Analysis (LDA)</option>
+								<option value="lda">t-Distributed Stochastic Neighbor Embedding (t-SNE)</option>
+							</select>
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label for="sel_algorithm" class="col-sm-2 control-label">Classification
+							Method</label>
+						<div class="col-sm-5">
+							<select id="sel_algorithm" class="form-control">
+								<option value="svm_ovo">Support Vector Machine (SVM): One vs One</option>
+								<option value="svm_ovr">Support Vector Machine (SVM): One vs All</option>
+							</select>
+						</div>
+					</div>
+					
+					
+					<div class="form-group">
+						<label for="test_size" class="col-sm-2 control-label">Test Size</label>
+						<div class="col-sm-5">
+							<input id="test_size" type="text" class="form-control" 
+								placeholder="Enter ratio of test data. Ex. 0.2">
+						</div>
+					</div>			
+					
+		
+				
+			</div>
+		</div>
+	</div> -->
+		<!--  Train/Test Result -->
+		<div id="results" class="main-right">
+			<ul class="nav nav-tabs">
+				<li class="active"><a data-toggle="tab" href="#tab_plot">Plot</a></li>
+				<li><a data-toggle="tab" href="#tab_model_desc">Model Description</a></li>
+				<li><a data-toggle="tab" href="#tab_selected_features">Selected Features</a></li>
+			</ul>
+			
+			<div class="tab-content">
+			<div id="tab_plot" class="tab-pane fade in active">
+				<!-- =========== Plot ============== -->
+				<div align="center" style="padding:10px;">
+					<div id="plotjs_container"></div>
+				</div>
+			</div>
+			<div id="tab_model_desc" class="tab-pane fade">
+				<!-- =========== Plot ============== -->
+				<div align="center" style="padding:10px;">
+					<h4>Train and Test Model Result</h4>
+					<div id="result_detail">
+						<div class="form-horizontal">
+							<div class="form-group">
+									<div class="col-sm-2">Scores</div>
+									<div class="col-sm-5">
+										<span id="scores" style="overflow-wrap: break-word;">-</span>
+									</div>
+									<div class="col-sm-3">Accuracy Mean</div>
+									<div class="col-sm-1">
+										<span id="accuracy_mean">-</span>
+									</div>
+								</div>
+							<!-- <div class="form-group">
+								<div class="col-sm-3">Accuracy Mean</div>
+								<div class="col-sm-7">
+									<span id="accuracy_mean">-</span>
+								</div>
+							</div> -->
+							<div class="form-group">
+								<div class="col-sm-3">Model Parameters</div>
+								<div class="col-sm-7">
+									<span id="params" style="overflow-wrap: break-word;">-</span>
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="col-sm-3">Model Description</div>
+								<div class="col-sm-7">
+									<span id="model_desc">-</span>
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="col-sm-3"></div>
+								<div class="col-sm-7">
+									<button id="btn_save" name="btn_save" class="btn btn-primary">Save Model</button>
+								</div>
+							</div>	
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div id="tab_selected_features" class="tab-pane fade">
+				<!-- =========== Plot ============== -->
+				<div align="center" style="padding:10px;">
+					<div id="data_table"></div>
+				</div>
+			</div>
+		</div>
+
+		</div>
+	
+	</div>
+	<!-- End of container -->
+</body>
+</html>

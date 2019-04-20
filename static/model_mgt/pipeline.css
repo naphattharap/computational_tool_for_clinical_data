@@ -1,0 +1,145 @@
+#widget_panel {
+  width: 200px;
+  background: #2c3e50;
+  position: absolute;
+  height: 100%;
+  top: 0;
+  left: -200px;
+  transition: left 0.5s ease;
+  height: 600px;
+  overflow-y: scroll;
+}
+
+.widget{
+    width: 50px;
+    height: 50px;
+    border: #138ef8;;
+    background: #8ee3fc;
+    border-style: solid;
+    border-radius: 0.5em;
+    border-width: thin;
+    text-align: center;
+    font-size: 10px;
+    font-weight: 600;
+    margin: 5px;
+    cursor: pointer;
+   }
+
+
+.pipeline{
+	width: 100%;
+	background: #d9edf7;
+    height: fit-content;
+    border: #337ab7;
+    border-style: solid;
+    border-width: thin;
+    border-radius: 0.5em;
+    margin-top: 10px;
+}
+.widget:hover{
+	background: #9ed8f5;
+    border: #337ab7;
+    border-width: thin;
+    border-style: solid;
+}
+.widgets_group{
+	display:inline-flex;
+}
+
+.input_header{
+
+    display: -webkit-inline-box;
+    
+}
+
+.panel_wrapper{
+    margin: 10px;
+    padding: 10px;
+    width: 35%;
+    border-right-style: solid;
+    border-width: thin;
+    height: 650px;
+    border-color: gray;
+    overflow-y: scroll;
+}
+
+.ico_img{
+    width: 30px;
+    height: 25px;
+}
+
+
+.pw_name{
+    margin-left: 5px;
+    font-weight: bold;
+    text-align: left;
+}
+
+#btn_run{
+    width: 100%;
+    text-align: -webkit-center;
+    display: -webkit-inline-box;
+    font-size: large;
+    background: #77fe77;
+    border-radius: 0.5em;
+    border-width: thin;
+    border-color: #5cb85c;
+    border-style: solid;
+    margin: 5px;
+    padding: 10px;
+}
+.input_row{
+	display: -webkit-box;
+}
+
+.input_row > .txt_label{
+	padding: 5px;
+    padding-top: 10px;
+    width: 40%;
+}
+
+.center_button {
+  margin: auto;
+  width: 50%;
+  margin-bottom: 10px;
+ 
+}
+
+#btn_train{
+    width: 150px;
+    height: 40px;
+    margin-top: 10px;
+}
+
+.header_section{
+	background: #ccc;
+    color: #333;
+    /* border-radius: 0.5em; */
+    padding: 5px;
+    text-align: left;
+    font-size: large;
+    font-weight: 500;
+    margin-top: 20px;
+}
+
+.main-right{
+	width: 60%;
+}
+
+.section_split_line{
+	margin-top: 5px;
+	margin-bottom: 5px;
+	border: 0.5px solid #61a5d5;
+}
+
+.section_title{
+	margin-top: 20px;
+	margin-bottom: 0px;
+}
+
+.graph_border{
+	height: 500px;
+    border-style: solid;
+    border-width: thin;
+    border-color: lightgray;
+}

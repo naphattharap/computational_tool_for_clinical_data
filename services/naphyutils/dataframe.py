@@ -56,7 +56,11 @@ class DataFrameUtil():
         """
         data = df.to_json(orient="values")
         return data, df.columns.values.tolist()
-    
+ 
+    @staticmethod   
+    def get_columns_by_indexes(data_frame, arr_indexes):
+        return data_frame.iloc[:, arr_indexes]
+   
     @staticmethod
     def get_column_value(data_frame, column_name):
         return data_frame[column_name].values

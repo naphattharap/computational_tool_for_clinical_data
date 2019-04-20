@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'visualization.apps.VisualizationConfig',
     'cluster.apps.ClusterConfig',
     'vis_radiomic.apps.VisRadiomicConfig',
+    'vis_stratified_radiomic.apps.VisStratifiedRadiomicConfig'
     # Django
 #     'django_plotly_dash.apps.DjangoPlotlyDashConfig'
 ]

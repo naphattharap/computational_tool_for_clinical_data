@@ -1,0 +1,23 @@
+/*overwrite width from 0 to 100%*/
+.jexcel > div > table{
+	width: 100% !important;
+}
+
+#tab_medical_history{
+	overflow: scroll;
+    height: 800px;
+}
+
+
+#tab_radiomic_result{
+	overflow: scroll;
+    height: 800px;
+}
+
+/* .tab-content>.tab-pane {
+    display: none;
+}
+
+.tab-content>.active {
+    display: block;
+} */

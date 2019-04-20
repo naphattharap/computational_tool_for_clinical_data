@@ -45,42 +45,67 @@ var disp_radiomic_column = [
 $(document).ready(function() {
 	
 	
+	$('#upload_file_title').on('click', function(){
+		$('#upload_file_section').toggle();
+	});
+
 	
-	// When document has finished loading, send request to draw graph
-	var url_load_dashboard = $('#load_dashboard').attr('data-url');
-	$.ajax({
-		type : "GET",
-		dataType : "json",
-		url : url_load_dashboard,
-		data : {},
-		beforeSend : function(e) {
-			$(".spinner").show();
-		},
-		complete : function() {
-			$(".spinner").hide();
-		},
-		success : function(resp) {
-			// Plot graph to target div
-			alert_message(resp);
-			df = JSON.parse(resp.data);
-			arr_obj_key = df['f.eid'];
-			console.log(resp.data);
-			plotly_js();
-			$('.nav.nav-tabs').show();
-			$('#filter_group').show();
-			
-//			var div_plot = $('<div />').html(resp.plot).text();
-//			var $target =$('#plot_container');
-//			$target.html('');
-//			$target.append(div_plot);
-			
-			
-		},
-		error : function(resp) {
-			alert_error_message(resp);
+	var url_process_data = $('#process_data_url').attr('data-url');
+	$('#form_upload_file').on('submit', function(e){
+		// Upload file and render result
+		e.preventDefault();
+		var form = document.getElementById('form_upload_file');
+		var formData = new FormData(form);
+		
+		formData.append('data_file', $('#data_file').val());
+		
+		var label_file = document.getElementById('label_file').files[0];
+		formData.append('label_file', label_file);
+
+		var new_data_file = document.getElementById('new_data_file').files[0];
+		formData.append('new_data_file', new_data_file);
+		
+		if(document.getElementById('general_data_file') != undefined){
+			var general_data_file = document.getElementById('general_data_file').files[0];
+			formData.append('general_data_file', general_data_file);
 		}
+		
+		
+		$.ajax({
+			url : form.action,
+			method : form.method,
+			processData : false, // important
+			contentType : false,
+			data : formData,
+			beforeSend: function(e){
+				$(".spinner").show();
+			},
+			complete:function(){
+				$(".spinner").hide();
+			},
+			success : function(resp) {
+				// Plot graph to target div
+				console.log(resp);
+				alert_message(resp);
+
+				console.log(resp.plot);
+				//Important to getElementById to avoid error in plotly.js
+				// plotly-1.47.0.min.js:7 Uncaught TypeError: r.getAttribute is not a function
+				var graphDiv = document.getElementById('plotjs_container');
+				plot_2d(graphDiv, resp.plot);
+				
+				//$('.nav.nav-tabs').show();
+				//$('#filter_group').show();
+			},
+			error : function(resp) {
+				alert_error_message(resp);
+			}
+			
+		});
+	
 	});
 	
+
 	// ========= Plotly Event Handlers =============
 	$('#plotjs_container').on('plotly_event', function(e){
     	// do something;
@@ -161,59 +186,108 @@ $(document).ready(function() {
 });
 
 
-function plotly_js(){
-	var graphDiv = document.getElementById('plotjs_container');
-	arr_x = Object.keys(df.x).map(function(_) { return df.x[_]; })
-	arr_y = Object.keys(df.y).map(function(_) { return df.y[_]; })
-	arr_label = Object.keys(df.label).map(function(_) { return df.label[_]; })
-	arr_unique_label = arr_label.filter((v, i, a) => a.indexOf(v) === i);
+function plot_2d(graphDiv, plot){
+	//Get data to plot from df variables.
+	var arr_x = get_obj_values(JSON.parse(plot.original_data).x);
+	var arr_y = get_obj_values(JSON.parse(plot.original_data).y);
+	var arr_label = get_obj_values(JSON.parse(plot.original_data).label);
 	
-	arr_feid = Object.keys(df['f.eid']).map(function(_) { return df['f.eid'][_]; })
+	var obj_point_id = JSON.parse(plot.original_data).point_id;
+	var arr_point_id = []
+	if (obj_point_id != undefined){
+		arr_point_id = get_obj_values(obj_point_id);
+	}
 
-	// Create array of traces based on label
-	var data = [];
-	for(var idx in arr_unique_label){
-		//console.log(arr_unique_label[idx]);
-		
-		label = arr_unique_label[idx];
-		var idx_cluster_data = arr_label.map((e, i) => e === label ? i : '').filter(String)
-		// Find data in current label to create a trace.
-		var arr_cx = [];
-		var arr_cy = [];
-		var arr_text = [];
-		var cluster_data = [];
-		var custom_data= [];
-		for(var xi in idx_cluster_data){
-			var pt_x = arr_x[idx_cluster_data[xi]];
-			var pt_y = arr_y[idx_cluster_data[xi]];
-			var pt_feid = arr_feid[idx_cluster_data[xi]];
-			arr_cx.push(pt_x);
-			arr_cy.push(pt_y);
-			arr_text.push("f.eid: "+pt_feid);
-			cluster_data.push(pt_feid);
-			var test = "test custom data: "+pt_feid;
-			custom_data.push(test);
+	var arr_data = {arr_x: arr_x, arr_y: arr_y, arr_label: arr_label, arr_point_id:arr_point_id }
+	var cluster_data_ori = get_cluster_data(arr_data);
+	
+	var data = []; // store trace
+	
+	var marker_size = 15;
+	//'rgb(244, 69, 66)' //red
+	//'rgb(0, 0, 0)'; //black
+	var dot_border_color = 'rgb(249, 2, 2)';
+	var dot_border_width = 2;
+	var group_counter = 1;
+	
+	var marker = { size: marker_size, opacity:0.7}
+	for(var cidx in cluster_data_ori){
+		var obj_cluster = cluster_data_ori[cidx];
+		var arr_cx = obj_cluster.x;
+		var arr_cy = obj_cluster.y;
+		// optional data
+		var arr_id = [];
+		var arr_text = []; // for hover text
+		if(obj_cluster.arr_id != undefined){
+			arr_id = obj_cluster.arr_id;
+			arr_text = arr_id;
 		}
 		
-		var trace = {
-				  x: arr_cx,
-				  y: arr_cy,
-				  ids: cluster_data,
-				  customdata: cluster_data,
-				  mode: 'markers',
-				  type: 'scatter',
-				  name: 'Cluster '+idx,
-				  text: arr_text,
-				  textposition: 'top center',
-				  textfont : {
-					    family:'Times New Roman'
-					  },
-				  marker: { size: 20, opacity:0.7}
-				};
 		
+//		trace = {
+//				  x: arr_cx,
+//				  y: arr_cy,
+//				  ids: arr_id,
+//				  //customdata: cluster_data,
+//				  name: "Diagnosed: "+obj_cluster.label,
+//				  legendgroup: "group"+group_counter,
+//				  mode: 'markers',
+//				  type: 'scatter',
+//				  text: arr_text,
+//				  textposition: 'top center',
+//				  textfont : {
+//					    family:'Times New Roman'
+//					  },
+//				  marker: marker
+//		};
+		var group_label = "Diagnosed: "+obj_cluster.label;
+		var legendgroup = "group"+group_counter;
+		var trace = get_trace_scatter(arr_cx, arr_cy, arr_id, arr_text, group_label, legendgroup, marker);
+		group_counter += 1;
 		data.push(trace);
-		arr_clusters.push(cluster_data);
 	}
+	
+	// If New Data to be predicted is uploaded (it's optional)
+	if(plot.new_data != undefined){
+		var arr_x_new = get_obj_values(JSON.parse(plot.new_data).x);
+		var arr_y_new = get_obj_values(JSON.parse(plot.new_data).y);
+		var arr_label_new = get_obj_values(JSON.parse(plot.new_data).label);
+		
+		var obj_point_id = JSON.parse(plot.new_data).point_id;
+		var arr_point_id = []
+		if (obj_point_id != undefined){
+			arr_point_id = get_obj_values(obj_point_id);
+		}
+		var arr_data2 = {arr_x: arr_x_new, arr_y: arr_y_new, arr_label: arr_label_new, arr_point_id:arr_point_id};
+		var cluster_data_new = get_cluster_data(arr_data2);
+		
+		var marker = { size: marker_size, 
+				  		line: {
+				  			color: dot_border_color,
+				  			width: dot_border_width
+				  		},
+				  		opacity:0.7};
+		
+		for(var cidx in cluster_data_new){
+			var obj_cluster = cluster_data_new[cidx];
+			var arr_cx = obj_cluster.x;
+			var arr_cy = obj_cluster.y;
+			// optional data
+			var arr_id = [];
+			var arr_text = [];
+			if(obj_cluster.arr_id != undefined){
+				arr_id = obj_cluster.arr_id;
+				arr_text = arr_id;
+			}
+			
+			var group_label = "Predict: "+obj_cluster.label;
+			var legendgroup = "group"+group_counter;
+			var trace = get_trace_scatter(arr_cx, arr_cy, arr_id, arr_text, group_label, legendgroup, marker);
+			group_counter += 1;
+			data.push(trace);
+		}
+		
+	}	
 	var layout = {
 			  title: '',
 			  xaxis: {
@@ -231,59 +305,3 @@ function plotly_js(){
 	Plotly.newPlot(graphDiv, data, layout);
 }
 
-/**
- * Get Patient ID from selected points
- * @param data
- * @returns array of patient ID
- */
-function current_selected_data(data){
-	var selected_patient_ids = [];
-	if (data != undefined && data.points){
-    data.points.forEach(function(pt) {
-    	console.log("cluster: "+pt.curveNumber);
-    	console.log("pointIndex: "+pt.pointIndex);
-        console.log("x,y: "+pt.x +","+ pt.y);
-        console.log("text", pt.text);
-        //var current_cluster = arr_clusters[pt.curveNumber];
-        //var current_feid = current_cluster[pt.pointIndex]; 
-        //console.log("patient id: "+current_feid);
-        selected_patient_ids.push(pt.id);
-    });
-    console.log(selected_patient_ids);
-    
-	}
-	return selected_patient_ids;
-}
-
-
-function get_table(keys, arr_obj_columns){
-	// For all keys in selected data, find corresponding data in dataframe.
-	var table = {};
-	if (arr_obj_key != undefined && keys.length > 0){
-		var table_data = []; // Store array of value for each column.
-		var table_columns = Object.keys(arr_obj_columns).map(function (key) {
-		    return arr_obj_columns[key].label;
-		});
-		for(var idx in keys){
-			var key_value = keys[idx];
-			var key_idx = Object.keys(arr_obj_key).find(key => arr_obj_key[key] === key_value);
-			if(key_idx != undefined && key_idx > -1){
-				// index found in array then get data at the same index from other columns in dataframe.
-				var column_values = [];
-				for (var column_index in arr_obj_columns){
-					if (column_index != undefined){
-						var column = arr_obj_columns[column_index];
-						// Get data at specified column at the same row index of key index.
-						var value = df[column.column_name][key_idx];
-						console.log(column.column_name, "/", value);
-						column_values.push(value);
-					}
-				}
-				// Push row
-				table_data.push(column_values);
-			}
-		}
-		table = {table_data: table_data, table_columns: table_columns};
-	}
-	return table;
-}

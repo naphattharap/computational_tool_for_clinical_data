@@ -123,6 +123,4 @@ function render_start_result(data){
 	$('#model_desc').text(data.model_desc);
 	$('#params').text(JSON.stringify(data.params));
 	
-	
-	
 }

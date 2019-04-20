@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Radiomic Result Analysis</title>
+<meta charset="utf-8" />
+{% load static %}
+{% include "main_menu/global_script.html" %}
+<!-- Jquery UI for autocomplete -->
+<script src="{% static "jquery/ui/1.12.1/jquery-ui.js"%}"></script>
+<link rel="stylesheet" type="text/css" href="{% static "jquery/ui/1.12.1/jquery-ui.min.css"%}"></link>
+<!--  Plotly -->
+<script type="text/javascript" src="{% static "plotly/plotly-1.47.0.min.js"%}"></script>
+
+<script type="text/javascript" src="{% static "vis_stratified_radiomic/vis_stratified_radiomic.js"%}"></script>
+<link rel="stylesheet" type="text/css" href="{% static "vis_stratified_radiomic/vis_stratified_radiomic.css"%}"></link>
+
+<!-- JExcel Scripts -->
+<script src="{% static "jexcel/2.0.2/js/jquery.jexcel.js"%}"></script>
+<link rel="stylesheet" href="{% static "jexcel/2.0.2/css/jquery.jexcel.css"%}" type="text/css"></link>
+<script type="text/javascript" src="{% static "theme/common-jexcel-ext.js"%}"></script>
+<script type="text/javascript" src="{% static "theme/common_graph.js"%}"></script>
+
+</head>
+<body>
+	<!-- Hidden fields used in JS -->
+	<input type="hidden" id="process_data_url" data-url="{%url 'vis_stratified_radiomic_process' %}" />
+	{% include "main_menu/nav_bar.html" %}
+	<h3 class="page_title">Radiomic Result Analysis</h3>
+	{% include "main_menu/alert_msg.html" %}
+	<div class="container-fluid">
+	
+	
+		<div>
+			<div id="dataset_group">
+			<form id="form_upload_file" method="post"
+				action="{% url 'vis_stratified_radiomic_process' %}" enctype="multipart/form-data">
+				{% csrf_token %}
+				
+				<!-- Upload file section -->
+				<div id="upload_file_group" class="form-group-border">
+					<p>
+						<a id="upload_file_title" href="#">Dataset</a>
+					</p>
+					<div  id="upload_file_section">
+						<!-- Row 1 -->
+						<div class="form-group row">
+							<label for="data_file" class="col-sm-2">Data File</label>
+							<div class="col-sm-10">
+								
+								<!-- Default checked -->
+								<div class="custom-control custom-checkbox">
+								  	<input type="checkbox" id="data_column_header"  name="data_column_header" class="custom-control-input" checked>
+								  	<label class="custom-control-label" for="column_header">Data file contains table header</label>
+								</div>
+								<input id="data_file" name="data_file" type="file" />
+							</div>
+						</div>
+						
+						<!-- Row 2 -->
+						<div class="form-group row">
+							<label for="label_file" class="col-sm-2">Label File</label>
+							<div class="col-sm-10">
+								
+								<!-- Default checked -->
+								<div class="custom-control custom-checkbox">
+								  	<input type="checkbox" id="label_column_header"  name="label_column_header" class="custom-control-input" checked>
+								  	<label class="custom-control-label" for="label_column_header">Data file contains table header</label>
+								</div>
+								<input id="label_file" name="label_file" type="file" />
+							</div>
+						</div>
+						
+						<!-- Additional Data for Base Space -->
+						<div class="form-group row">
+							<label for="label_file" class="col-sm-2">Additional Data File (first column is unique ID)</label>
+							<div class="col-sm-10">
+								
+								<!-- Default checked -->
+								<div class="custom-control custom-checkbox">
+								  	<input type="checkbox" id="add_data_column_header"  name="add_data_column_header" class="custom-control-input" checked>
+								  	<label class="custom-control-label" for="add_data_column_header">Data file contains table header</label>
+								</div>
+								<input id="add_data_file" name="add_data_file" type="file" />
+							</div>
+						</div>
+						
+						<!-- Row 3 -->
+						<div class="form-group row">
+							<label for="data_file" class="col-sm-2">New Data File</label>
+							<div class="col-sm-10">
+								
+								<!-- Default checked -->
+								<div class="custom-control custom-checkbox">
+								  	<input type="checkbox" id="new_data_column_header"  name="new_data_column_header" class="custom-control-input" checked>
+								  	<label class="custom-control-label" for="new_data_column_header">Data file contains table header</label>
+								</div>
+								<input id="new_data_file" name="new_data_file" type="file" />
+							</div>
+						</div>				
+						<!-- Row 4 -->
+						<div  class="form-group row">
+							<label for="general_data_file" class="col-sm-2">General Information</label>
+							<div class="col-sm-10">
+								
+								<!-- Default checked -->
+								<div class="custom-control custom-checkbox">
+								  	<input type="checkbox" id="general_data_column_header"  name="general_data_column_header" class="custom-control-input" checked>
+								  	<label class="custom-control-label" for="general_data_column_header">Data file contains table header</label>
+								</div>
+								<input name="general_data_file" type="file" />
+								<div style="margin-top: 15px;">
+									<button id="process_data" class="btn btn-primary" type="submit">Process</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</form>
+			
+			
+			
+				<div class="" style="display: -webkit-inline-box;margin: 10px;">
+				  <p>Dataset</p>
+				  <select id="" style="margin-left: 5px;">
+				  	<option>All</option>
+				  	<option>Male</option>
+				  	<option>Female</option>
+				  </select>
+				</div>
+				<div class="" style="display: -webkit-inline-box;margin: 10px;">
+				  <p>Filter 2</p>
+				  <select id="" style="margin-left: 5px;">
+				  	<option>Option 1</option>
+				  </select>
+				</div>
+				<div class="" style="display: -webkit-inline-box;margin: 10px;">
+				  <p>Filter 3</p>
+				  <select id="" style="margin-left: 5px;">
+				  	<option>Option 1</option>
+				  </select>
+				</div>
+				<div class="" style="display: -webkit-inline-box;margin: 10px;">
+				  <p>Age
+  				<input type="text" id="age" readonly style="border:0; color:#f6931f; font-weight:bold;">
+					</p>
+ 
+				<div id="slider-range"></div>
+				</div>
+			</div>
+		</div>
+		
+		<div>
+			<div id="filter_group" style="display:none;">
+				<div class="" style="display: -webkit-inline-box;margin: 10px;">
+				  <p>Gender</p>
+				  <select id="" style="margin-left: 5px;">
+				  	<option>All</option>
+				  	<option>Male</option>
+				  	<option>Female</option>
+				  </select>
+				</div>
+				<div class="" style="display: -webkit-inline-box;margin: 10px;">
+				  <p>Filter 2</p>
+				  <select id="" style="margin-left: 5px;">
+				  	<option>Option 1</option>
+				  </select>
+				</div>
+				<div class="" style="display: -webkit-inline-box;margin: 10px;">
+				  <p>Filter 3</p>
+				  <select id="" style="margin-left: 5px;">
+				  	<option>Option 1</option>
+				  </select>
+				</div>
+				<div class="" style="display: -webkit-inline-box;margin: 10px;">
+				  <p>Age
+  				<input type="text" id="age" readonly style="border:0; color:#f6931f; font-weight:bold;">
+					</p>
+ 
+				<div id="slider-range"></div>
+				</div>
+			</div>
+		</div>
+		<div id="plotjs_container"></div>
+		
+	</div>
+	
+	
+	<div class="container-fluid">
+		<!-- <h2>Dynamic Tabs</h2> -->
+		<ul class="nav nav-tabs" style="display:none;">
+			<li class="active"><a data-toggle="tab" href="#tab_radiomic_result">Radiomic Result</a></li>
+			<li><a data-toggle="tab" href="#tab_medical_history">Medical History</a></li>
+		</ul>
+		
+		<div class="tab-content">
+			<div id="tab_radiomic_result" class="tab-pane fade in active">
+				<!-- =========== Plot ============== -->
+				<div align="center" style="padding:10px;">
+					<div id="data_table_radiomic_result">
+					</div>
+				</div>
+			</div>
+			<div id="tab_medical_history" class="tab-pane fade">
+				<!-- =========== Plot ============== -->
+				<div align="center" style="padding:10px;">
+					<div id="data_table_medical_history">
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

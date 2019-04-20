@@ -25,6 +25,7 @@ from db import urls as db_urls
 from visualization import urls as vis_urls
 from cluster import urls as cluster_urls
 from vis_radiomic import urls as vis_radiomic_urls
+from vis_stratified_radiomic import urls as vis_stratified_radiomic_urls
 urlpatterns = [
     path('admin/', admin.site.urls),
     # go to main page
@@ -38,5 +39,6 @@ urlpatterns = [
     path("", include(vis_urls)),
     path("", include(cluster_urls)),
     path("", include(vis_radiomic_urls)),
+    path("", include(vis_stratified_radiomic_urls)),
    # path('django_plotly_dash/', include('django_plotly_dash.urls')),
 ]
