@@ -7,6 +7,18 @@ function get_unique_values(obj){
 	return obj.filter((v, i, a) => a.indexOf(v) === i);
 }
 
+function get_indexes(arr_values, arr_search_values){
+    var indexes = [];
+	for(var i in arr_search_values){
+		var val = arr_search_values[i];
+		var result_idx = arr_values.indexOf(val);
+		if(result_idx >=0){
+			indexes.push(result_idx);
+		}
+	}
+	return indexes;
+}
+
 function get_cluster_data(arr_data){
 	var arr_x = arr_data.arr_x;
 	var arr_y = arr_data.arr_y;
@@ -49,8 +61,12 @@ function get_cluster_data(arr_data){
 }
 
 
-function get_trace_scatter(arr_x, arr_y, arr_id, arr_text, name, legendgroup, marker){
+function get_trace_scatter(arr_x, arr_y, arr_id, arr_text, mode, name, legendgroup, marker){
 	var trace;
+	var custom_mode = "markers";
+	if (mode != undefined && mode != ""){
+		custom_mode = mode;
+	}
 	if(arr_id != undefined && arr_id.length > 0){
 		trace = {
 				  x: arr_x,
@@ -59,7 +75,7 @@ function get_trace_scatter(arr_x, arr_y, arr_id, arr_text, name, legendgroup, ma
 				  //customdata: cluster_data,
 				  name: name,
 				  legendgroup: legendgroup,
-				  mode: 'markers',
+				  mode: custom_mode,
 				  type: 'scatter',
 				  text: arr_text,
 				  textposition: 'top center',
@@ -75,7 +91,7 @@ function get_trace_scatter(arr_x, arr_y, arr_id, arr_text, name, legendgroup, ma
 				  //customdata: cluster_data,
 				  name: name,
 				  legendgroup: legendgroup,
-				  mode: 'markers',
+				  mode: custom_mode,
 				  type: 'scatter',
 				  text: arr_text,
 				  textposition: 'top center',
@@ -136,22 +152,22 @@ function get_table(keys, arr_obj_columns){
  * @returns array of patient ID
  */
 function current_selected_data(data){
-	var selected_patient_ids = [];
+	var selected_data_ids = [];
 	if (data != undefined && data.points){
-    data.points.forEach(function(pt) {
-    	console.log("cluster: "+pt.curveNumber);
-    	console.log("pointIndex: "+pt.pointIndex);
-        console.log("x,y: "+pt.x +","+ pt.y);
-        console.log("text", pt.text);
+		data.points.forEach(function(pt) {
+//    	console.log("cluster: "+pt.curveNumber);
+//    	console.log("pointIndex: "+pt.pointIndex);
+//        console.log("x,y: "+pt.x +","+ pt.y);
+//        console.log("text", pt.text);
         //var current_cluster = arr_clusters[pt.curveNumber];
         //var current_feid = current_cluster[pt.pointIndex]; 
         //console.log("patient id: "+current_feid);
-        selected_patient_ids.push(pt.id);
+		selected_data_ids.push(pt.id);
     });
-    console.log(selected_patient_ids);
+    console.log(selected_data_ids);
     
 	}
-	return selected_patient_ids;
+	return selected_data_ids;
 }
 
 
