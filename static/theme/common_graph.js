@@ -1,3 +1,7 @@
+function get_obj_keys(obj){
+	return Object.keys(obj);
+}
+
 
 function get_obj_values(obj){
 	return Object.keys(obj).map(function(_) { return obj[_]; })
@@ -164,7 +168,7 @@ function current_selected_data(data){
         //console.log("patient id: "+current_feid);
 		selected_data_ids.push(pt.id);
     });
-    console.log(selected_data_ids);
+    //console.log(selected_data_ids);
     
 	}
 	return selected_data_ids;

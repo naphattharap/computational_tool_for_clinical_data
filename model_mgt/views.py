@@ -197,6 +197,7 @@ def pipeline_run_handler(request):
         
         # Feature Selection
         sfs_k_features = form.cleaned_data['sfs_k_features']
+        sfs_k_neighbors = form.cleaned_data['sfs_k_neighbors']
         sfs_forward = form.cleaned_data['sfs_forward']
         sfs_floating = form.cleaned_data['sfs_floating']
         sfs_scoring = form.cleaned_data['sfs_scoring']
@@ -209,7 +210,7 @@ def pipeline_run_handler(request):
         stratified_kfold_shuffle = form.cleaned_data['stratified_kfold_shuffle']
         
         # Dataframe for storing dataset from file.
-        df = None
+        df = pd.DataFrame()
         
         if fs.is_file_in_base_location(dataset_file_name):
             # and fs.is_file_in_base_location(label_file_name):
@@ -255,6 +256,7 @@ def pipeline_run_handler(request):
             if sfs_k_features != "":
                 # In case of feature selection, plot result as table
                 # Feature Selection
+                parameters['sfs_k_neighbors'] = sfs_k_neighbors
                 parameters['sfs_k_features'] = sfs_k_features
                 parameters['sfs_forward'] = sfs_forward
                 parameters['sfs_floating'] = sfs_floating
@@ -278,7 +280,8 @@ def pipeline_run_handler(request):
                 
                 # Display table that list feature in order.
             
-            if X.any():
+            if isinstance(X, np.ndarray) and X.any() \
+                or isinstance(X, pd.DataFrame) and not X.empty:
                 # Check X dimension
                 nD = X.shape[1]
                 if nD == 2:
@@ -286,8 +289,8 @@ def pipeline_run_handler(request):
 #                     pca_helper = PcaUtil()
 #                     X2d = pca_helper.reduce_dimension(X, n_components=2)
                     df_plot = pd.DataFrame(data=X, columns=['x', 'y'])
-                    df_label = pd.DataFrame(data=y, columns=['label'])
-                    df_plot = df_plot.join(df_label)
+                    # df_label = pd.DataFrame(data=y, columns=['label'])
+                    df_plot['label'] = y
                     resp_data['plot_data'] = df_plot.to_json()
                     resp_data['dimension'] = 2
                     
@@ -295,8 +298,9 @@ def pipeline_run_handler(request):
                 # For 3D
 #                 X3d = pca_helper.reduce_dimension(X, n_components=3)
                     df_plot = pd.DataFrame(data=X, columns=['x', 'y', 'z'])
-                    df_label = pd.DataFrame(data=y, columns=['label'])
-                    df_plot = df_plot.join(df_label)
+                    # df_label = pd.DataFrame(data=y, columns=['label'])
+                    # df_plot = df_plot.join(df_label)
+                    df_plot['label'] = y
                     resp_data['plot_data'] = df_plot.to_json()
                     resp_data['dimension'] = 3
                 
@@ -330,7 +334,8 @@ def process_pipeline(arr_pipeline, X, y, parameters):
             # Select data
             clf = feature_selection_sfs(X, y, parameters)
             if isinstance(X, pd.DataFrame):
-                X = DataFrameUtil.get_columns_by_indexes(X, list(clf.k_feature_idx_))
+                # X = DataFrameUtil.get_columns_by_indexes(X, list(clf.k_feature_idx_))
+                X = X.iloc[:, list(clf.k_feature_idx_)]
             elif isinstance(X, np.ndarray):
                 X = X[:, list(clf.k_feature_idx_)]
             
@@ -427,7 +432,8 @@ def feature_selection_sfs(X, y, parameters):
 #     scoring = parameters['scoring']
 #     n_folds = parameters['n_folds']
 #     n_jobs = parameters['n_jobs']
-    knn = KNeighborsClassifier(n_neighbors=4)
+
+    knn = KNeighborsClassifier(n_neighbors=parameters['sfs_k_neighbors'])
     sfs1 = SFS(knn,
            k_features=parameters['sfs_k_features'],
            forward=parameters['sfs_forward'],

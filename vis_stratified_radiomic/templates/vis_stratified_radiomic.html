@@ -9,9 +9,32 @@
 <script src="{% static "jquery/ui/1.12.1/jquery-ui.js"%}"></script>
 <link rel="stylesheet" type="text/css" href="{% static "jquery/ui/1.12.1/jquery-ui.min.css"%}"></link>
 <!--  Plotly -->
-<script type="text/javascript" src="{% static "plotly/plotly-1.47.0.min.js"%}"></script>
+<script type="text/javascript" src="{% static "plotly/plotly-1.47.3.min.js"%}"></script>
 
+
+<!-- SlickGrid -->
+<!-- can't remove 1.11.3 -->
+<script src="{% static "slickgrid/2.4.3/lib/jquery-ui-1.11.3.min.js"%}"></script>
+<script src="{% static "slickgrid/2.4.3/lib/jquery.event.drag-2.3.0.js"%}"></script>
+<script type="text/javascript" src="{% static "slickgrid/2.4.3/slick.core.js"%}"></script>
+<script type="text/javascript" src="{% static "slickgrid/2.4.3/slick.grid.js"%}"></script>
+<script type="text/javascript" src="{% static "slickgrid/2.4.3/slick.formatters.js"%}"></script>
+<script type="text/javascript" src="{% static "slickgrid/2.4.3/slick.editors.js"%}"></script>
+<script type="text/javascript" src="{% static "slickgrid/2.4.3/plugins/slick.rowselectionmodel.js"%}"></script>
+<script type="text/javascript" src="{% static "slickgrid/2.4.3/slick.dataview.js"%}"></script>
+<script type="text/javascript" src="{% static "slickgrid/2.4.3/controls/slick.pager.js"%}"></script>
+<script type="text/javascript" src="{% static "slickgrid/2.4.3/controls/slick.columnpicker.js"%}"></script>
+<!-- Plug in to group column -->
+<!-- https://github.com/naresh-n/slickgrid-column-group/blob/master/examples/example-1.html -->
+<script type="text/javascript" src="{% static "slickgrid/slick.columngroup.js"%}"></script>
+
+<script type="text/javascript" src="{% static "d3js/d3.v3.js"%}"></script>
+
+
+
+<script type="text/javascript" src="{% static "vis_stratified_radiomic/vis_stratified_radiomic_grid.js"%}"></script>
 <script type="text/javascript" src="{% static "vis_stratified_radiomic/vis_stratified_radiomic.js"%}"></script>
+<script type="text/javascript" src="{% static "vis_stratified_radiomic/vis_stratified_radiomic_dashboard.js"%}"></script>
 <link rel="stylesheet" type="text/css" href="{% static "vis_stratified_radiomic/vis_stratified_radiomic.css"%}"></link>
 
 <!-- JExcel Scripts -->
@@ -22,29 +45,11 @@
 
 
 <link rel="stylesheet" href="{% static "slickgrid/2.4.3/slick.grid.css"%}" type="text/css"/>
+<link rel="stylesheet" href="{% static "slickgrid/2.4.3/slick-default-theme.css"%}" type="text/css"/>
 <link rel="stylesheet" href="{% static "slickgrid/2.4.3/controls/slick.pager.css"%}" type="text/css"/>
 <link rel="stylesheet" href="{% static "slickgrid/2.4.3//controls/slick.columnpicker.css"%}" type="text/css"/>
 <link rel="stylesheet" href="{% static "jquery/ui/1.12.1/jquery-ui.theme.css"%}" type="text/css"/>
-<link rel="stylesheet" href="examples.css" type="text/css"/>
-<style>
-    .cell-title {
-      font-weight: bold;
-    }
-    .cell-effort-driven {
-      text-align: center;
-    }
-    .cell-selection {
-      border-right-color: silver;
-      border-right-style: solid;
-      background: #f5f5f5;
-      color: gray;
-      text-align: right;
-      font-size: 10px;
-    }
-    .slick-row.selected .cell-selection {
-      background-color: transparent; /* show default selected row background */
-    }
-  </style>
+
 </head>
 <body>
 	<!-- Hidden fields used in JS -->
@@ -53,12 +58,7 @@
 	<h3 class="page_title">Radiomic Result Analysis</h3>
 	{% include "main_menu/alert_msg.html" %}
 	
-	
-
-	
 	<div class="container-fluid">
-	
-	
 		<div>
 			<div id="dataset_group">
 				<form id="form_upload_file" method="post"
@@ -68,77 +68,78 @@
 					<!-- Upload file section -->
 					<div id="upload_file_group" class="form-group-border">
 						<p>
-							<a id="upload_file_title" href="#">Dataset</a>
+							<a id="upload_file_title" href="#">Dataset Hide/Show</a>
 						</p>
 						<div  id="upload_file_section">
+							
+							<h4 class="h_section_title">BASE PATIENT SPACE</h4>
 							<!-- Row 1 -->
 							<div class="form-group row">
-								<label for="data_file" class="col-sm-2">Data File</label>
-								<div class="col-sm-10">
+								<label for="data_file" class="col-sm-3">Radiomic Calculated Result</label>
+								<div class="col-sm-7">
 									
 									<!-- Default checked -->
 									<div class="custom-control custom-checkbox">
 									  	<input type="checkbox" id="data_column_header"  name="data_column_header" class="custom-control-input" checked>
-									  	<label class="custom-control-label" for="column_header">Data file contains table header</label>
+									  	<label class="custom-control-label" for="data_column_header">Data file contains table header</label>
 									</div>
-									<input id="data_file" name="data_file" type="file" />
+									<input id="data_file" name="data_file" type="file" class="file_chooser"/>
 								</div>
 							</div>
 							
 							<!-- Row 2 -->
 							<div class="form-group row">
-								<label for="label_file" class="col-sm-2">Label File</label>
-								<div class="col-sm-10">
+								<label for="label_file" class="col-sm-3">Label</label>
+								<div class="col-sm-7">
 									
 									<!-- Default checked -->
 									<div class="custom-control custom-checkbox">
 									  	<input type="checkbox" id="label_column_header"  name="label_column_header" class="custom-control-input" checked>
 									  	<label class="custom-control-label" for="label_column_header">Data file contains table header</label>
 									</div>
-									<input id="label_file" name="label_file" type="file" />
+									<input id="label_file" name="label_file" type="file" class="file_chooser"/>
 								</div>
 							</div>
 							
 							<!-- Additional Data for Base Space -->
 							<div class="form-group row">
-								<label for="label_file" class="col-sm-2">Additional Data File (first column is unique ID)</label>
-								<div class="col-sm-10">
-									
+								<label for="label_file" class="col-sm-3">Medical History<br>First column is ID</label>
+								<div class="col-sm-7">
 									<!-- Default checked -->
 									<div class="custom-control custom-checkbox">
 									  	<input type="checkbox" id="add_data_column_header"  name="add_data_column_header" class="custom-control-input" checked>
 									  	<label class="custom-control-label" for="add_data_column_header">Data file contains table header</label>
 									</div>
-									<input id="add_data_file" name="add_data_file" type="file" />
+									<input id="add_data_file" name="add_data_file" type="file" class="file_chooser"/>
 								</div>
 							</div>
 							
-							<!-- Row 3 -->
+							<h4 class="h_section_title">NEW PATIENT</h4>
 							<div class="form-group row">
-								<label for="data_file" class="col-sm-2">New Data File</label>
-								<div class="col-sm-10">
+								<label for="data_file" class="col-sm-3">Radiomic Calculated Result</label>
+								<div class="col-sm-7">
 									
 									<!-- Default checked -->
 									<div class="custom-control custom-checkbox">
 									  	<input type="checkbox" id="new_data_column_header"  name="new_data_column_header" class="custom-control-input" checked>
 									  	<label class="custom-control-label" for="new_data_column_header">Data file contains table header</label>
 									</div>
-									<input id="new_data_file" name="new_data_file" type="file" />
+									<input id="new_data_file" name="new_data_file" type="file" class="file_chooser"/>
 								</div>
 							</div>				
 							<!-- Row 4 -->
 							<div  class="form-group row">
-								<label for="general_data_file" class="col-sm-2">General Information</label>
-								<div class="col-sm-10">
+								<label for="general_data_file" class="col-sm-3">Medical History<br> First column is ID</label>
+								<div class="col-sm-7">
 									
 									<!-- Default checked -->
 									<div class="custom-control custom-checkbox">
 									  	<input type="checkbox" id="general_data_column_header"  name="general_data_column_header" class="custom-control-input" checked>
 									  	<label class="custom-control-label" for="general_data_column_header">Data file contains table header</label>
 									</div>
-									<input name="general_data_file" type="file" />
+									<input name="general_data_file" type="file" class="file_chooser"/>
 									<div style="margin-top: 15px;">
-										<button id="process_data" class="btn btn-primary" type="submit">Process</button>
+										<button id="process_data" class="btn btn-primary" style="width: 150px;" type="submit">Process</button>
 									</div>
 								</div>
 							</div>
@@ -148,169 +149,433 @@
 			</div>
 		</div>
 
-		<div>
-		<div id="plotjs_container"></div>
+	<div id="process_result">
+		<div id="main_left_result" class="form-group-border">
 			<!-- Graph search -->
-			<div>
-				<div class="form-group row">
-					<div class="col-sm-5" style="display: -webkit-inline-box;margin: 10px;">
-						<div class="col-sm-5">
-							<label for="btn_hide_text_on_dot">Show text over the dots</label>
-						</div>
-						<div class="col-sm-5">
-							 <label class="switch">
-			  						<input id="btn_hide_text_on_dot" name="btn_hide_text_on_dot" type="checkbox" checked>
-			  						<span class="slider round"></span>
-							 </label>
-						 </div>
-					</div>
-					<div class="col-sm-5" style="display: -webkit-inline-box;margin: 10px;">
-						<div class="col-sm-5">
-							<label for="btn_hide_text_on_dot">Search ID</label>
-						</div>
-						<div class="col-sm-5">
-		  				 	<input id="search_id" name="search_id" type="text" class="form-control"></input>
-		  				 	<!-- <button id="btn_find_dot_by_id" name="btn_find_dot_by_id" class="btn btn-primary">Find</button> -->
-		  				</div>
-		 
-					</div>
-				</div>
+			<div id="search_group" >
+				<p>
+					<!-- <a id="search_group_title" href="#">Filter Hide/Show</a> -->
+				</p>
 				
-				<div class="form-group row">
-					<div class="col-sm-5" style="display: -webkit-inline-box;margin: 10px;">
-						<div class="col-sm-5">
-							<label for="sel_health_rate">Text Search</label>
+				<div id="search_group_section">
+						<div class="form-group" style="margin-bottom: 5px;">
+							<div class="col-sm-8">
+								<label for="btn_hide_text_on_dot">Show text over the
+									dots</label>
+							</div>
+							<div>
+								<label class="switch"> <input id="btn_hide_text_on_dot"
+									name="btn_hide_text_on_dot" type="checkbox" checked> <span
+									class="slider round"></span>
+								</label>
+							</div>
 						</div>
-						<div class="col-sm-5">
-							 <label for="txt_search">
-			  						<input id="txt_search" name="txt_search" type="text" class="form-control">
-							 </label>
-						 </div>
-					</div>
-					<div class="col-sm-5" style="display: -webkit-inline-box;margin: 10px;">
-						<div class="col-sm-5">
-							<label for="sel_health_rate">Health Rating</label>
+
+						<div class="form-group row">
+							<div class="col_label">
+								<label for="search_id">Search ID</label>
+							</div>
+							<div>
+	  							<input id="search_id" name="search_id" type="text" class="form-control"></input>
+							 </div>
 						</div>
-						<div class="col-sm-5">
-							 <label for="sel_health_rate">
-			  						<select id="sel_health_rate" style="margin-left: 5px;"></select>
-							 </label>
-						 </div>
-					</div>
+						
+						
+						<div class="form-group row">
+							<div class="col_label">
+								<label for="txt_search">Text Search</label>
+							</div>
+							<div>
+				  				<input id="txt_search" name="txt_search" type="text" class="form-control">
+							 </div>
+						</div>
+						
+					
+						<div class="form-group row">
+							<div class="col_label">
+								<label for="sel_gender">Gender</label>
+							</div>
+							<div>
+				  				<select id="sel_gender" name="sel_gender">
+		  							<option value="" selected>All</option>
+		  							<option value="Male">Male</option>
+		  							<option value="Female">Female</option>
+		  						</select>
+							 </div>
+						</div>
+				
+				
+						<div class="form-group row">
+							<div class="col_label">
+								<label for="range_age">Age(year)</label>
+							</div>
+							<div>
+				  				<input type="text" id="range_age" name="range_age" readonly style="border:0; color:#2196f3;; font-weight:bold;">
+								<div id="slider-range-age"></div>
+							 </div>
+						</div>
+					
+					
+					  	<div class="form-group row">
+							<div class="col_label">
+								<label for="range_height">Height(cm)</label>
+							</div>
+							<div>
+				  				<input type="text" id="range_height" name="range_height" readonly style="border:0; color:#2196f3;; font-weight:bold;">
+								<div id="slider-range-height"></div>
+							 </div>
+						</div>
+					
+
+					  	<div class="form-group row">
+							<div class="col_label">
+								<label for="range_weight">Weight(kg)</label>
+							</div>
+							<div>
+				  				<input type="text" id="range_weight" name="range_weight" readonly style="border:0; color:#2196f3;; font-weight:bold;">
+								<div id="slider-range-weight"></div>
+							 </div>
+						</div>
+											
+					
+						<div class="form-group row">
+							<div class="center_button">
+								<button id="btn_reset_filter" name="btn_reset_filter" class="btn btn-primary">Clear</button>
+							</div>					
+						</div>
+					
+					<!-- <div class="col-sm-5">
+								<label for="sel_health_rate">Health Rating</label>
+							</div>
+							<div class="col-sm-5">
+								 <label for="sel_health_rating">
+				  						<select id="sel_health_rating" name="sel_health_rating" style="margin-left: 5px;" class="form-control">
+				  							<option value="" selected>All</option>
+				  							<option value="Excellent">Excellent</option>
+				  							<option value="Good">Good</option>
+				  							<option value="Fair">Fair</option>
+				  							<option value="Poor">Poor</option>
+				  						</select>
+								 </label>
+							 </div> -->
 				</div>
 			</div>
 		</div>
 		
-		<div class="container-fluid">
+		<div id="main_right_result" class="form-group-border" style="margin-left: 5px;">
+		
+			<div id="plotjs_container"></div>
+		</div>
+	</div>
+		
+		<div id="process_result_tabs" class="container-fluid">
 			<ul class="nav nav-tabs">
-				<li class="active"><a data-toggle="tab" href="#tab_radiomic_result">Radiomic Result</a></li>
+				<li class="active"><a data-toggle="tab" href="#tab_dashboard_analytic1">Analytic Dashboard</a></li>
+				<li><a data-toggle="tab" href="#tab_grid_radiomic_result">Radiomic Result</a></li>
 				<li><a data-toggle="tab" href="#tab_grid_medical_history">Medical History</a></li>
+				<!-- <li><a data-toggle="tab" href="#tab_grid_similar_properties">Mutual Information(Not yet)</a></li> -->
+				
 			</ul>
-			<div id="grid_container">
-				<div id="tab_grid_radiomic_result" class="tab-pane fade in active">
-					<!-- =========== Plot ============== -->
-					<div align="center" style="padding:10px;">
-						
-					</div>
+			<div id="gridContainer">
+				<div id="tab_grid_radiomic_result" class="tab-pane fade" style="display:none;">
+					<div>
+					    <!-- <div class="grid-header" style="width:100%">
+					      <span style="float:right" class="ui-icon ui-icon-search" title="Toggle search panel"></span>
+					    </div> -->
+					    <div id="grid_radiomic_result" style="width:100%;height:500px;"></div>
+					    <div id="pager_grid_radiomic_result" style="width:100%;height:20px;"></div>
+					  </div>
 				</div>
 				
-				<div id="tab_grid_medical_history" class="tab-pane fade">
+				<div id="tab_grid_medical_history" class="tab-pane fade" style="display:none;">
 				  <div>
-				    <div class="grid-header" style="width:100%">
-				      <!-- <label>SlickGrid</label> -->
-				      <span style="float:right" class="ui-icon ui-icon-search" title="Toggle search panel"
-				            onclick="toggleFilterRow()"></span>
-				    </div>
+				    <!-- <div class="grid-header" style="width:100%">
+				     <span style="float:right" class="ui-icon ui-icon-search" title="Toggle search panel"></span>
+				    </div> -->
 				    <div id="grid_medical_history" style="width:100%;height:500px;"></div>
-				    <div id="pager" style="width:100%;height:20px;"></div>
+				    <div id="pager_grid_medical_history" style="width:100%;height:20px;"></div>
 				  </div>
 				</div>
-			</div>
-		</div>
-		
-		<!-- Tables to display data -->
-<!-- 		<div class="container-fluid">
-			<ul class="nav nav-tabs">
-				<li class="active"><a data-toggle="tab" href="#tab_radiomic_result">Radiomic Result</a></li>
-				<li><a data-toggle="tab" href="#tab_medical_history">Medical History</a></li>
-			</ul>
+				
+				<!-- <div id="tab_grid_similar_properties" class="tab-pane fade in active">
+					<div>
+					    <div class="grid-header" style="width:100%">
+					      <span style="float:right" class="ui-icon ui-icon-search" title="Toggle search panel"></span>
+					    </div>
+					    <div id="grid_similar_properties" style="width:100%;height:500px;"></div>
+					    <div id="pager_grid_similar_properties" style="width:100%;height:20px;"></div>
+					  </div>
+				</div> -->
+				
+				<div id="tab_dashboard_analytic1" class="tab-pane fade in active">
+					<div id="dashboard_header">
+					   	<div id="dashboard">
+					   		<!-- <p class="dashboard_group_title">General Information</p> -->
+				   			<div class="dashboard_row">
+				   				<div class="dashboard_column">
+						   			<div class="dashboard_row_block" style="width: 50%;">
+							   			<div  class="dashboard_row_block_header">
+							   				<p class="dashboard_group_title">General Information</p>
+							   			</div>
+								   		<div class="dashboard_row_block_body">
+								   			<div id="plot_gender"></div>
+								   			<div id="plot_gender_age"></div>
+								   		</div>
+									 </div>
+							</div>
+							<div class="dashboard_column" style="border-left: 3px solid #cccccc;">
+								 
+								 <div class="dashboard_row_block" style="width: 50%;">
+						   			<div  class="dashboard_row_block_header">
+						   				<p class="dashboard_group_title">Physical Measurement</p>
+						   			</div>
+							   		<div class="dashboard_row_block_body">
+							   			
+							   			<div class="block_pulse_rate_blood_pressure">
+							   				<div id="plot_pulse_rate">
+							   					<img src="{% static "images/cardiogram.png"%}" width="50"/>
+							   					<p id="pulse_rate">70</p>
+							   				</div>
+							   				<div id="plot_blood_pressure">
+							   					<img src="{% static "images/blood-pressure.png"%}" width="50"/>
+							   					<p id="blood_pressure">80</p>
+							   				</div>
+							   			</div>
+							   			<div id="plot_bmi"></div>
+					   				</div>
+								 </div>
+								</div>
+					   		</div>
+					   		
+					   		
+					   		<div class="dashboard_row">
+						   		<div class="dashboard_row_block">
+						   			<div  class="dashboard_row_block_header">
+							   			<p class="dashboard_group_title">Life Style</p>
+						   			</div>
+							   		<div class="dashboard_row_block_body" style="width: 800; height: 500px;">
+							   			<div id="plot_nutrition_factor_bar" ></div>
+							   		</div>
+							   	</div>
+					   		</div>
+					   		
+					   		
+					   		<!-- <div class="dashboard_row">
+					   			<div  class="dashboard_row_block_header">
+						   			<p class="dashboard_group_title">Life Style</p>
+					   			</div>
+						   		<div class="dashboard_row_block_body">
+						   			<div id="plot_lifestyle_factor_bar"></div>
+						   		</div>
+					   		</div> -->
+					   	</div>
+					   
 			
-			<div class="tab-content">
-				<div id="tab_radiomic_result" class="tab-pane fade in active">
-					=========== Plot ==============
-					<div align="center" style="padding:10px;">
-						<div id="data_table_radiomic_result">
-						</div>
-					</div>
-				</div>
-				<div id="tab_medical_history" class="tab-pane fade">
-					=========== Plot ==============
-					<div align="center" style="padding:10px;">
-						<div id="data_table_medical_history">
-						</div>
 					</div>
 				</div>
 			</div>
-		</div> -->
-		
 		</div>
-		
-		
-
-<script src="{% static "slickgrid/2.4.3/lib/jquery-1.11.2.min.js"%}"></script>
-<!-- can't remove 1.11.3 -->
-	<script src="{% static "slickgrid/2.4.3/lib/jquery-ui-1.11.3.min.js"%}"></script>
-<script src="{% static "slickgrid/2.4.3/lib/jquery.event.drag-2.3.0.js"%}"></script>
-<script type="text/javascript" src="{% static "slickgrid/2.4.3/slick.core.js"%}"></script>
-<script type="text/javascript" src="{% static "slickgrid/2.4.3/slick.grid.js"%}"></script>
-<script type="text/javascript" src="{% static "slickgrid/2.4.3/slick.formatters.js"%}"></script>
-<script type="text/javascript" src="{% static "slickgrid/2.4.3/slick.editors.js"%}"></script>
-<script type="text/javascript" src="{% static "slickgrid/2.4.3/plugins/slick.rowselectionmodel.js"%}"></script>
-<script type="text/javascript" src="{% static "slickgrid/2.4.3/slick.dataview.js"%}"></script>
-<script type="text/javascript" src="{% static "slickgrid/2.4.3/controls/slick.pager.js"%}"></script>
-<script type="text/javascript" src="{% static "slickgrid/2.4.3/controls/slick.columnpicker.js"%}"></script>
-
-
-
-<!-- <div id="grid_container"> style="position:relative"
-  <div>style="width:600px;"
-    <div class="grid-header" style="width:100%">
-      <label>SlickGrid</label>
-      <span style="float:right" class="ui-icon ui-icon-search" title="Toggle search panel"
-            onclick="toggleFilterRow()"></span>
-    </div>
-    <div id="grid_medical_history" style="width:100%;height:500px;"></div>
-    <div id="pager" style="width:100%;height:20px;"></div>
-  </div>
-</div> -->
-
-<!--   <div class="options-panel">
-    <b>Search:</b>
-    <hr/>
-    <div style="padding:6px;">
-      <label style="width:200px;float:left">Show tasks with % at least: </label>
-
-      <div style="padding:2px;">
-        <div style="width:100px;display:inline-block;" id="pcSlider"></div>
-      </div>
-      <br/>
-      <label style="width:200px;float:left">And title including:</label>
-      <input type=text id="txtSearch" style="width:100px;">
-      <br/><br/>
-      <button id="btnSelectRows">Select first 10 rows</button>
-      <br/>
-    </div>
-  </div>
 </div>
- -->
-<!-- <div id="inlineFilterPanel" style="display:none;background:#dddddd;padding:3px;color:black;">
-  Show tasks with title including <input type="text" id="txtSearch2">
-  and % at least &nbsp;
-  <div style="width:100px;display:inline-block;" id="pcSlider2"></div>
-</div>
- -->
+	
+
+<script>
+var male_color = "rgb(86, 179, 247)";
+var female_color = "rgb(238, 187, 247)";
+
+
+var trace_pie_gender = {
+		  values: [19, 26],
+		  labels: ['Male', 'Female'],
+		  type: 'pie',
+		  domain: {
+			  row: 0,
+			  column: 0
+			  },
+			  marker: {
+				    colors: [male_color, female_color]
+				  },
+		  hoverinfo: 'none',
+		  textinfo: 'label+percent+value' //'label+percent+name',
+		  
+		};
+	
+	var layout = {
+			title: 'Total ' + 45,
+			 width: 250,
+	 		// grid: {rows: 2, columns: 3, pattern: 'independent'},
+	  		showlegend: false
+	};
+	// {displayModeBar: false} = hide toolbox
+	Plotly.newPlot('plot_gender', [trace_pie_gender], layout,{displayModeBar: false});
+	
+	// x = arg range
+	// y =
+
+	var male = {
+	  x: ["<= 20", "21 - 40", "41 - 60", " > 60"],
+	  y: [20, 14, 23, 1],
+	  name: "Male",
+	  type: "bar",
+	  marker: {color: male_color},
+	  barmode: "stack",
+	  domain: {
+		    row: 0,
+		    column: 1
+	 } 
+		
+	};
+	 var female = {
+	  x: ["<= 20", "21 - 40", "41 - 60", " > 60"],
+	  y: [12, 18, 29, 2],
+	  name: "Female",
+	  type: "bar",
+	  marker: {color: female_color},
+	  barmode: "stack",
+	  domain: {
+		    row: 0,
+		    column: 1
+		  }
+	}; 
+	 
+	 var layout_gender_age = {
+		  title: 'Gender vs Age',
+		  width: 400,
+		   barmode: "stack",
+	       
+		  showlegend: true ,
+		  xaxis: {domain: [0.8, 0.1]} // size of stacked bar
+		};
+	
+	Plotly.newPlot('plot_gender_age', [male, female], layout_gender_age, {displayModeBar: false});
+	//Plotly.plot('gender_graph', trace4, layout);
+	// barmode: "stack"
+	
+	
+	// ======== BMI
+	var data_bmi = [{
+	  values: [1,2,3,4],
+	  labels: ["Underweight", "Normal", "Overweight", "Obese"],
+	  //domain: {column: 0},
+	  name: '',
+	  marker: {colors: ["rgb(1, 128, 191)", "rgb(1, 163, 103)", "rgb(249, 225, 44)", "rgb(193, 21, 1)"]},
+	  hoverinfo: 'label+percent+name',
+	  hole: .5,
+	  type: 'pie'
+	}];
+
+var layout_bmi = {
+  title: '',
+  //autoresize: true,
+  height: 300,
+  width: 350,
+  showlegend: true,
+  //grid: {rows: 1, columns: 2}
+  annotations: [
+	    {
+	      font: {
+	        size: 18
+	      },
+	      showarrow: false,
+	      text: 'BMI',
+	      x: 0.5,
+	      y: 0.5
+	    }
+	  ]
+};
+
+Plotly.newPlot('plot_bmi', data_bmi, layout_bmi, {displayModeBar: false});
 
 
 
+// ===========
+var trace_name = "Never eat eggs, dairy, wheat, sugar";
+var trace1 = {
+  x: [
+      	[   trace_name, trace_name, trace_name, trace_name],
+    	[	'I eat all of the above', 
+    		'Sugar or foods/drinks containing sugar',
+    		'Wheat products', 
+    		'Eggs or foods containing eggs']
+  ],
+  y: [12, 4, 5, 9],
+  name: trace_name,
+  text: ["a", "b", "c", "d"],
+  textinfo: 'label+percent+value',
+  type: 'bar',
+  width: 0.3
+};
+
+var trace_name2 = "sleep duration"
+var trace2 = {
+  x: [
+    [trace_name2, trace_name2, trace_name2],
+    ['<5', '5 - 10', '> 10']
+  ],
+  y: [10, 20, 5,5],
+  name: trace_name2,
+  type: 'bar',
+  width: 0.3
+};
+
+
+var trace_name3 = "activity 3"
+	var trace3 = {
+	  x: [
+	    [trace_name3, trace_name3, trace_name3],
+	    ['<5', '5 - 10', '> 10']
+	  ],
+	  y: [10, 20, 5,5],
+	  name: trace_name3,
+	  type: 'bar',
+	  width: 0.3
+	};
+	
+var trace_name4 = "activity 4"
+	var trace4 = {
+	  x: [
+	    [trace_name4, trace_name4, trace_name4],
+	    ['<5', '5 - 10', '> 10']
+	  ],
+	  y: [10, 20, 5,5],
+	  name: trace_name4,
+	  type: 'bar',
+	  width: 0.3
+	};
+	
+var trace_name5 = "activity 5"
+	var trace5 = {
+	  x: [
+	    [trace_name5, trace_name5, trace_name5],
+	    ['<5', '5 - 10', '> 10']
+	  ],
+	  y: [10, 20, 5,5],
+	  name: trace_name5,
+	  type: 'bar',
+	  width: 0.3
+	};
+
+var data = [trace2, trace3, trace4, trace5, trace1];
+var layout3 = {
+ // autoresize: true,
+  showlegend: true,
+  width: 1100,
+  height: 500,
+  xaxis: {
+     tickson: "boundaries",
+    ticklen: 10,
+    showdividers: true,
+    dividercolor: 'grey',
+    dividerwidth: 0
+  }, 
+  barmode: 'group',
+  bargap: 0.25,
+  bargroupgap: 0.1
+};
+
+Plotly.newPlot('plot_nutrition_factor_bar', data, layout3);
+
+// ===================
+	
+</script>
 </body>
 </html>

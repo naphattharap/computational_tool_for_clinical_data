@@ -56,6 +56,7 @@ class PipelineForm(forms.Form):
     save_as_name = forms.CharField(required=False)
     
     # Feature Selection
+    sfs_k_neighbors = forms.IntegerField(required=False)
     sfs_k_features = forms.IntegerField(required=False)
     sfs_forward = forms.BooleanField(required=False)
     sfs_floating = forms.BooleanField(required=False)

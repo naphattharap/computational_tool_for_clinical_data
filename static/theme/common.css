@@ -88,3 +88,10 @@ input:checked + .slider:before {
   border-radius: 50%;
 }
 /* Toggle End */
+
+
+.section_split_line{
+	margin-top: 5px;
+	margin-bottom: 5px;
+	border: 0.5px solid #61a5d5;
+}

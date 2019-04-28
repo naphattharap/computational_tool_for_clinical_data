@@ -131,6 +131,8 @@ function get_pipeline_input(){
 	data['n_folds'] = $('#pipeline #n_folds').val();
 	
 	// Feature Selection
+	
+	data['sfs_k_neighbors'] = $('#pipeline #sfs_k_neighbors').val();
 	data['sfs_k_features'] = $('#pipeline #sfs_k_features').val();
 	data['sfs_forward'] = $('#pipeline #sfs_forward').val();
 	data['sfs_floating'] = $('#pipeline #sfs_floating').val();

@@ -16,7 +16,7 @@ import naphyutils.algorithm_pipeline
 from . import views
 from .forms import VisInputForm
 import constants.const_msg as msg
-
+import numpy as np
 MAIN_PAGE = "vis_stratified_radiomic.html"
 
 
@@ -151,26 +151,21 @@ def process_data_handler(request):
         
         # =========== End of Processing Predict Data =========
         
-        # df_data_table.append(df_add_data, ignore_index=True)
-        
-        # data_table['rediomic_columns'] = df_data.columns.tolist()
-        # data_table['rediomic_data'] = df_data.values
-        
         if not df_predict_data_info.empty:
             # append general info of new data to based space
             df_add_data = df_add_data.append(df_predict_data_info)
         
         # Prepare data for visualize
         resp_data['plot'] = plot
-        
+        # id for slickgrid (required)
         if not df_add_data_id.empty:
-            data_tables['table1'] = {  # 'table_columns': df_data.columns.tolist(), \
-                                  'table_data': df_data.to_json(orient='records'), \
-                                  'point_id':  df_add_data.iloc[:, 0].to_json(orient='values')}
+            df_data.insert(loc=0, column='id', value=df_add_data_id.values)
         else:
-            data_tables['table1'] = {  # 'table_columns': df_data.columns.tolist(), \
-                                      'table_data': df_data.to_json()}
+            df_data.insert(loc=0, column='id', value=np.arange(0, df_data.shape[0]))
         
+        data_tables['table1'] = { 'table_data': df_data.to_json(orient='records'), \
+                                  'point_id':  str(list(df_data['id'].values))}
+         
         if not df_add_data.empty:
             # For SlickGrid use orient='records'
             # Format point_id: [{..}, {..}]
@@ -180,6 +175,14 @@ def process_data_handler(request):
             data_tables['table2'] = { 'table_data': df_add_data.to_json(orient='records'), \
                                      'point_id': df_add_data.iloc[:, 0].to_json(orient='values')}
             
+            # TypeError: Object of type 'int64' is not JSON serializable 
+            # Then cast to str
+            resp_data['height_min'] = str(df_add_data['height'].min())
+            resp_data['height_max'] = str(df_add_data['height'].max())
+            resp_data['weight_min'] = str(df_add_data['weight'].min())
+            resp_data['weight_max'] = str(df_add_data['weight'].max())
+            resp_data['age_min'] = str(df_add_data['age'].min())
+            resp_data['age_max'] = str(df_add_data['age'].max())
         resp_data['data_tables'] = data_tables
     else:
         
