@@ -6,29 +6,29 @@
 {% load static %}
 {% include "main_menu/global_script.html" %}
 <!-- Jquery UI for autocomplete -->
-<script src="{% static "jquery/ui/1.12.1/jquery-ui.js"%}"></script>
-<link rel="stylesheet" type="text/css" href="{% static "jquery/ui/1.12.1/jquery-ui.min.css"%}"></link>
+<script src="{% static "external_library/jquery/ui/1.12.1/jquery-ui.js"%}"></script>
+<link rel="stylesheet" type="text/css" href="{% static "external_library/jquery/ui/1.12.1/jquery-ui.min.css"%}"></link>
 <!--  Plotly -->
-<script type="text/javascript" src="{% static "plotly/plotly-1.47.3.min.js"%}"></script>
+<script type="text/javascript" src="{% static "external_library/plotly/plotly-1.47.3.min.js"%}"></script>
 
 
 <!-- SlickGrid -->
 <!-- can't remove 1.11.3 -->
-<script src="{% static "slickgrid/2.4.3/lib/jquery-ui-1.11.3.min.js"%}"></script>
-<script src="{% static "slickgrid/2.4.3/lib/jquery.event.drag-2.3.0.js"%}"></script>
-<script type="text/javascript" src="{% static "slickgrid/2.4.3/slick.core.js"%}"></script>
-<script type="text/javascript" src="{% static "slickgrid/2.4.3/slick.grid.js"%}"></script>
-<script type="text/javascript" src="{% static "slickgrid/2.4.3/slick.formatters.js"%}"></script>
-<script type="text/javascript" src="{% static "slickgrid/2.4.3/slick.editors.js"%}"></script>
-<script type="text/javascript" src="{% static "slickgrid/2.4.3/plugins/slick.rowselectionmodel.js"%}"></script>
-<script type="text/javascript" src="{% static "slickgrid/2.4.3/slick.dataview.js"%}"></script>
-<script type="text/javascript" src="{% static "slickgrid/2.4.3/controls/slick.pager.js"%}"></script>
-<script type="text/javascript" src="{% static "slickgrid/2.4.3/controls/slick.columnpicker.js"%}"></script>
+<script src="{% static "external_library/slickgrid/2.4.3/lib/jquery-ui-1.11.3.min.js"%}"></script>
+<script src="{% static "external_library/slickgrid/2.4.3/lib/jquery.event.drag-2.3.0.js"%}"></script>
+<script type="text/javascript" src="{% static "external_library/slickgrid/2.4.3/slick.core.js"%}"></script>
+<script type="text/javascript" src="{% static "external_library/slickgrid/2.4.3/slick.grid.js"%}"></script>
+<script type="text/javascript" src="{% static "external_library/slickgrid/2.4.3/slick.formatters.js"%}"></script>
+<script type="text/javascript" src="{% static "external_library/slickgrid/2.4.3/slick.editors.js"%}"></script>
+<script type="text/javascript" src="{% static "external_library/slickgrid/2.4.3/plugins/slick.rowselectionmodel.js"%}"></script>
+<script type="text/javascript" src="{% static "external_library/slickgrid/2.4.3/slick.dataview.js"%}"></script>
+<script type="text/javascript" src="{% static "external_library/slickgrid/2.4.3/controls/slick.pager.js"%}"></script>
+<script type="text/javascript" src="{% static "external_library/slickgrid/2.4.3/controls/slick.columnpicker.js"%}"></script>
 <!-- Plug in to group column -->
 <!-- https://github.com/naresh-n/slickgrid-column-group/blob/master/examples/example-1.html -->
-<script type="text/javascript" src="{% static "slickgrid/slick.columngroup.js"%}"></script>
+<script type="text/javascript" src="{% static "external_library/slickgrid/slick.columngroup.js"%}"></script>
 
-<script type="text/javascript" src="{% static "d3js/d3.v3.js"%}"></script>
+<script type="text/javascript" src="{% static "external_library/d3js/d3.v3.js"%}"></script>
 
 
 
@@ -44,11 +44,11 @@
 <script type="text/javascript" src="{% static "theme/common_graph.js"%}"></script>
 
 
-<link rel="stylesheet" href="{% static "slickgrid/2.4.3/slick.grid.css"%}" type="text/css"/>
-<link rel="stylesheet" href="{% static "slickgrid/2.4.3/slick-default-theme.css"%}" type="text/css"/>
-<link rel="stylesheet" href="{% static "slickgrid/2.4.3/controls/slick.pager.css"%}" type="text/css"/>
-<link rel="stylesheet" href="{% static "slickgrid/2.4.3//controls/slick.columnpicker.css"%}" type="text/css"/>
-<link rel="stylesheet" href="{% static "jquery/ui/1.12.1/jquery-ui.theme.css"%}" type="text/css"/>
+<link rel="stylesheet" href="{% static "external_library/slickgrid/2.4.3/slick.grid.css"%}" type="text/css"/>
+<link rel="stylesheet" href="{% static "external_library/slickgrid/2.4.3/slick-default-theme.css"%}" type="text/css"/>
+<link rel="stylesheet" href="{% static "external_library/slickgrid/2.4.3/controls/slick.pager.css"%}" type="text/css"/>
+<link rel="stylesheet" href="{% static "external_library/slickgrid/2.4.3//controls/slick.columnpicker.css"%}" type="text/css"/>
+<link rel="stylesheet" href="{% static "external_library/jquery/ui/1.12.1/jquery-ui.theme.css"%}" type="text/css"/>
 
 </head>
 <body>
@@ -243,21 +243,6 @@
 								<button id="btn_reset_filter" name="btn_reset_filter" class="btn btn-primary">Clear</button>
 							</div>					
 						</div>
-					
-					<!-- <div class="col-sm-5">
-								<label for="sel_health_rate">Health Rating</label>
-							</div>
-							<div class="col-sm-5">
-								 <label for="sel_health_rating">
-				  						<select id="sel_health_rating" name="sel_health_rating" style="margin-left: 5px;" class="form-control">
-				  							<option value="" selected>All</option>
-				  							<option value="Excellent">Excellent</option>
-				  							<option value="Good">Good</option>
-				  							<option value="Fair">Fair</option>
-				  							<option value="Poor">Poor</option>
-				  						</select>
-								 </label>
-							 </div> -->
 				</div>
 			</div>
 		</div>
@@ -488,6 +473,23 @@ Plotly.newPlot('plot_bmi', data_bmi, layout_bmi, {displayModeBar: false});
 
 
 // ===========
+	var trace_name_alco = "Alcohol intake";
+	var trace9 = {
+	  x: [
+	    [	trace_name_alco, trace_name_alco, trace_name_alco,
+	    	trace_name_alco,
+	    ],
+	    [	'Never',
+	    	'...', 
+	    	'.....', 
+	    	'Daily or almost daily' ]
+	  ],
+	  y: [1, 5, 5, 29],
+	  name: trace_name_alco,
+	  type: 'bar',
+	  width: 0.3
+};
+	
 var trace_name = "Never eat eggs, dairy, wheat, sugar";
 var trace1 = {
   x: [
@@ -497,7 +499,7 @@ var trace1 = {
     		'Wheat products', 
     		'Eggs or foods containing eggs']
   ],
-  y: [12, 4, 5, 9],
+  y: [8, 24, 5, 3],
   name: trace_name,
   text: ["a", "b", "c", "d"],
   textinfo: 'label+percent+value',
@@ -511,7 +513,7 @@ var trace2 = {
     [trace_name2, trace_name2, trace_name2],
     ['<5', '5 - 10', '> 10']
   ],
-  y: [10, 20, 5,5],
+  y: [8, 22, 5,5],
   name: trace_name2,
   type: 'bar',
   width: 0.3
@@ -524,7 +526,7 @@ var trace_name3 = "activity 3"
 	    [trace_name3, trace_name3, trace_name3],
 	    ['<5', '5 - 10', '> 10']
 	  ],
-	  y: [10, 20, 5,5],
+	  y: [5,5, 20, 10],
 	  name: trace_name3,
 	  type: 'bar',
 	  width: 0.3
@@ -548,17 +550,78 @@ var trace_name5 = "activity 5"
 	    [trace_name5, trace_name5, trace_name5],
 	    ['<5', '5 - 10', '> 10']
 	  ],
-	  y: [10, 20, 5,5],
+	  y: [15, 15, 5,5],
 	  name: trace_name5,
 	  type: 'bar',
 	  width: 0.3
-	};
+};
 
-var data = [trace2, trace3, trace4, trace5, trace1];
+var trace_name6 = "Beek intake in a week";
+	var trace6 = {
+	  x: [
+	    [	trace_name6, trace_name6, trace_name6,
+	    	trace_name6, trace_name6, trace_name6,
+	    ],
+	    [	'Never',
+	    	'Less than once a week', 
+	    	'once a week', 
+	    	'2-4 times a week',
+	    	'5-6 times a week',
+	    	'Once or more daily' ]
+	  ],
+	  y: [1, 5, 5,5, 10, 14],
+	  name: trace_name6,
+	  type: 'bar',
+	  width: 0.3
+};
+	
+	
+	var trace_name7 = "Poultry intake in a week";
+	var trace7 = {
+	  x: [
+	    [	trace_name7, trace_name7, trace_name7,
+	    	trace_name7, trace_name7, trace_name7,
+	    ],
+	    [	'Never',
+	    	'Less than once a week', 
+	    	'once a week', 
+	    	'2-4 times a week',
+	    	'5-6 times a week',
+	    	'Once or more daily' ]
+	  ],
+	  y: [1, 5, 5,5, 10, 14],
+	  name: trace_name7,
+	  type: 'bar',
+	  width: 0.3
+};
+	
+// processed meat intake
+	var trace_name8 = "Processed meat intake";
+	var trace8 = {
+	  x: [
+	    [	trace_name8, trace_name8, trace_name8,
+	    	trace_name8, trace_name8, trace_name8,
+	    ],
+	    [	'Never',
+	    	'Less than once a week', 
+	    	'once a week', 
+	    	'2-4 times a week',
+	    	'5-6 times a week',
+	    	'Once or more daily' ]
+	  ],
+	  y: [1, 5, 5,5, 10, 14],
+	  name: trace_name8,
+	  type: 'bar',
+	  width: 0.3
+};
+
+//cheese intake
+
+var data = [trace9, trace1, trace2, trace3, trace4, trace5, trace6, trace7, trace8];
 var layout3 = {
  // autoresize: true,
   showlegend: true,
-  width: 1100,
+  width: 1200,
   height: 500,
   xaxis: {
      tickson: "boundaries",

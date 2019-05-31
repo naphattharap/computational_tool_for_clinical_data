@@ -26,8 +26,14 @@ from visualization import urls as vis_urls
 from cluster import urls as cluster_urls
 from vis_radiomic import urls as vis_radiomic_urls
 from vis_stratified_radiomic import urls as vis_stratified_radiomic_urls
+from feature_analysis import urls as feature_analysis_urls
+
+from corr_explore import urls as corr_explore_urls
+
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path("", include(corr_explore_urls)),
+    
     # go to main page
     # our project app urls path
     path("", include(vis_brain_urls)),
@@ -40,5 +46,6 @@ urlpatterns = [
     path("", include(cluster_urls)),
     path("", include(vis_radiomic_urls)),
     path("", include(vis_stratified_radiomic_urls)),
+    path("", include(feature_analysis_urls))
    # path('django_plotly_dash/', include('django_plotly_dash.urls')),
 ]

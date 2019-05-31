@@ -10,46 +10,94 @@ see #plotjs_container height
 	margin-top: 30px;
 }
 
-#main_left_result{
+#main_left{
 	width: 30%;
     height: 100%;
+    border-right: 1px solid #ccc;
+    min-height: 300px; /*set same value as main_right*/
 }
 
-#main_right_result{
-	width: 70%;
-    height: 100%;
-    padding: 10px;
-}
 
-#main_left_result .row{
+#main_left .row{
 	margin-bottom: 5px;
     width: 100%;
     display: -webkit-inline-box;
 
 }
 
-#main_left_result .col_label{
+#main_left .col_label{
     width: 30%;
 }
 
-#plotjs_container{
-	height: 400px;
+#source_target_selection_group{
+	display: -webkit-inline-box;
+	width: 100%;
+	min-height: 200px;
+}
+  
+#feature_list{
+    max-height: 200px;
+    overflow: scroll;
 }
 
-.center_button{
-	margin: auto;
-    /* width: 50%; */
-    margin-bottom: 10px;
+#main_right{
+	width: 70%;
+    height: 100%;
+    padding: 10px;
+    min-height: 300px; /*set same value as main_left*/
 }
 
-#btn_reset_filter{
-	width: 150px;
-	margin-top: 15px;
+#main_right_table{
+   max-height: 300px;
+   overflow: scroll;
 }
-/*overwrite width from 0 to 100%*/
-.jexcel > div > table{
-	width: 100% !important;
+#tbl_criterion{
+	width: 100%;
 }
+#tbl_criterion th {
+	text-align: center;
+	background-color: #ddebfd;
+}
+#tbl_criterion th, td{
+	padding: 5px;
+	border: 1px solid #ccc;
+}
+
+.txb_slider{
+	border:0; 
+	color:#2196f3;
+	font-weight:bold;
+	width: 100px;
+}
+
+.txb_num_fix_small{
+	width: 50px;
+    text-align: right;
+}
+
+.txb_inactive{
+    background-color: #f5f5f5;
+    border: 1px solid #ccc;
+}
+
+.txb_active_require{
+	background: #f9c6c6;
+}
+
+/*overwrite jquery slider*/
+.ui-corner-all{
+	width: 100px;
+}
+
+
+#tab_1{
+	min-height: 600px;
+}
+#tab_2{
+	min-height: 600px;
+}
+
+
 
 #tab_medical_history, #tab_radiomic_result{
 	overflow: scroll;
@@ -62,13 +110,6 @@ see #plotjs_container height
         height: fit-content;
 }
 
-/* .tab-content>.tab-pane {
-    display: none;
-}
-
-.tab-content>.active {
-    display: block;
-} */
 
 /*overwrite default*/
 .row{
@@ -81,6 +122,7 @@ see #plotjs_container height
 	color: #2196f3;
     margin-top: 20px;
     margin-left: 10px;
+    text-align: center;
 }
 
 .file_chooser{
@@ -248,11 +290,11 @@ see #plotjs_container height
 }
 
 /*Make 2 rows of column name*/
-.slick-column-name {
+/* .slick-column-name {
     white-space: normal;
     overflow: auto;
     word-break: break-word;
-}
+} */
 /*To see gredient of header background*/
 #grid_radiomic_result .ui-state-default{
 	background: none !important;

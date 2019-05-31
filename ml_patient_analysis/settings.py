@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_extensions',
     # our project apps
+    'corr_explore.apps.CorrExploreConfig',
     'vis_brain.apps.VisBrainConfig',
     'main_menu.apps.MainMenuConfig',
     'dataset_management.apps.DatasetManagementConfig',
@@ -49,7 +50,8 @@ INSTALLED_APPS = [
     'visualization.apps.VisualizationConfig',
     'cluster.apps.ClusterConfig',
     'vis_radiomic.apps.VisRadiomicConfig',
-    'vis_stratified_radiomic.apps.VisStratifiedRadiomicConfig'
+    'vis_stratified_radiomic.apps.VisStratifiedRadiomicConfig',
+    'feature_analysis.apps.FeatureAnalysisConfig'
     # Django
 #     'django_plotly_dash.apps.DjangoPlotlyDashConfig'
 ]
