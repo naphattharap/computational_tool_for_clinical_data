@@ -29,6 +29,7 @@ function alert_message(resp){
 		$("#result-msg-error").after(div_error);
 		$("div.alert.alert-danger").show();
 	}
+	$('.spinner').hide();
 }
 
 /**

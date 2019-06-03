@@ -1,73 +1,94 @@
 /* height is related to svg canvas height here = svg + 20
 see #plotjs_container height
 */
-#process_result{
+/* #process_result{
 	display: -webkit-inline-box;
     height: 420px;
+} */
+
+.toggle_text{
+	margin-left: 15px;
+    font-size: medium;
+    font-weight: 700;
 }
 
 #process_result_tabs{
 	margin-top: 30px;
 }
 
-#main_left{
+/*======== Tab 1 =============*/
+#source_target_selection_group > #main_left, #pca_group > #main_left{
 	width: 30%;
-    height: 100%;
+    /* height: 100%; */
     border-right: 1px solid #ccc;
     min-height: 300px; /*set same value as main_right*/
 }
 
 
-#main_left .row{
-	margin-bottom: 5px;
-    width: 100%;
+#source_target_selection_group #main_left .row{
+	margin-bottom: 5px !important;
+    width: 95% !important;
     display: -webkit-inline-box;
 
 }
 
-#main_left .col_label{
+#source_target_selection_group #main_left .col_label{
     width: 30%;
 }
 
-#source_target_selection_group{
+#source_target_selection_group, #pca_group{
 	display: -webkit-inline-box;
 	width: 100%;
 	min-height: 200px;
 }
   
-#feature_list{
+#source_target_selection_group #feature_list{
     max-height: 200px;
     overflow: scroll;
 }
 
-#main_right{
+.top_bottom_lines{
+	border-bottom: 1px solid #ccc;
+    border-top: 1px solid #ccc;
+    width: 90% !important;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+#source_target_selection_group > #main_right, #pca_group > #main_right{
 	width: 70%;
     height: 100%;
     padding: 10px;
     min-height: 300px; /*set same value as main_left*/
 }
 
-#main_right_table{
+#source_target_selection_group #main_right_table, #pca_group  #main_right_table{
    max-height: 300px;
    overflow: scroll;
 }
-#tbl_criterion{
+#source_target_selection_group #tbl_criterion, #pca_group  #tbl_pca_criterion{
 	width: 100%;
 }
-#tbl_criterion th {
+#source_target_selection_group #tbl_criterion th, #pca_group #tbl_pca_criterion th {
 	text-align: center;
 	background-color: #ddebfd;
 }
-#tbl_criterion th, td{
+#source_target_selection_group #tbl_criterion th, td{
 	padding: 5px;
 	border: 1px solid #ccc;
 }
+
+#pca_group #tbl_pca_criterion th, td{
+	padding: 5px;
+	border: 1px solid #ccc;
+}
+
 
 .txb_slider{
 	border:0; 
 	color:#2196f3;
 	font-weight:bold;
-	width: 100px;
+	width: 100%;
 }
 
 .txb_num_fix_small{
@@ -86,29 +107,14 @@ see #plotjs_container height
 
 /*overwrite jquery slider*/
 .ui-corner-all{
-	width: 100px;
+	width: 90%;
 }
 
 
-#tab_1{
-	min-height: 600px;
-}
-#tab_2{
-	min-height: 600px;
+#tab_1, #tab_2, #tab_3{
+	min-height: 1000px;
 }
 
-
-
-#tab_medical_history, #tab_radiomic_result{
-	overflow: scroll;
-    height: 800px;
-}
-
-#tab_dashboard_analytic1{
-    width: 100%;
-    /* height: 500px; */
-        height: fit-content;
-}
 
 
 /*overwrite default*/
@@ -119,7 +125,7 @@ see #plotjs_container height
 }
 
 .h_section_title{
-	color: #2196f3;
+	color: #555555;
     margin-top: 20px;
     margin-left: 10px;
     text-align: center;
@@ -140,144 +146,38 @@ see #plotjs_container height
   width: 150px
 }
 
-
-    .cell-title {
+.cell-title {
       font-weight: bold;
-    }
-    .cell-effort-driven {
+}
+    
+.cell-effort-driven {
       text-align: center;
-    }
-    .cell-selection {
+}
+
+.cell-selection {
       border-right-color: silver;
       border-right-style: solid;
       background: #f5f5f5;
       color: gray;
       text-align: right;
       font-size: 10px;
-    }
-    .slick-row.selected .cell-selection {
+}
+
+.slick-row.selected .cell-selection {
       background-color: transparent; /* show default selected row background */
-    }
-    
-/* ============== Dashboard ================= */
-#dashboard{
-	margin: 10px;
-    width: 100%;
-    border-style: solid;
-    border-width: thin;
-    border-color: #c5c5c5;
-	  background-color: #e8e8e8;
-}
-
-.dashboard_group_title{
-	margin-left: 20px;
-    margin-top: 20px;
-    font-weight: 700;
-    font-size: larger;
-    color: #1f97f4;
-}
-
-.dashboard_row{
-	position: relative;
-    height: 300px;
-    /*display: -webkit-inline-box; display: table-row;*/
-    display: inline-table;
-    width: 100%;
-    border-style: solid;
-    border-color: #cccccc;
-}
-
-.dashboard_column{
-	position: relative;
-    display: table-cell;
-    background: white;
-
-}
-.dashboard_row_block{
-	/* margin: 5px; */
-    /* border: 3px solid #d9edf7; */
-    height: fit-content;
-    padding: 5px;
-    background-color: white;
-}
-.dashboard_row_block_body{
-	display: inline-flex;
-	height: 300px;
-}
-
-#plot_gender{
-	width: 250px;
-	
-}
-
-#plot_gender_age{
-	width: 400px;
-}
-#plot_bmi{
-	width:400;
-	height:300;
-}
-
-#plot_pulse_rate{
-	width: 130px;
-	height: 100px;
-    text-align: center;
-    vertical-align: middle;
-    line-height: 100px;
-    display: -webkit-inline-box;
-     margin-top: 30px; /* to align with BMI */
-}
-#pulse_rate{
-	font-size: 50px;
-    color: dimgray;
-}
-
-#blood_pressure{
-	font-size: 50px;
-    color: dimgray;	
-}
-
-.block_pulse_rate_blood_pressure{
-	display: inline-grid;
-    height: fit-content;
-    width: fit-content;
-    margin-top: 30px;
-    margin-left: 20px;
-   
-}
-/* #plot_pulse_rate:before{
-	background-image: url(../images/cardiogram.png);
-    background-position: center;
-    background-repeat: no-repeat;
-    opacity: 0.5;
-    background-size: 80px;
-    content: "";
-} */
-
-#plot_blood_pressure{
-	/* width: 150px;  follow width of pulse rate*/
-	height: 100px;
-    text-align: center;
-    vertical-align: middle;
-    line-height: 100px;
-    display: -webkit-inline-box;
-}
-
-#tab_grid_radiomic_result{
-	height: 500px;	
-	
 }
 
 
-#grid_radiomic_result, #grid_medical_history{
-	border: 1px solid #c5c5c5;
-	margin-top: 5px;
-	width: 100%;
-    height: 500px;
-    overflow: hidden;
-    outline: 0px;
-    position: relative;
+/* ============ Tab 2 ============ */
+#pca_group #pca_feature_list{
+    max-height: 200px;
+    overflow: scroll;
 }
+
+#plot_reduced_dim{
+	 
+}
+
 
 /* Overwrite slickgrid style for 3 rows text*/
 .slick-header-column {
@@ -289,21 +189,16 @@ see #plotjs_container height
     background: #eef7fb !important;
 }
 
-/*Make 2 rows of column name*/
-/* .slick-column-name {
-    white-space: normal;
-    overflow: auto;
-    word-break: break-word;
-} */
-/*To see gredient of header background*/
-#grid_radiomic_result .ui-state-default{
-	background: none !important;
-}
-#grid_medical_history .ui-state-default{
-	background: none !important;
-}
+
+
 /* Remove border of header row, it's thick*/
 .slick-header.ui-state-default {
     overflow: inherit;
     border: 0px;
+}
+
+/*====== Plotly.js =========*/
+/*Overwrite to remove Aa text above legend*/
+g.pointtext {
+	display: none;
 }

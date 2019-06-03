@@ -1,9 +1,14 @@
 import numpy as np
 import pandas as pd
-
+from random import randint
+from services.naphyutils.pca import PcaUtil, LdaUtil
+from services.naphyutils.standardization import PreProcessingUtil
 ORDINAL = "ORDINAL"
 NOMINAL = "NOMINAL"
 INTERVAL = "INTERVAL"
+
+PCA = "PCA"
+LDA = "LDA"
 
 
 class Helper:
@@ -84,8 +89,8 @@ class Helper:
         
         # Select data based on condition
         # Join all data together to filter
-        len_source_col = df_source.shape[1]  
-        len_target_col = df_target.shape[1] 
+#         len_source_col = df_source.shape[1]  
+#         len_target_col = df_target.shape[1] 
         
         # Select only the selected source columns 
         arr_source_col_idx = feature_indexes.split(",")
@@ -95,34 +100,31 @@ class Helper:
         df_strat_res = df_selected_source.join(df_target)
         arr_columns = list(df_target.columns)
         
+        df_strat_res = Helper.get_filtered_data(df_strat_res, arr_columns, arr_numtypes, arr_criterion)
         # Loop through all target columns to filter data
-        for idx in range(0, len_target_col):
-            
-            col_name = arr_columns[idx]
-            numtype = arr_numtypes[idx]  # INTERVAL, ORDINAL, NOMINAL
-            # Cond vals are in format of cond1&cond2_val1,cond2_val2&cond3
-            # single number, pair of number, Text like Female, Male
-            str_cond_vals = arr_criterion[idx]  
-            
-            # For number value column "interval", process as range
-            if numtype == INTERVAL or  numtype == ORDINAL:
-                cond_vals = str_cond_vals.split(",")
-                from_val = int(cond_vals[0])
-                to_val = int(cond_vals[1])
-                
-                df_strat_res = df_strat_res.loc[(df_strat_res[col_name] >= from_val) & (df_strat_res[col_name] <= to_val)]
-                
-            elif numtype == NOMINAL:
-                # Find data where match with conds
-                cond_vals = str_cond_vals.split(",")
-                print(cond_vals)
-                df_strat_res = df_strat_res[df_strat_res[col_name].isin(cond_vals)]
-                
-#             elif numtype == ORDINAL:
-#                 # Data must be processed before stratifying
-#                 df_strat_res = df_strat_res.loc[(df_strat_res[col_name] >= from_val) & (df_strat_res[col_name] < to_val)]
-         
-            print("Shape result data: ", df_strat_res.shape)
+#         for idx in range(0, len_target_col):
+#             
+#             col_name = arr_columns[idx]
+#             numtype = arr_numtypes[idx]  # INTERVAL, ORDINAL, NOMINAL
+#             # Cond vals are in format of cond1&cond2_val1,cond2_val2&cond3
+#             # single number, pair of number, Text like Female, Male
+#             str_cond_vals = arr_criterion[idx]  
+#             
+#             # For number value column "interval", process as range
+#             if numtype == INTERVAL or  numtype == ORDINAL:
+#                 cond_vals = str_cond_vals.split(",")
+#                 from_val = int(cond_vals[0])
+#                 to_val = int(cond_vals[1])
+#                 
+#                 df_strat_res = df_strat_res.loc[(df_strat_res[col_name] >= from_val) & (df_strat_res[col_name] <= to_val)]
+#                 
+#             elif numtype == NOMINAL:
+#                 # Find data where match with conds
+#                 cond_vals = str_cond_vals.split(",")
+#                 print(cond_vals)
+#                 df_strat_res = df_strat_res[df_strat_res[col_name].isin(cond_vals)]
+# 
+#             print("Shape result data: ", df_strat_res.shape)
                 
         # Group by
         # Group data by level and bin value
@@ -151,25 +153,27 @@ class Helper:
                 start_num = int(bin_range[0])
                 stop_num = int(bin_range[1])
 
-                arr_step_bin = np.arange(start_num, stop_num, step_bin)
+                arr_step_bin = np.arange(start_num, stop_num + 1, step_bin)
             
-                arr_bin_tuple = []
+#                 arr_bin_tuple = []
+                group_names = []
                 # create first bin to handle the lowest data
                 # if number starts from 50 and step is 5, 
                 # the first bin is 44 - 49
-                arr_bin_tuple.append((arr_step_bin[0] - step_bin - 1, arr_step_bin[0] - 1))
+#                 arr_bin_tuple.append((arr_step_bin[0] - step_bin - 1, arr_step_bin[0] - 1))
             
                 for from_val in arr_step_bin:
                     # The number that matched with start value is not included in result
                     # but end number is include
                     # if target range is 50 - 54, bin needs to be defined as 49 - 54 
-                    arr_bin_tuple.append((from_val - 1, from_val + step_bin - 1))
-                    
-                    # ex. [(40, 44), (45, 49), (50, 54), (55, 59), (60, 64), (65, 69), (70, 74)]
-                    bins = pd.IntervalIndex.from_tuples(arr_bin_tuple)
+#                     arr_bin_tuple.append((from_val - 1, from_val + step_bin - 1))
+                    group_names.append(col_name + str(from_val) + "-" + str(from_val + step_bin - 1))
+                    # ex. (-6, -1], (-1, 4], (4, 9], (9, 14], (14, 19] ... (29, 34], (34, 39], (39, 44], (44, 49], (49, 54]]
+#                 bins = pd.IntervalIndex.from_tuples(arr_bin_tuple)
              
+                bins = len(arr_step_bin)
                 # Group by
-                group = pd.cut(df_strat_res[col_name], bins, labels=np.arange(1, len(bins)))
+                group, outbins = pd.cut(df_strat_res[col_name], bins, labels=group_names, retbins=True)
                 new_col_name = "G" + str(idx_selected_groupby)
                 df_strat_res[new_col_name] = group
                 arr_new_groupby.append(new_col_name)
@@ -183,12 +187,12 @@ class Helper:
             # print(len(group1))
             # print(group2)
              
-        print(df_strat_res.head(10))
+#         print(df_strat_res.head(10))
         
         if len(arr_new_groupby) > 0:
             df_groupped = df_strat_res.groupby(arr_new_groupby)
             groups = df_groupped.groups
-            print(groups.keys())
+#             print(groups.keys())
             
             # Initialize array to store selected radiomics column by group of stratified data
             len_group = len(groups.keys())
@@ -198,34 +202,48 @@ class Helper:
             # Loop through all sub-groups (smallest group)
             arr_x_labels = []
             arr_y_vals = []
+            arr_n_group_member = []
+#             cnt_group = 0
+            # In case of categorical groupkeys = dict_keys(['Current', 'Never'])
+            # 2 Level (Cate => Interval) ==> 
             for group_keys in groups.keys():
                 print("key:", group_keys)
                 
                 # Generate label for x in chat
                 str_label_key = ""
                 idx_gb_col = 0
-                for key in group_keys:
-                    type_key = type(key)
-                    str_label_key = str_label_key + arr_selected_groupby[idx_gb_col] + ":"
-                    if isinstance(key, str):
-                        str_label_key = str_label_key + key + " | "
-                    elif isinstance(key, pd.Interval):  
-                        # +1 for left because the label that want to display and how pd.cut works are different.
-                        # pd.cut does not include left but we display left as included in range
-                        str_label_key = str_label_key + str(key.left + 1) + "-" + str(key.right) + " | "
-                    idx_gb_col = idx_gb_col + 1  
+                
+                if isinstance(group_keys, str):
+                    str_label_key = group_keys 
+
+                elif isinstance(group_keys, pd.Interval):
+                    str_label_key = str(group_keys.left + 1) + "-" + str(group_keys.right)
+                else:     
+                    for key in group_keys:
+                        type_key = type(key)
+                        str_label_key = str_label_key + arr_selected_groupby[idx_gb_col] + ":"
+                        if isinstance(key, str):
+                            str_label_key = str_label_key + key + " | "
+                        elif isinstance(key, pd.Interval):  
+                            # +1 for left because the label that want to display and how pd.cut works are different.
+                            # pd.cut does not include left but we display left as included in range
+                            str_label_key = str_label_key + str(key.left + 1) + "-" + str(key.right) + " | "
+                        idx_gb_col = idx_gb_col + 1  
                 # Label of each bar
                 arr_x_labels.append(str_label_key)
                 
-                groupped_data = df_groupped.get_group(group_keys)
-                group_mean = groupped_data.mean()
+                # If data in group is empty, skip calc mean
+                groupped_data = Helper.get_group(df_groupped, group_keys)
+                if groupped_data.shape[0] > 1:
+                    # Add number of member in group to display on chart
+                    arr_n_group_member.append("#Member: " + str(groupped_data.shape[0]))
+                    group_mean = groupped_data.mean()
                 
-                # Add mean value to each selected source column in radiomics
-                
-                for s_idx in range(0, len(arr_selected_source_col)):
-                    sel_col = arr_selected_source_col[s_idx]
-                    group_mean_val = group_mean[sel_col]
-                    arr_all_y_vals[s_idx][idx_arr_x] = group_mean_val
+                    # Add mean value to each selected source column in radiomics
+                    for s_idx in range(0, len(arr_selected_source_col)):
+                        sel_col = arr_selected_source_col[s_idx]
+                        group_mean_val = group_mean[sel_col]
+                        arr_all_y_vals[s_idx][idx_arr_x] = group_mean_val
                 
                 idx_arr_x = idx_arr_x + 1
             
@@ -236,7 +254,95 @@ class Helper:
             trace['x_labels'] = arr_x_labels
             # change ndarray to list to prevent json problem
             trace['y_values'] = list(arr_all_y_vals[s_idx]) 
+            trace['n_group_member'] = list(arr_n_group_member)
             arr_traces.append(trace)
         
         return arr_traces
+
+    @staticmethod
+    def get_stratify_3d_data(df_source, df_target, pca_feature_indexes, target_label_index, \
+                                              arr_numtypes, arr_criterion, reduce_dim_algorithm):
+        """
+            Filter data by criterion and do PCA for 3d
+            reduce_dim_algorithm: Only PCA is implemented for this phase
+        """
+        
+        # Select only the selected source columns in radiomics
+        df_selected_source = Helper.get_selected_features(df_source, pca_feature_indexes)
+        
+        # Use length to split result between source and label later
+        len_selected_source = len(df_selected_source.columns)
+        
+        df_strat_source = df_selected_source.join(df_target)
+        
+        # df_data, arr_criterion_columns, arr_numtypes, arr_criterion
+        arr_criterion_columns = list(df_target.columns)
+        df_start_res = Helper.get_filtered_data(df_strat_source, arr_criterion_columns,
+                                                arr_numtypes, arr_criterion)
+        
+        X = df_start_res.iloc[:, 0:len_selected_source]
+        y = df_start_res[[df_target.columns.values[int(target_label_index)]]]
+        # Select target columns
+#         df_selected_source = df_source.iloc[:, arr_int_source_col_idx]
+#         arr_selected_source_col = list(df_selected_source.columns)
+        
+        # Standardize data
+        X_scaled = PreProcessingUtil.standardize(X)
+        dim_3d = []
+        if reduce_dim_algorithm == PCA:
+            # Get explain variance ratio
+            pca_helper = PcaUtil()
+            dim_3d = pca_helper.reduce_dimension(X_scaled, n_components=3)
+        elif reduce_dim_algorithm == LDA:
+            dim_3d = LdaUtil.reduce_dimension(X_scaled, y.values.ravel(), n_components=3)
+        
+        return dim_3d, y
+    
+    @staticmethod
+    def get_group(g, key):
+        try:
+            if key in g.groups: 
+                return g.get_group(key)
+            else:
+                return pd.DataFrame()
+        except KeyError: 
+            return pd.DataFrame()
+    
+    @staticmethod
+    def get_filtered_data(df_data, arr_criterion_columns, arr_numtypes, arr_criterion):
+        """
+        Filter data by specifying conditions, type of number (range or specific)
+        """
+        # Loop through all target columns to filter data
+        len_target_col = len(arr_criterion_columns)
+        for idx in range(0, len_target_col):
+            col_name = arr_criterion_columns[idx]
+            numtype = arr_numtypes[idx]  # INTERVAL, ORDINAL, NOMINAL
+            # Cond vals are in format of cond1&cond2_val1,cond2_val2&cond3
+            # single number, pair of number, Text like Female, Male
+            str_cond_vals = arr_criterion[idx]  
+            
+            # For number value column "interval", process as range
+            if numtype == INTERVAL or  numtype == ORDINAL:
+                cond_vals = str_cond_vals.split(",")
+                from_val = int(cond_vals[0])
+                to_val = int(cond_vals[1])
+                
+                df_data = df_data.loc[(df_data[col_name] >= from_val) & (df_data[col_name] <= to_val)]
+                
+            elif numtype == NOMINAL:
+                # Find data where match with conds
+                cond_vals = str_cond_vals.split(",")
+                print(cond_vals)
+                df_data = df_data[df_data[col_name].isin(cond_vals)]
+
+            print("Shape result data: ", df_data.shape)
+        return df_data
+
+    @staticmethod
+    def get_selected_features(df_data, feature_indexes):
+        arr_source_col_idx = feature_indexes.split(",")
+        arr_int_source_col_idx = list(map(int, arr_source_col_idx))
+        df_selected_source = df_data.iloc[:, arr_int_source_col_idx]
+        return df_selected_source
         

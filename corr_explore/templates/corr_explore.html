@@ -47,7 +47,8 @@
 <script type="text/javascript" src="{% static "theme/common_graph.js"%}"></script>
 <script type="text/javascript" src="{% static "project/corr_explore/corr_explore.js"%}"></script>
 <script type="text/javascript" src="{% static "project/corr_explore/corr_explore_events.js"%}"></script>
-<script type="text/javascript" src="{% static "project/corr_explore/corr_explore_plotly.js"%}"></script>
+<script type="text/javascript" src="{% static "project/corr_explore/corr_explore_plot_mean_bar.js"%}"></script>
+<script type="text/javascript" src="{% static "project/corr_explore/corr_explore_plot_pca.js"%}"></script>
 <script type="text/javascript" src="{% static "project/corr_explore/corr_explore_slickgrid.js"%}"></script>
 
 
@@ -57,7 +58,9 @@
 	<!-- Hidden fields used in JS for backend info -->
 	<input type="hidden" id="data_attr" 
 			data-url-upload="{%url 'corr_explore_analyze_source_target' %}"
-			data-url-strat="{%url 'corr_explore_stratify_data' %}" />
+			data-url-strat="{%url 'corr_explore_stratify_data' %}" 
+			data-url-dim="{%url 'corr_explore_reduce_dim_data' %}"
+			data-url-fselection1="{%url 'corr_explore_feature_selection' %}"/>
 			
 	<!-- Include naviation bar to the page -->		
 	{% include "main_menu/nav_bar.html" %}
@@ -82,19 +85,17 @@
 				<form id="form_upload_file" method="post"
 					action="{% url 'corr_explore_analyze_source_target' %}" enctype="multipart/form-data">
 					{% csrf_token %}
-<!-- 					<input 	type="checkbox" checked data-toggle="toggle" 
-							data-on="Show" data-off="Hide" data-onstyle="primary" data-offstyle="default"> -->
 					
 					<!-- ======== Upload file section ======== -->
 					<p>
-						<a id="upload_file_title" href="#">Upload File</a>
+						<a id="upload_file_title" href="#" class="toggle_text">Upload File</a>
 					</p>
 					<div id="upload_file_group" class="form-group-border">
 						<div  id="upload_file_section">
 							<!-- <h4 class="h_section_title">BASE PATIENT SPACE</h4> -->
 							<!-- Row 1 -->
 							<div class="form-group row">
-								<label for="source_file" class="col-sm-3">Source Features</label>
+								<p class="col-sm-2">Features</p>
 								<div class="col-sm-7">
 									
 									<!-- Default checked -->
@@ -107,7 +108,7 @@
 							</div>
 							<!-- Row 2 -->
 							<div class="form-group row">
-								<label for="target_file" class="col-sm-3">Target</label>
+								<p class="col-sm-2">Target</p>
 								<div class="col-sm-7">
 									<!-- Default checked -->
 									<div class="custom-control custom-checkbox">
@@ -124,91 +125,153 @@
 					</div>
 				</form>
 			</div>
-	
-			<!-- =============== Data column selection ============== -->
-			<p>
-				<a id="source_target_selection_title" href="#">Features and Criterion</a>
-			</p>
-			
-			<div id="source_target_selection_group_outer" class="form-group-border">
-			<div id="source_target_selection_group">
-			
-				<div id="main_left">
-					<!-- Graph search -->
-					<div id="feature_group" >
-						<p>
-							<!-- <a id="search_group_title" href="#">Filter Hide/Show</a> -->
-						</p>
-						
-						<div id="feature_group_section">
-							<div>
-								<h5 class="h_section_title">FEATURES</h5>
-								<div class="form-group row">
-									<div>
-										<a id="lnk_clear_features" href="#">Clear All</a>
-									</div>					
-								</div>
-							</div>
-							<div id="feature_list">
-							</div>
-						</div>
-					</div>
-				</div>
-				<div id="main_right">
-					<div id="main_right_table">
-						<h5 class="h_section_title">CRITERIONS</h5>
-						<table id="tbl_criterion">
-						  <thead>
-						    <tr>
-						      <th>Column</th>
-						      <th>Number Type</th>
-						      <th>Criterion</th>
-						      <th>Group By Level</th>
-						      <th>Bin</th>
-						    </tr>
-						  </thead>
-						<!--   <tfoot>
-						    <tr>
-						      <th>Name</th>
-						      <th>Instrument</th>
-						    </tr>
-						  </tfoot> -->
-						  <tbody>
-						  </tbody>
-						</table>
-					</div>
-					<!-- set width = 100% to center button -->
-					<!-- <div style="width:100%; text-align: center;margin-top:10px;">
-						<button id="render_plot" class="btn btn-primary" style="width: 150px;" type="submit">Render Plot</button>
-					</div> -->
-				</div>
-				<!-- ======= End of main_right ====== -->
-			</div>
-			<!-- ====== End of Source/Target selection ====== -->
-			<div style="width:100%; text-align: center;margin-top:10px;margin-bottom: 10px;">
-				<button id="render_plot" class="btn btn-primary" style="width: 300px;" type="submit">Render Plot</button>
-			</div>
-			
-			</div>
-			<!-- <p>
-				<a id="plot_title" href="#">Plot Hide/Show</a>
-			</p> -->
-			<!-- <div id="plot_group" class="form-group-border">
-				
-			</div> -->
 	</div>
 	<!-- ===== End of div container-fluid ===== -->
+	
+	
 	<div id="process_result_tabs" class="container-fluid">
-		<ul class="nav nav-tabs">
-			<li class="active"><a data-toggle="tab" href="#tab_1">Stratification Bar</a></li>
-			<li><a data-toggle="tab" href="#tab_2"></a></li>
-			<li><a data-toggle="tab" href="#tab_3">Tab 3</a></li>
+		<ul class="nav nav-tabs" style="margin-bottom: 15px;">
+			<li class="active"><a data-toggle="tab" href="#tab_1">Mean Bar Chart</a></li>
+			<li><a data-toggle="tab" href="#tab_2">Principle Component Analysis</a></li>
+			<!-- <li><a data-toggle="tab" href="#tab_3">Feature Analysis</a></li> -->
 			
 		</ul>
 		
 		<div id="tab_1" class="tab-pane fade in active">
+			<!-- Toggle -->
+			<p>
+				<a id="source_target_selection_title" href="#" class="toggle_text">Features and Criterion</a>
+			</p>
+			<!-- =============== Data column selection ============== -->
+			<div id="source_target_selection_group_outer" class="form-group-border">
+				<div id="source_target_selection_group">
+					<div id="main_left">
+						<div id="feature_group" >
+							<div id="feature_group_section">
+								<div>
+									<h5 class="h_section_title">FEATURES</h5>
+									
+
+									<div class="form-group row top_bottom_lines">
+										<div style="display: -webkit-inline-box;">
+											<div><a id="lnk_clear_features" href="#">Clear All</a></div>
+											<!-- <div><img width="25px" src="{% static "images/alphabetical-order.png"%}"/></div> -->
+										</div>					
+									</div>
+								</div>
+								<div id="feature_list">
+								</div>
+							</div>
+						</div>
+					</div>
+					<div id="main_right">
+						<div id="main_right_table">
+							<h5 class="h_section_title">CRITERIONS</h5>
+							<table id="tbl_criterion">
+							  <thead>
+							    <tr>
+							      <th>Column</th>
+							      <th>Number Type</th>
+							      <th>Criterion</th>
+							      <th>Group By Level</th>
+							      <th>Bin</th>
+							    </tr>
+							  </thead>
+							  <tbody>
+							  </tbody>
+							</table>
+						</div>
+					</div>
+					<!-- ======= End of main_right ====== -->
+				</div>
+				<!-- ====== End of Source/Target selection ====== -->
+				<div style="width:100%; text-align: center;margin-top:10px;margin-bottom: 10px;">
+					<button id="render_plot" class="btn btn-primary" style="width: 300px;" type="submit">Plot</button>
+				</div>
+			</div>
 			<div id="plot_strat_mean_bar" ></div>
 		</div>
+		<!-- ===== End of tab 1 ===== -->
+
+
+		
+		<div id="tab_2" class="tab-pane">
+			<!-- Toggle -->
+			<p>
+				<a id="pca_selection_title" href="#"  class="toggle_text">Features and Criterion</a>
+			</p>
+			<!-- =============== Data column selection ============== -->
+			<div id="pca_group_outer" class="form-group-border">
+				<div id="pca_group">
+					<div id="main_left">
+						<div id="pca_feature_group" >
+							<div id="pca_feature_group_section">
+								<div>
+									<h5 class="h_section_title">FEATURES</h5>
+									<div style="display: -webkit-inline-box;width: 100%;">
+										<div style="width: 45%; margin-left: 10px;">
+											<p>Select By</p>
+										</div>
+										<div style="display: -webkit-inline-box;">
+											<div><img id="reload_feature_selection" src="{% static "images/reload.png"%}" style="width: 20px;margin-right: 10px;cursor: pointer;"/></div>
+											<select id="pca_feature_selection_algo" name="pca_feature_selection_algo">
+												<option value="MANUAL">Manual Select</option>
+												<option value="RANDOMFOREST">Random Forest</option>
+												<option value="XGBOOST">XGBoost</option>
+											</select>
+										</div>
+									</div>
+									<div class="form-group row top_bottom_lines">
+										<div>
+											<a id="lnk_clear_pca_features" href="#">Clear All</a> |
+											<a id="lnk_select_all" href="#">Select All</a>|
+											<a id="lnk_sort_az" href="#">A-Z</a>
+										</div>					
+									</div>
+								</div>
+								<div id="pca_feature_list">
+								</div>
+							</div>
+						</div>
+					</div>
+					<div id="main_right">
+						<div id="main_right_table">
+							<h5 class="h_section_title">CRITERIONS</h5>
+							<table id="tbl_pca_criterion">
+							  <thead>
+							    <tr>
+							    	<th width="100px;">Select Label</th>
+							      	<th>Column Name</th>
+							      	<th>Number Type</th>
+							      	<th>Criterion</th>
+							    </tr>
+							  </thead>
+							  <tbody>
+							  </tbody>
+							</table>
+						</div>
+<!-- 						<div>
+							<h5 class="h_section_title">DIMENSIONALITY REDUCTION TECHNIQUE</h5>
+							<div class="form-group-border">
+								<input type="radio" id="pca" name="dimalgo" value="PCA">
+								<label for="pca">PCA</label>
+								<input type="radio" id="lda" name="dimalgo" value="LDA" style="margin-left: 20px;">
+								<label for="lda">LDA</label>
+							</div>
+						</div> -->
+					</div>
+					<!-- ======= End of main_right ====== -->
+				</div>
+				<!-- ====== End of Source/Target selection ====== -->
+				<div style="width:100%; text-align: center;margin-top:10px;margin-bottom: 10px;">
+					<!-- <button id="btn_sel_feature_xgboost" class="btn btn-primary" style="width: 250px;" type="submit">Select Features by XGBoost</button> -->
+					<button id="render_pca_space" class="btn btn-primary" style="width: 150px;" type="submit">PCA Plot</button>
+				</div>
+			</div>
+			<div id="plot_reduced_dim" ></div>
+		</div>
+		<!-- End tab#2 -->
+		
 	</div>
 	
 

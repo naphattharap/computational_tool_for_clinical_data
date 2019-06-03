@@ -5,4 +5,6 @@ urlpatterns = [
     path("corr_explore/home", views.home_hander, name="corr_explore_home"),
     path("corr_explore/analyze_source_target", views.get_source_target, name="corr_explore_analyze_source_target"),
     path("corr_explore/stratify_data", views.stratify_data, name="corr_explore_stratify_data"),
+    path("corr_explore/reduce_dimension", views.reduce_dimension, name="corr_explore_reduce_dim_data"),
+    path("corr_explore/feature_selection", views.select_features, name="corr_explore_feature_selection"),
 ]
