@@ -1,175 +1,4 @@
 
-
-
-function example(){
-	var trace_name_alco = "Alcohol intake";
-	var trace9 = {
-	  x: [
-	    [	trace_name_alco, trace_name_alco, trace_name_alco,
-	    	trace_name_alco,
-	    ],
-	    [	'Never',
-	    	'...', 
-	    	'.....', 
-	    	'Daily or almost daily' ]
-	  ],
-	  y: [1, 5, 5, 29],
-	  name: trace_name_alco,
-	  type: 'bar',
-	  width: 0.3
-};
-	
-var trace_name = "Never eat eggs, dairy, wheat, sugar";
-var trace1 = {
-  x: [
-      	[   trace_name, trace_name, trace_name, trace_name],
-    	[	'I eat all of the above', 
-    		'Sugar or foods/drinks containing sugar',
-    		'Wheat products', 
-    		'Eggs or foods containing eggs']
-  ],
-  y: [8, 24, 5, 3],
-  name: trace_name,
-  text: ["a", "b", "c", "d"],
-  textinfo: 'label+percent+value',
-  type: 'bar',
-  width: 0.3
-};
-
-var trace_name2 = "sleep duration"
-var trace2 = {
-  x: [
-    [trace_name2, trace_name2, trace_name2],
-    ['<5', '5 - 10', '> 10']
-  ],
-  y: [8, 22, 5,5],
-  name: trace_name2,
-  type: 'bar',
-  width: 0.3
-};
-
-
-var trace_name3 = "activity 3"
-	var trace3 = {
-	  x: [
-	    [trace_name3, trace_name3, trace_name3],
-	    ['<5', '5 - 10', '> 10']
-	  ],
-	  y: [5,5, 20, 10],
-	  name: trace_name3,
-	  type: 'bar',
-	  width: 0.3
-	};
-	
-var trace_name4 = "activity 4"
-	var trace4 = {
-	  x: [
-	    [trace_name4, trace_name4, trace_name4],
-	    ['<5', '5 - 10', '> 10']
-	  ],
-	  y: [10, 20, 5,5],
-	  name: trace_name4,
-	  type: 'bar',
-	  width: 0.3
-	};
-	
-var trace_name5 = "activity 5"
-	var trace5 = {
-	  x: [
-	    [trace_name5, trace_name5, trace_name5],
-	    ['<5', '5 - 10', '> 10']
-	  ],
-	  y: [15, 15, 5,5],
-	  name: trace_name5,
-	  type: 'bar',
-	  width: 0.3
-};
-
-var trace_name6 = "Beek intake in a week";
-	var trace6 = {
-	  x: [
-	    [	trace_name6, trace_name6, trace_name6,
-	    	trace_name6, trace_name6, trace_name6,
-	    ],
-	    [	'Never',
-	    	'Less than once a week', 
-	    	'once a week', 
-	    	'2-4 times a week',
-	    	'5-6 times a week',
-	    	'Once or more daily' ]
-	  ],
-	  y: [1, 5, 5,5, 10, 14],
-	  name: trace_name6,
-	  type: 'bar',
-	  width: 0.3
-};
-	
-	
-	var trace_name7 = "Poultry intake in a week";
-	var trace7 = {
-	  x: [
-	    [	trace_name7, trace_name7, trace_name7,
-	    	trace_name7, trace_name7, trace_name7,
-	    ],
-	    [	'Never',
-	    	'Less than once a week', 
-	    	'once a week', 
-	    	'2-4 times a week',
-	    	'5-6 times a week',
-	    	'Once or more daily' ]
-	  ],
-	  y: [1, 5, 5,5, 10, 14],
-	  name: trace_name7,
-	  type: 'bar',
-	  width: 0.3
-};
-	
-// processed meat intake
-	var trace_name8 = "Processed meat intake";
-	var trace8 = {
-	  x: [
-	    [	trace_name8, trace_name8, trace_name8,
-	    	trace_name8, trace_name8, trace_name8,
-	    ],
-	    [	'Never',
-	    	'Less than once a week', 
-	    	'once a week', 
-	    	'2-4 times a week',
-	    	'5-6 times a week',
-	    	'Once or more daily' ]
-	  ],
-	  y: [1, 5, 5,5, 10, 14],
-	  name: trace_name8,
-	  type: 'bar',
-	  width: 0.3
-};
-
-//cheese intake
-
-var data = [trace9, trace1, trace2, trace3, trace4, trace5, trace6, trace7, trace8];
-var layout3 = {
- // autoresize: true,
-  showlegend: true,
-  width: 1200,
-  height: 500,
-  xaxis: {
-     tickson: "boundaries",
-    ticklen: 10,
-    showdividers: true,
-    dividercolor: 'grey',
-    dividerwidth: 0
-  }, 
-  barmode: 'group',
-  bargap: 0.25,
-  bargroupgap: 0.1
-};
-
-Plotly.newPlot('plot_strat_bar', data, layout3);
-}
-
-
-
-
 /**
  * Render feature 
  * @param arr_features
@@ -228,15 +57,26 @@ function render_mean_bar_criterion_table(criterions){
 		for(var i=0; i < len_data; i++){
 			var row_data = criterions[i];
 			var criterion_name = "criterion_" + i;
+			var suffix = NAME_IDX_SEPARATOR+i;
 			
 			var $tr = $('<tr>');
 			$tr.attr('id', 'row_'+i);
-			var $td_pca_target = $('<td>');
+			// Include data in filter process or not
+			var $td_inc_target = $('<td align="center">');
+			
 			var $td_col_name = $('<td>');
 			var $td_num_type = $('<td align="center">');
 			var $td_criterion = $('<td>');
 			var $td_bin = $('<td align="center">');
 			var $td_groupby = $('<td align="center">');
+			
+			// Include data
+			var $checkbox_inc_target = $('<input>').attr({type: 'checkbox', id: "target_strat" + suffix, name: "target_strat" });
+			// Add i as column index in csv for target
+			$checkbox_inc_target.val(i);
+			// set default to "checked"
+			$checkbox_inc_target.attr('checked', 'checked');
+			$td_inc_target.append($checkbox_inc_target);
 			
 			// Column name
 			$td_col_name.text(row_data.column_name);
@@ -259,7 +99,7 @@ function render_mean_bar_criterion_table(criterions){
 					var choice_val = nominal_values[idx];
 					var choice_id = choice_val + idx;
 					var $checkbox = $('<input>').attr({type: 'checkbox', id: choice_id, name: criterion_name});
-					var $label = $('<label>').attr({class:'custom-control-label', for:choice_id});
+					var $label = $('<label>').attr({class:'custom-control-label criterion_checkbox_label', for:choice_id});
 					$checkbox.val(choice_val);
 					$checkbox.attr('checked', 'checked');
 					$label.text(choice_val);
@@ -301,8 +141,10 @@ function render_mean_bar_criterion_table(criterions){
 			var $groupby = $('<input>').attr({type: 'text', id: 'groupby_'+i, name: "groupby"});
 			$groupby.addClass('txb_num_fix_small');
 			$td_groupby.append($groupby);
+			
+			
 			// Append all td to tr
-			$tr.append($td_col_name).append($td_num_type).append($td_criterion).append($td_groupby).append($td_bin);
+			$tr.append($td_inc_target).append($td_col_name).append($td_num_type).append($td_criterion).append($td_groupby).append($td_bin);
 			$("#tbl_criterion tbody").append($tr);
 			
 		}
@@ -359,12 +201,24 @@ function bind_mean_bar_groupby_events(){
 				$bin_target.attr('readonly',true);
 				$bin_target.addClass('txb_inactive');
 				$bin_target.val('');
+				$bin_target.removeClass("txb_active_require");
 			}
 		});
 
 	});
 }
 
+//$('input[name="groupby"').each(function(idx){
+//	$(this).on("change", function(e){
+//        if($(this).val() == ""){
+//            var obj_id = $(this).attr("id");
+//            console.log(obj_id);
+//            var row_idx = obj_id.split("_")[1];                                
+//           $('#bin_'+ row_idx).val("");
+//           $('#bin_'+ row_idx).removeClass("txb_active_require");
+//        }
+//    });
+//});
 
 
 
@@ -374,7 +228,7 @@ function bind_mean_bar_groupby_events(){
  * @returns none
  */
 function bind_render_mean_bar_plot(){
-	$('#render_plot').on('click', function(e){
+	$('#btn_mean_bar, #btn_fmh_score, #btn_feature_variance').on('click', function(e){
 		// Get target URL that processes the file
 		var url = $('#data_attr').attr('data-url-strat');
 		
@@ -393,6 +247,24 @@ function bind_render_mean_bar_plot(){
 			var target_file = document.getElementById('target_file').files[0];
 			form_data.append('target_file', target_file);
 			
+			var btn_id = $(this).attr('id');
+			
+			var is_calc_framingham = false;
+			var target_action = "";
+			if (btn_id == "btn_fmh_score"){
+				//is_calc_framingham = true;
+				//form_data.append('is_calc_framingham', 'yes');
+				target_action =  "framingham";
+				form_data.append("target_action",target_action);
+			}else if(btn_id == "btn_feature_variance"){
+				//form_data.append('is_calc_framingham', 'no');
+				target_action = "feature_variance";
+				form_data.append("target_action", target_action);
+			}else{
+				target_action = "stratify";
+				form_data.append("target_action", target_action);
+			}
+			
 			// Source and target criterion
 			var arr_feature_indexes = [];
 			$('input[name="feature_indexes"]:checked').each(function() {
@@ -400,58 +272,115 @@ function bind_render_mean_bar_plot(){
 			});
 			form_data.append('feature_indexes', arr_feature_indexes.join(","));
 			
-			// Num type
+			
+			// Selected column index in target file for filtering
+			var arr_sel_targets = [];
 			var arr_numtype = [];
-			$('select[name^="numtypes"').each(function(idx){
-				arr_numtype.push($(this).val());
-			});
-			form_data.append('numtypes', arr_numtype.join(","));
-			
-			
-			// == Criterion
-			// Criteria for each target column to filter data
-			var arr_criterion_name = [];
-			$('input[name^="criterion_"]').each(function(idx, ele){
-				arr_criterion_name.push($(this).attr('name'));
-			});
-			// Get only unique name to prevent duplicated result for checkbox
-			var arr_unique_name = $.unique(arr_criterion_name); 
 			var arr_criterion = [];
-			for (var idx in arr_unique_name){
-				var ele_name = arr_unique_name[idx];
-				var $target = $("input[name='"+ele_name+"']");
-				var ele_type = $target.attr('type');
-				if(ele_type == 'checkbox'){
-					// Get checked value data and serialize to 1d text
-					// arr_criterion.push($("input[name='"+ele_name+"']:checked").serialize());
+			var arr_groupby = []
+			var arr_bin = [];
+			$('input[name="target_strat"]:checked').each(function() {
+				arr_sel_targets.push($(this).val());
+			});
+			
+			// Submit only selected target rows.
+			len_sel_targets = arr_sel_targets.length;
+			if (len_sel_targets > 0){
+				for(var i =0; i < len_sel_targets; i++){
+					var row_idx = arr_sel_targets[i];
+					
+					var numtype = $('#numtype_'+row_idx).val()
+					arr_numtype.push(numtype);
+					
 					var arr_checked_vals = [];
-					$("input[name='"+ele_name+"']:checked").each(function(idx){
-						arr_checked_vals.push($(this).val());
+					$('input[name="criterion_'+row_idx+'"]').each(function(idx, ele){
+						//console.log(ele_type);
+						//console.log(($(this).attr("checked") == "checked"));
+						var ele_type = $(this).attr('type');
+						if(ele_type == 'checkbox' && $(this).is(":checked")){
+							arr_checked_vals.push($(this).val());
+						}else if(ele_type == 'text'){
+							var text_val = $(this).val().replace("-", ",");
+							// Submit with format "1,2&2,3&...
+							arr_checked_vals.push(text_val);
+						}
 					});
 					
 					arr_criterion.push(arr_checked_vals.join(","));
-				}else if(ele_type == 'text'){
-					var text_val = $target.val().replace("-", ",");
-					// Submit with format "1,2&2,3&...
-					arr_criterion.push(text_val);
+					
+					//Group by
+					var groupby = $('#groupby_'+row_idx).val();
+					arr_groupby.push(groupby);
+					
+					// Bin
+					var bin = $('#bin_'+row_idx).val();
+					arr_bin.push(bin);
+					
 				}
 			}
-
+			
+			form_data.append('target_strat', arr_sel_targets.join(","));
+			form_data.append('numtypes', arr_numtype.join(","));
 			form_data.append('criterion', arr_criterion.join("&"));
-
-			// ===== Bin
-			var arr_bin = [];
-			$('input[name="bin"]').each(function(idx){
-				arr_bin.push($(this).val());
-			});	
+			form_data.append('groupby', arr_groupby.join(","));
 			form_data.append('bin', arr_bin.join(","));
 			
-			// ===== Group by
-			arr_groupby = []
-			$('input[name="groupby"').each(function(idx){
-				arr_groupby.push($(this).val());
-			});
-			form_data.append('groupby', arr_groupby.join(","));
+			
+			
+			
+			// Num type
+//			var arr_numtype = [];
+//			$('select[name^="numtypes"').each(function(idx){
+//				arr_numtype.push($(this).val());
+//			});
+			
+			// == Criterion
+			// Criteria for each target column to filter data
+//			var arr_criterion_name = [];
+//			$('input[name^="criterion_"]').each(function(idx, ele){
+//				arr_criterion_name.push($(this).attr('name'));
+//			});
+//			
+//			// Get only unique name to prevent duplicated result for checkbox
+//			var arr_unique_name = $.unique(arr_criterion_name); 
+//			var arr_criterion = [];
+//			for (var idx in arr_unique_name){
+//				var ele_name = arr_unique_name[idx];
+//				var $target = $("input[name='"+ele_name+"']");
+//				var ele_type = $target.attr('type');
+//				if(ele_type == 'checkbox'){
+//					// Get checked value data and serialize to 1d text
+//					// arr_criterion.push($("input[name='"+ele_name+"']:checked").serialize());
+//					var arr_checked_vals = [];
+//					$("input[name='"+ele_name+"']:checked").each(function(idx){
+//						arr_checked_vals.push($(this).val());
+//					});
+//					
+//					arr_criterion.push(arr_checked_vals.join(","));
+//				}else if(ele_type == 'text'){
+//					var text_val = $target.val().replace("-", ",");
+//					// Submit with format "1,2&2,3&...
+//					arr_criterion.push(text_val);
+//				}
+//			}
+//
+//			form_data.append('criterion', arr_criterion.join("&"));
+
+			// ===== Bin
+//			var arr_bin = [];
+//			$('input[name="bin"]').each(function(idx){
+//				arr_bin.push($(this).val());
+//			});	
+//			form_data.append('bin', arr_bin.join(","));
+//			
+//			// ===== Group by
+//			arr_groupby = []
+//			$('input[name="groupby"').each(function(idx){
+//				arr_groupby.push($(this).val());
+//			});
+//			form_data.append('groupby', arr_groupby.join(","));
+			
+			
 			// Upload file
 			$.ajax({
 				url : url,
@@ -474,8 +403,16 @@ function bind_render_mean_bar_plot(){
 						//Hide previous display error (if any)
 						alert_message(resp);
 					}
-					plot_strat_mean_bar(resp.traces);
-					
+					if (target_action == "stratify"){
+						plot_strat_mean_bar(resp.traces);
+						//$("#plot_fmh_mean_bar").html("")
+					}else if((target_action == "framingham")){
+						// Plot value with framingham
+						plot_strat_mean_bar(resp.traces);
+						plot_strat_mean_fmh_bar(resp.traces);
+					}else if(target_action == "feature_variance"){
+						plot_feature_variance_bar(resp.feature_variances);
+					}
 				},
 				error : function(resp) {
 					alert_error_message(resp);
@@ -485,6 +422,11 @@ function bind_render_mean_bar_plot(){
 	});
 }
 
+/**
+ * Plot bar chart of stratification result in group of radiomic feature
+ * @param traces
+ * @returns
+ */
 function plot_strat_mean_bar(traces){
 	if(traces != undefined && traces.length > 0){
 		// data for keeping all traces
@@ -536,6 +478,141 @@ function plot_strat_mean_bar(traces){
 }
 
 
+/**
+ * Plot bar chart of framingham risk score, corresponding to stratification result
+ * @param traces
+ * @returns
+ */
+function plot_strat_mean_fmh_bar(traces){
+	// TODO assign color to individual bar
+	if(traces != undefined && traces.length > 0){
+		// data for keeping all traces
+		var data = [];
+		for(t_idx in traces){
+			temp_trace = traces[t_idx];
+			// Generate array of duplicate trace name for grouping bar in case there are many groups
+			var t_name = temp_trace.trace_name
+			var len_group_item = temp_trace.x_labels.length
+			var arr_t_name = []
+			for(var i = 0; i < len_group_item; i++){
+				arr_t_name.push(t_name);
+			}
+			var trace = {
+					  x: [arr_t_name, temp_trace.x_labels],
+					  y: temp_trace.framingham_risk_score,
+					  title: {
+						    text:'Mean value of each features'
+					  },
+//					  marker: {
+//						  color: get_fmh_marker_color(temp_trace.framingham_risk_score)
+//					  },
+					  text: temp_trace.n_group_member.map(String), // show text on bar
+					  textposition: 'top center',
+					  name: t_name,
+					  type: 'bar'
+					  //width: 0.3
+				};
+			data.push(trace);
+		}// end of for
+		
+		var layout = {
+				  autosize: true,
+				  showlegend: true,
+				  title: {
+					    text:'Framingham 10-year risk in %'
+				  },
+//				  width: 1200,
+//				  height: 500,
+				  xaxis: {
+//					type: 'category', // error for this
+//					automargin: true,
+					tickangle: 35,
+//				    tickson: "boundaries",
+//				    ticklen: 10,
+				    showdividers: false, // vertical line between group
+//				    dividercolor: 'grey',
+//				    dividerwidth: 0
+				  }, 
+				  barmode: 'group',
+//				  bargap: 0.25,
+				  bargroupgap: 0.25
+				};
+		
+		Plotly.newPlot('plot_fmh_mean_bar', data, layout);
+			
+	}	
+}
+
+
+/**
+ * Plot feature variance bar
+ * @param feature_variance: object contain key: feature and value
+ * @returns -
+ */
+function plot_feature_variance_bar(feature_variance){
+	if(feature_variance != undefined){
+		// data for keeping all traces
+		var data = [];
+		//for(idx in feature_variance.features){
+			var trace = {
+					  x: feature_variance.features,
+					  y: feature_variance.values,
+//					  title: {
+//						    text:'Variance of Features'
+//					  },
+					 // text: temp_trace.n_group_member.map(String), // show text on bar
+					 // textposition: 'top center',
+					  name: feature_variance.features, //name
+					  type: 'bar'
+				};
+			data.push(trace);
+		//}
+		var layout = {
+				  autosize: true,
+				  showlegend: true,
+				  title: {
+					    text:'Feature Variance Max - Min'
+				  },
+				  xaxis: {
+//					type: 'category', // error for this
+//					automargin: true,
+					tickangle: 35,
+//				    tickson: "boundaries",
+//				    ticklen: 10,
+				    showdividers: false, // vertical line between group
+//				    dividercolor: 'grey',
+//				    dividerwidth: 0
+				  }, 
+				  barmode: 'group',
+//				  bargap: 0.25,
+				  bargroupgap: 0.25
+				};
+		
+		Plotly.newPlot('plot_feature_variance_bar', data, layout);
+			
+	}	
+}
+
+var fhm_color_4 = 'rgba(251,52,4,1)';
+var fhm_color_3 = 'rgba(255,123,127,1)';
+var fhm_color_2 = 'rgba(143,245,143,1)';
+var fhm_color_1 = 'rgba(2,191,2,1)';
+function get_fmh_marker_color(arr_y_values){
+	var arr_fhm_risk_color = [];
+	if(arr_y_values != undefined && arr_y_values.length > 0){
+		for(var idx in arr_y_values){
+			var val = arr_y_values[idx];
+			if(val > 20){
+				arr_fhm_risk_color.push(fhm_color_3);
+			}else if(val >=10 && val <= 20){
+				arr_fhm_risk_color.push(fhm_color_2);
+			}else if(val < 10){
+				arr_fhm_risk_color.push(fhm_color_1);
+			} 
+		}
+	}
+	return arr_fhm_risk_color;
+}
 
 /**
  * Plot nominal or interval

@@ -42,8 +42,9 @@ see #plotjs_container height
 	min-height: 200px;
 }
   
-#source_target_selection_group #feature_list{
-    max-height: 200px;
+#source_target_selection_group #feature_list, #pca_group #pca_feature_list{
+
+    max-height: 420px;
     overflow: scroll;
 }
 
@@ -63,7 +64,7 @@ see #plotjs_container height
 }
 
 #source_target_selection_group #main_right_table, #pca_group  #main_right_table{
-   max-height: 300px;
+   max-height: 500px;
    overflow: scroll;
 }
 #source_target_selection_group #tbl_criterion, #pca_group  #tbl_pca_criterion{
@@ -83,7 +84,9 @@ see #plotjs_container height
 	border: 1px solid #ccc;
 }
 
-
+.criterion_checkbox_label{
+	margin-right: 15px;
+}
 .txb_slider{
 	border:0; 
 	color:#2196f3;
@@ -169,10 +172,10 @@ see #plotjs_container height
 
 
 /* ============ Tab 2 ============ */
-#pca_group #pca_feature_list{
-    max-height: 200px;
+/* #pca_group #pca_feature_list{
+    max-height: 500px;
     overflow: scroll;
-}
+} */
 
 #plot_reduced_dim{
 	 

@@ -1,4 +1,4 @@
-<div class="alert alert-success alert-dismissible" style="display:none;">
+<!-- <div class="alert alert-success alert-dismissible" style="display:none;">
 	<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
   	<strong>[Success]</strong> <div id="result-msg-success" style="display: inline-block;"></div>
 </div>
@@ -16,8 +16,127 @@
 <div class="alert alert-danger alert-dismissible" style="display:none;">
 	<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
   	<strong>[Error]</strong> <div id="result-msg-error" style="display: inline-block;"></div>
-</div>
+</div> -->
 
 
 <!-- Spinner -->
 <i class="spinner" style="display:none;"></i>
+
+
+<div id="alert-modal" class="modal fade">
+	<!-- <div class="alert alert-danger alert-dismissible" >
+			<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+  			<strong>[Error]</strong> <div id="result-msg-error" style="display: inline-block;"></div>
+		</div>
+      </div> -->
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 id="alert-modal-title" class="modal-title"></h4>
+      </div>
+      <div id="alert-modal-body" class="modal-body">
+      <div class="alert alert-danger alert-dismissible" >
+			<!-- <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a> -->
+  			<strong>[Error]</strong><br/> 
+  			<div id="result-msg-error" style="display: inline-block;"></div>
+		</div>
+		<div class="alert alert-success alert-dismissible" style="display:none;">
+		<!-- <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a> -->
+  			<strong>[Success]</strong> <br/>
+  			<div id="result-msg-success" style="display: inline-block;"></div>
+		</div>
+
+		<div class="alert alert-info alert-dismissible" style="display:none;">
+			<!-- <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a> -->
+		  	<strong>[Info]</strong><br/> 
+		  	<div id="result-msg-info" style="display: inline-block;"></div>
+		</div>
+
+		<div class="alert alert-warning alert-dismissible" style="display:none;">
+			<!-- <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a> -->
+		  	<strong>[Warning]</strong> <br/>
+		  	<div id="result-msg-warning" style="display: inline-block;"></div>
+		</div>
+
+		<!-- <div class="alert alert-danger alert-dismissible" style="display:none;">
+			<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+		  	<strong>[Error]</strong> <div id="result-msg-error" style="display: inline-block;"></div>
+		</div> -->
+		
+      </div>
+      
+     <!--  <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div> -->
+      
+    </div>
+  </div>
+</div>
+
+<script>
+function alert_message(resp){
+	
+	
+	//console.log(resp)
+	// Hide all previous alert messages.
+	$("div.alert.alert-success").hide();
+	$("div.alert.alert-info").hide();
+	$("div.alert.alert-warning").hide();
+	$("div.alert.alert-danger").hide();
+	
+	$(".errorlist").remove();
+	
+	if (resp.msg_success != undefined && resp.msg_success != ""){
+		$("#result-msg-success").text(resp.msg_success);
+		$("div.alert.alert-success").show();
+		$('#alert-modal').modal('show');
+	}else if (resp.msg_info != undefined && resp.msg_info != ""){
+		$("#result-msg-info").text(resp.msg_info);
+		$("div.alert.alert-info").show();
+		$('#alert-modal').modal('show');
+	}else if (resp.msg_warning != undefined && resp.msg_warning != ""){
+		$("#result-msg-warning").text(resp.msg_warning);
+		$("div.alert.alert-info").show();
+		$('#alert-modal').modal('show');
+	}else if (resp.msg_error != undefined && resp.msg_error != ""){
+		// Remove previous error
+		//var div_error = $('<div />').html(resp.msg_error).text();
+		//console.log(div_error);
+		
+		//$("#result-msg-error").after(div_error);
+		
+		
+		$("#result-msg-error").html('');
+		var html_text = $('<div />').html(resp.msg_error).text();
+		$("#result-msg-error").append(html_text);
+		//$('#alert-modal').modal('show');
+		//$("#result-msg-error").text(resp.msg_error);
+		$("div.alert.alert-danger").show();
+		
+		/* $('#alert-modal').modal('show');
+		$("#result-msg-error").append(resp.msg_error);
+		//$('#alert-modal').modal('show');
+		$("#result-msg-error").html(resp.msg_error);
+		//$('#alert-modal').modal('show');
+		$("#result-msg-error").text(resp.msg_error);
+		$("div.alert.alert-danger").show(); */
+		
+		$('#alert-modal').modal('show');
+	}
+	
+	$('.spinner').hide();
+	
+	
+}
+
+/* function alertModal(title, body) {
+  // Display error message to the user in a modal
+  //$('#alert-modal-title').html(title);
+  //$('#alert-modal-body').html(body);
+  $('#alert-modal').modal('show');
+}
+var a = {msg_info: "aaaaa"};
+alert_message(a); */
+//alertModal("xxx", "yyy");
+</script>

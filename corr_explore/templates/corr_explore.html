@@ -7,27 +7,28 @@
 
 <!-- Link to CSS -->
 
-<link rel="stylesheet" type="text/css" href="{% static "external_library/slickgrid/2.4.3/slick.grid.css"%}" type="text/css" />
+<!-- <link rel="stylesheet" type="text/css" href="{% static "external_library/slickgrid/2.4.3/slick.grid.css"%}" type="text/css" />
 <link rel="stylesheet" type="text/css" href="{% static "external_library/slickgrid/2.4.3/slick-default-theme.css"%}" type="text/css" />
 <link rel="stylesheet" type="text/css" href="{% static "external_library/slickgrid/2.4.3/controls/slick.pager.css"%}" type="text/css" />
-<link rel="stylesheet" type="text/css" href="{% static "external_library/slickgrid/2.4.3//controls/slick.columnpicker.css"%}" type="text/css" />
+<link rel="stylesheet" type="text/css" href="{% static "external_library/slickgrid/2.4.3//controls/slick.columnpicker.css"%}" type="text/css" /> -->
 <link rel="stylesheet" type="text/css" href="{% static "external_library/jquery/ui/1.12.1/jquery-ui.theme.css"%}" type="text/css" />
 <link rel="stylesheet" type="text/css" href="{% static "external_library/jquery/ui/1.12.1/jquery-ui.min.css"%}"></link>
 
 
 <!-- Link to JS -->
 
-<!-- Jquery UI for autocomplete -->
+<!-- Jquery UI for autocomplete, slider bar -->
 <script src="{% static "external_library/jquery/ui/1.12.1/jquery-ui.js"%}"></script>
 
 <!--  Plotly -->
 <script type="text/javascript" src="{% static "external_library/d3js/d3.v3.js"%}"></script>
-<script type="text/javascript" src="{% static "external_library/plotly/plotly-1.47.3.min.js"%}"></script>
+<script type="text/javascript" src="{% static "external_library/plotly/plotly-1.48.1.min.js"%}"></script>
 
 
 <!-- SlickGrid Component -->
 <!-- can't remove 1.11.3 -->
-<script src="{% static "external_library/slickgrid/2.4.3/lib/jquery-ui-1.11.3.min.js"%}"></script>
+<!-- <script src="{% static "external_library/slickgrid/2.4.3/lib/jquery-ui-1.11.3.min.js"%}"></script>
+
 <script src="{% static "external_library/slickgrid/2.4.3/lib/jquery.event.drag-2.3.0.js"%}"></script>
 <script type="text/javascript" src="{% static "external_library/slickgrid/2.4.3/slick.core.js"%}"></script>
 <script type="text/javascript" src="{% static "external_library/slickgrid/2.4.3/slick.grid.js"%}"></script>
@@ -36,11 +37,11 @@
 <script type="text/javascript" src="{% static "external_library/slickgrid/2.4.3/plugins/slick.rowselectionmodel.js"%}"></script>
 <script type="text/javascript" src="{% static "external_library/slickgrid/2.4.3/slick.dataview.js"%}"></script>
 <script type="text/javascript" src="{% static "external_library/slickgrid/2.4.3/controls/slick.pager.js"%}"></script>
-<script type="text/javascript" src="{% static "external_library/slickgrid/2.4.3/controls/slick.columnpicker.js"%}"></script>
+<script type="text/javascript" src="{% static "external_library/slickgrid/2.4.3/controls/slick.columnpicker.js"%}"></script> -->
 
 <!-- Bootstrap-toggle -->
-<script src="{% static "external_library/bootstrap-toggle/js/bootstrap2-toggle.min.js"%}"></script>
-<link rel="stylesheet" type="text/css" href="{% static "external_library/bootstrap-toggle/css/bootstrap2-toggle.min.css"%}"></link>
+<!-- <script src="{% static "external_library/bootstrap-toggle/js/bootstrap2-toggle.min.js"%}"></script>
+<link rel="stylesheet" type="text/css" href="{% static "external_library/bootstrap-toggle/css/bootstrap2-toggle.min.css"%}"></link> -->
 
 <!--  The project static files -->
 <link rel="stylesheet" type="text/css" href="{% static "project/corr_explore/corr_explore.css"%}"></link>
@@ -75,7 +76,7 @@
 	<select id="template_select_number" style="display:none;">
 	  <option value="INTERVAL">Interval</option>
 	  <option value="NOMINAL" selected>Nominal</option>
-	  <option value="ORDINAL">Ordinal</option>
+<!-- 	  <option value="ORDINAL">Ordinal</option> -->
 	</select>
 
 	<!-- Use container-fluid for full screen -->
@@ -155,6 +156,7 @@
 									<div class="form-group row top_bottom_lines">
 										<div style="display: -webkit-inline-box;">
 											<div><a id="lnk_clear_features" href="#">Clear All</a></div>
+											<div><a id="lnk_select_all_features" href="#">Select All</a></div>
 											<!-- <div><img width="25px" src="{% static "images/alphabetical-order.png"%}"/></div> -->
 										</div>					
 									</div>
@@ -170,6 +172,7 @@
 							<table id="tbl_criterion">
 							  <thead>
 							    <tr>
+							      <th>Include</th>
 							      <th>Column</th>
 							      <th>Number Type</th>
 							      <th>Criterion</th>
@@ -186,10 +189,15 @@
 				</div>
 				<!-- ====== End of Source/Target selection ====== -->
 				<div style="width:100%; text-align: center;margin-top:10px;margin-bottom: 10px;">
-					<button id="render_plot" class="btn btn-primary" style="width: 300px;" type="submit">Plot</button>
+					<button id="btn_mean_bar" class="btn btn-primary" style="width: 150;" type="submit">Group Mean Value Plot</button>
+					<button id="btn_fmh_score" class="btn btn-primary" style="width: 150;" type="submit">Framingham Risk Score</button>
+					<a href="#">About Framingham</a>
+					<button id="btn_feature_variance" class="btn btn-primary" style="width: 150;" type="submit">Features Variance</button>
 				</div>
 			</div>
 			<div id="plot_strat_mean_bar" ></div>
+			<div id="plot_fmh_mean_bar" ></div>
+			<div id="plot_feature_variance_bar" ></div>
 		</div>
 		<!-- ===== End of tab 1 ===== -->
 
@@ -265,7 +273,8 @@
 				<!-- ====== End of Source/Target selection ====== -->
 				<div style="width:100%; text-align: center;margin-top:10px;margin-bottom: 10px;">
 					<!-- <button id="btn_sel_feature_xgboost" class="btn btn-primary" style="width: 250px;" type="submit">Select Features by XGBoost</button> -->
-					<button id="render_pca_space" class="btn btn-primary" style="width: 150px;" type="submit">PCA Plot</button>
+					<button id="btn_pca_plot" class="btn btn-primary" style="width: 150px;" type="submit">PCA Plot</button>
+					<button id="btn_pca_lda_plot" class="btn btn-primary" style="width: 150px;" type="submit">LDA Plot</button>
 				</div>
 			</div>
 			<div id="plot_reduced_dim" ></div>

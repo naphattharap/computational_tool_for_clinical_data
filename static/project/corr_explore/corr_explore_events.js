@@ -16,7 +16,7 @@ var plot_reduced_dim;
 // Flag to check if it is new plot or not 
 // in order to decide whether restyle or newPlot should be used.
 var is_new_plot = true;
-
+var NAME_IDX_SEPARATOR = "-";
 
 var radiomic_layout = {
 	   	scene: {
@@ -88,13 +88,15 @@ $(document).ready(function() {
 	bind_render_mean_bar_plot();
 
 	// When click on render button
-	bind_render_pca_plot();
+	bind_button_pca_plot();
 	
 	$( window ).resize(function() {
+		if (strat_mean_bar != undefined && $(strat_mean_bar).html() != ""){
 		  Plotly.relayout(strat_mean_bar, {
 			  width: $(strat_mean_bar).width(), 
 			  height: $(strat_mean_bar).height()  
 		  });
+		}
 	});
 	
 	// ========== Tab Select Event Handlers ============
@@ -595,6 +597,7 @@ function bind_file_upload_event(){
 			processData : false, // important
 			contentType : false,
 			data : formData,
+			dataType: "json",
 			beforeSend: function(e){
 				$(".spinner").show();
 			},
@@ -652,7 +655,7 @@ function bind_file_upload_event(){
 				$('#upload_file_group').toggle();
 			},
 			error : function(resp) {
-				alert_error_message(resp);
+				alert_message(resp);
 			}
 			
 		});

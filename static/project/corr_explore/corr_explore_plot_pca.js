@@ -2,19 +2,32 @@
 
 // Slider or Checkbox 
 var pca_criterion_name = "pca_criterion";
-var NAME_IDX_SEPARATOR = "-";
+
 /**
  * Bind event when clicks on Render Plot of tab#2 
  * then plot scatter plot
  * @returns none
  */
-function bind_render_pca_plot(){
+function bind_button_pca_plot(){
 	
-	$('#render_pca_space').on('click', function(e){
+	
+	$('#btn_pca_plot, #btn_pca_lda_plot').on('click', function(e){
+		var btn_id = $(this).attr("id");
+		console.log(btn_id);
+		var selected_algo = ""
+		if(btn_id == "btn_pca_plot"){
+			selected_algo = "PCA";
+		} else if(btn_id == "btn_pca_lda_plot"){
+			selected_algo = "LDA";
+		}else{
+			console.error("Selected algorithm is not defined.")
+			return false;
+		}
+		
 		e.preventDefault();
 		// Add parameter to form
 		var form = document.getElementById('form_upload_file');
-		var form_data = get_pca_form_data(form);
+		var form_data = get_pca_form_data(form, selected_algo);
 		// Get target URL that processes the file
 		var url = $('#data_attr').attr('data-url-dim');
 		// Upload file
@@ -175,13 +188,11 @@ function set_features(sorted_important_col_names, sorted_important_indexes, n_fe
 	}
 }
 
-function get_pca_form_data(form){
+function get_pca_form_data(form, selected_algo){
 
-	
-	//$('#form_upload_file').submit(function(e){
-		// Upload file and render result
 		
-		
+		// Add parameter to form
+		var form = document.getElementById('form_upload_file');
 		
 		// crsf bind here
 		var form_data = new FormData(form);
@@ -205,7 +216,7 @@ function get_pca_form_data(form){
 		var $selected_col_row = $('input[name="dimtarget"]:checked').attr('id');
 		if($selected_col_row == undefined){
 			alert("Please select target label");
-			return;
+			return false;
 		}
 		var row_idx = $selected_col_row.split("-")[1];
 		form_data.append('column_index', row_idx);
@@ -256,7 +267,6 @@ function get_pca_form_data(form){
 //		if(selected_algo == undefined){
 //			alert("Please select algo");
 //		}
-		var selected_algo = "PCA";
 		form_data.append('dim_algo', selected_algo);
 		
 		return form_data;
