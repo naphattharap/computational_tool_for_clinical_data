@@ -36,6 +36,16 @@ function render_feature_columns($target, checkbox_name, arr_features){
 	}else{
 		console.error('Empty array cannot be processed!');
 	}
+	
+	// Bind event on click at select/clear all checkbox
+	$('#chk_all_features').on('click',function(){
+		if($(this).is(':checked')){
+			$('input[type=checkbox][name="feature_indexes"]').prop('checked', true);
+		}else{
+			// Set all rows' background color
+			$('input[type=checkbox][name="feature_indexes"]').prop('checked', false);
+		}
+	});
 }
 
 
@@ -60,11 +70,13 @@ function render_mean_bar_criterion_table(criterions){
 			var suffix = NAME_IDX_SEPARATOR+i;
 			
 			var $tr = $('<tr>');
-			$tr.attr('id', 'row_'+i);
+			$tr.attr('id', 'row' + NAME_IDX_SEPARATOR +i);
 			// Include data in filter process or not
 			var $td_inc_target = $('<td align="center">');
 			
 			var $td_col_name = $('<td>');
+			$td_col_name.attr('id', 'target_col_name' + NAME_IDX_SEPARATOR +i);
+			
 			var $td_num_type = $('<td align="center">');
 			var $td_criterion = $('<td>');
 			var $td_bin = $('<td align="center">');
@@ -161,8 +173,27 @@ function render_mean_bar_criterion_table(criterions){
  * @returns
  */
 function bind_mean_bar_criterion_sliders(){
+	
+	$('#chk_inc_all_targets').on('click',function(){
+		if($(this).is(':checked')){
+			$('input[type=checkbox][name="target_strat"]').prop('checked', true);
+			// Clear all rows' background color
+			// $('#tbl_criterion tbody').css('background-color','')
+			$("#tbl_criterion").find("tbody>tr").each(function(e){
+				$(this).css('background-color','');
+			});
+		}else{
+			// Set all rows' background color
+			$('input[type=checkbox][name="target_strat"]').prop('checked', false);
+			//$('#tbl_criterion tbody').css('background-color','#eeeeee');	
+			$("#tbl_criterion").find("tbody>tr").each(function(e){
+				$(this).css('background-color','#eeeeee');
+			});
+		}
+	});
+	
 	$("div[id^='slider-criterion_']").each(function(idx, ele){
-		console.log(idx);
+		//console.log(idx);
 		var id = $(this).attr('id');
 		var idx_textbox = id.split("_");
 		min_val = arr_slider_min[idx];
@@ -179,7 +210,28 @@ function bind_mean_bar_criterion_sliders(){
 			 }
 	});
 	});
+	
+	// Bind checkbox onclick event
+	$("input[name='target_strat']").each(function(idx, ele){
+
+		$(this).on('click',function(e){
+			var myid = $(this).attr('id');
+			var row_idx = myid.split(NAME_IDX_SEPARATOR)[1];
+			var $row = $("#row" + NAME_IDX_SEPARATOR + row_idx);
+			if($(this).is(":checked")){
+				// clear row background color when it is selected.
+				$row.css('background-color','');
+			}else{
+				// add gray background color for unselected row
+				$row.css('background-color','#eeeeee');
+			}
+		});
+		
+	});
+	
 }
+
+
 
 function bind_mean_bar_groupby_events(){
 	$('input[name="groupby"]').each(function(idx){
@@ -228,9 +280,9 @@ function bind_mean_bar_groupby_events(){
  * @returns none
  */
 function bind_render_mean_bar_plot(){
-	$('#btn_mean_bar, #btn_fmh_score, #btn_feature_variance').on('click', function(e){
+	$('#btn_lda_execute, #btn_fs_execute, #btn_mean_bar, #btn_fmh_score, #btn_feature_variance').on('click', function(e){
 		// Get target URL that processes the file
-		var url = $('#data_attr').attr('data-url-strat');
+		
 		
 		//$('#form_upload_file').submit(function(e){
 			// Upload file and render result
@@ -251,25 +303,60 @@ function bind_render_mean_bar_plot(){
 			
 			var is_calc_framingham = false;
 			var target_action = "";
-			if (btn_id == "btn_fmh_score"){
+			var url = ""
+			if(btn_id == "btn_fs_execute"){
+				target_action =  "xgboost";
+				form_data.append("target_action",target_action);
+				url = $('#data_attr').attr('data-url-strat');
+				// Bind data for xgboost
+				var arr_target_labels = [];
+				$('input[name="target_labels"]:checked').each(function() {
+					arr_target_labels.push($(this).val());
+				});
+				form_data.append('target_labels', arr_target_labels.join(","));
+				var n_feature_selection = $('#n_feature_selection').val();
+				if(n_feature_selection == ""){
+					msg = {msg_error: "Please enter number of features."};
+					alert_message(msg);
+					return false;
+				}
+				//alert(n_feature_selection);
+				form_data.append('n_feature_selection', n_feature_selection);
+			}else if (btn_id == "btn_fmh_score"){
+				url = $('#data_attr').attr('data-url-strat');
 				//is_calc_framingham = true;
 				//form_data.append('is_calc_framingham', 'yes');
 				target_action =  "framingham";
 				form_data.append("target_action",target_action);
 			}else if(btn_id == "btn_feature_variance"){
+				url = $('#data_attr').attr('data-url-strat');
 				//form_data.append('is_calc_framingham', 'no');
 				target_action = "feature_variance";
 				form_data.append("target_action", target_action);
-			}else{
+			}else if(btn_id == "btn_mean_bar"){
+				url = $('#data_attr').attr('data-url-strat');
 				target_action = "stratify";
 				form_data.append("target_action", target_action);
+			}else if(btn_id == "btn_lda_execute"){
+				var $selected_col_row = $('input[name="target_lda_label"]:checked').attr('id');
+				if($selected_col_row == undefined){
+					msg = {msg_error: "Please select a target label."};
+					alert_message(msg);
+					return false;
+				}
+				var row_idx = $selected_col_row.split(NAME_IDX_SEPARATOR)[1];
+				form_data.append('column_index', row_idx);
+				form_data.append('dim_algo', 'LDA');
+				target_action = "lda";
+				url = $('#data_attr').attr('data-url-dim');
 			}
 			
 			// Source and target criterion
 			var arr_feature_indexes = [];
 			$('input[name="feature_indexes"]:checked').each(function() {
-				arr_feature_indexes.push(this.value);
+				arr_feature_indexes.push($(this).val());
 			});
+			// not required when click xgboost
 			form_data.append('feature_indexes', arr_feature_indexes.join(","));
 			
 			
@@ -318,67 +405,13 @@ function bind_render_mean_bar_plot(){
 					
 				}
 			}
+
 			
 			form_data.append('target_strat', arr_sel_targets.join(","));
 			form_data.append('numtypes', arr_numtype.join(","));
 			form_data.append('criterion', arr_criterion.join("&"));
 			form_data.append('groupby', arr_groupby.join(","));
 			form_data.append('bin', arr_bin.join(","));
-			
-			
-			
-			
-			// Num type
-//			var arr_numtype = [];
-//			$('select[name^="numtypes"').each(function(idx){
-//				arr_numtype.push($(this).val());
-//			});
-			
-			// == Criterion
-			// Criteria for each target column to filter data
-//			var arr_criterion_name = [];
-//			$('input[name^="criterion_"]').each(function(idx, ele){
-//				arr_criterion_name.push($(this).attr('name'));
-//			});
-//			
-//			// Get only unique name to prevent duplicated result for checkbox
-//			var arr_unique_name = $.unique(arr_criterion_name); 
-//			var arr_criterion = [];
-//			for (var idx in arr_unique_name){
-//				var ele_name = arr_unique_name[idx];
-//				var $target = $("input[name='"+ele_name+"']");
-//				var ele_type = $target.attr('type');
-//				if(ele_type == 'checkbox'){
-//					// Get checked value data and serialize to 1d text
-//					// arr_criterion.push($("input[name='"+ele_name+"']:checked").serialize());
-//					var arr_checked_vals = [];
-//					$("input[name='"+ele_name+"']:checked").each(function(idx){
-//						arr_checked_vals.push($(this).val());
-//					});
-//					
-//					arr_criterion.push(arr_checked_vals.join(","));
-//				}else if(ele_type == 'text'){
-//					var text_val = $target.val().replace("-", ",");
-//					// Submit with format "1,2&2,3&...
-//					arr_criterion.push(text_val);
-//				}
-//			}
-//
-//			form_data.append('criterion', arr_criterion.join("&"));
-
-			// ===== Bin
-//			var arr_bin = [];
-//			$('input[name="bin"]').each(function(idx){
-//				arr_bin.push($(this).val());
-//			});	
-//			form_data.append('bin', arr_bin.join(","));
-//			
-//			// ===== Group by
-//			arr_groupby = []
-//			$('input[name="groupby"').each(function(idx){
-//				arr_groupby.push($(this).val());
-//			});
-//			form_data.append('groupby', arr_groupby.join(","));
 			
 			
 			// Upload file
@@ -405,13 +438,37 @@ function bind_render_mean_bar_plot(){
 					}
 					if (target_action == "stratify"){
 						plot_strat_mean_bar(resp.traces);
+						plot_feature_variance_bar(resp.feature_variances);
 						//$("#plot_fmh_mean_bar").html("")
 					}else if((target_action == "framingham")){
 						// Plot value with framingham
-						plot_strat_mean_bar(resp.traces);
-						plot_strat_mean_fmh_bar(resp.traces);
-					}else if(target_action == "feature_variance"){
-						plot_feature_variance_bar(resp.feature_variances);
+						// plot_strat_mean_bar(resp.traces);
+						//plot_feature_variance_bar(resp.feature_variances);
+						// plot_strat_mean_fmh_bar(resp.traces);
+						plot_radiomics_fmh(resp.traces);
+					//}else if(target_action == "feature_variance"){
+					//	plot_feature_variance_bar(resp.feature_variances);
+					}else if(target_action == "xgboost"){
+						// check at target feature
+						select_features_xgboost(resp.feature_selection.col_name, 
+												resp.feature_selection.col_idx);
+						// Alert info
+//						msg_text = "";
+//						for(var i in resp.feature_selection.col_name){
+//							for(var j in resp.feature_selection.col_name[i]){
+//								var res_fs_col_name = resp.feature_selection.col_name[i][j];
+//								msg_text += res_fs_col_name + "<br/>" ;
+//							}
+//						}
+						// Prepare message for information dialog
+						score_msg = "Train Score: "+ resp.feature_selection.train_score +
+							"&lt;br&gt;Test Score: " + resp.feature_selection.test_score + "&lt;br&gt;";	
+						str_msg = resp.feature_selection.col_name.join(",");
+						str_msg = str_msg.replace(/,/gi,", &lt;br&gt;");
+						msg = {msg_info: score_msg + str_msg};
+						alert_message(msg);
+					}else if(target_action == "lda"){
+						plot_reduced_dim_space(plot_reduced_dim, resp.plot_data, radiomic_layout);
 					}
 				},
 				error : function(resp) {
@@ -422,6 +479,228 @@ function bind_render_mean_bar_plot(){
 	});
 }
 
+function select_features_xgboost(sorted_important_col_names, sorted_important_indexes){
+	if(sorted_important_indexes != undefined && sorted_important_indexes.length > 0){
+		// Uncheck existing checked features
+		$('input[type=checkbox][name="feature_indexes"]').prop('checked', false);
+		// Join ndarray 
+		var str_idx = sorted_important_indexes.join(',');
+		var arr_idx = str_idx.split(",");
+		var len = arr_idx.length;
+		for(var i = 0; i < len; i++){
+			var col_idx = arr_idx[i];
+			// set "checked" at feature
+			$("#feature_indexes_"+col_idx).prop('checked', true);
+		}
+	}
+}
+/**
+ * Submit to get feature selection result by xgboost 
+ * and check the checkbox for corresponding features
+ * @returns
+ */
+function bind_xgboost_regressor(){
+	$('#btn_xgboostregressor').on('click', function(e){
+		// get checked stratified column
+		var target_label_name = "target_labels";
+		var $div_target = $('#target_label_list');	
+		// clear previous html
+		$div_target.html('');
+		var elements = $('input[name="target_strat"]:checked').each(function(e){
+			// get value for column index in csv file based on selected strat data
+			var col_idx = $(this).val();
+			// render checkbox for target label
+			var col_name = $('#target_col_name'+ NAME_IDX_SEPARATOR +col_idx).text()
+			var chk_id = target_label_name + NAME_IDX_SEPARATOR + col_idx;
+			var $checkbox = $('<input>').attr({type: 'checkbox', id: chk_id, name: target_label_name});
+			var $label = $('<label>').attr({class:'custom-control-label criterion_checkbox_label', for:chk_id});
+			
+			$checkbox.val(col_idx);
+			$checkbox.attr('checked', 'checked');
+			$label.text(col_name);
+			$div_target.append($checkbox).append($label);
+		});
+		$('#sel_target_labels_modal').modal('show');	
+	});
+}
+
+/**
+ * Render radio button for select label of LDA algo.
+ * @returns
+ */
+function render_modal_lda(){
+	$('#btn_lda_plot').on('click', function(e){
+		// get checked stratified column
+		var target_label_name = "target_lda_label";
+		var $div_target = $('#target_lda_label_list');	
+		// clear previous html
+		$div_target.html('');
+		var elements = $('input[name="target_strat"]:checked').each(function(e){
+			// get value for column index in csv file based on selected strat data
+			var col_idx = $(this).val();
+			// render radio for target label
+			// - get column text
+			var col_name = $('#target_col_name'+ NAME_IDX_SEPARATOR +col_idx).text()
+			var chk_id = target_label_name + NAME_IDX_SEPARATOR + col_idx;
+			var $radio = $('<input>').attr({type: 'radio', id: chk_id, name: target_label_name});
+			var $label = $('<label>').attr({class:'custom-control-label criterion_checkbox_label', for:chk_id});
+			
+			$radio.val(col_idx);
+			//$checkbox.attr('checked', 'checked');
+			$label.text(col_name);
+			$div_target.append($radio).append($label);
+		});
+		$('#sel_lda_target_label_modal').modal('show');	
+	});
+}
+
+/**
+ * Bind event when clicks on Render Plot of tab#2 
+ * then plot scatter plot
+ * @returns none
+ */
+/*
+function bind_button_lda_execute(){
+	
+	$('#btn_lda_execute').on('click', function(e){
+	//$('#btn_pca_plot, #btn_pca_lda_plot, #btn_lda_execute').on('click', function(e){
+		var btn_id = $(this).attr("id");
+		console.log(btn_id);
+		var selected_algo = ""
+
+		if(btn_id == "btn_pca_plot"){
+			selected_algo = "PCA";
+		} else if(btn_id == "btn_pca_lda_plot" || btn_id == "btn_lda_execute"){
+			selected_algo = "LDA";
+		}else{
+			console.error("Selected algorithm is not defined.")
+			return false;
+		}
+		
+		e.preventDefault();
+		// Add parameter to form
+		var form = document.getElementById('form_upload_file');
+		var form_data = get_reduced_dim_form_data(form, selected_algo);
+		// Get target URL that processes the file
+		var url = $('#data_attr').attr('data-url-dim');
+		// Upload file
+		$.ajax({
+			url : url,
+			method : form.method, // POST
+			processData : false,  // important
+			contentType : false,
+			data : form_data,
+			beforeSend: function(e){
+				$(".spinner").show();
+			},
+			complete:function(){
+				$(".spinner").hide();
+			},
+			success : function(resp) {
+				console.log(resp);
+				if(resp.msg_error != undefined &&  resp.msg_error !== ""){
+					alert_message(resp);
+					return;
+				}else{
+					//Hide previous display error (if any)
+					alert_message(resp);
+				}
+				
+				plot_reduced_dim_space(plot_reduced_dim, resp.plot_data, radiomic_layout);
+				
+			},
+			error : function(resp) {
+				alert_error_message(resp);
+			}
+		});
+	});
+}
+
+function get_reduced_dim_form_data(form, selected_algo){
+	// Add parameter to form
+	var form = document.getElementById('form_upload_file');
+	
+	// crsf bind here
+	var form_data = new FormData(form);
+	
+	// Source file
+	form_data.append('source_file', $('#source_file').val());
+	
+	var target_file = document.getElementById('target_file').files[0];
+	form_data.append('target_file', target_file);
+	
+	// Source and target criterion
+	var arr_feature_indexes = [];
+	$('input[name="feature_indexes"]:checked').each(function() {
+		arr_feature_indexes.push($(this).val());
+	});
+	
+	form_data.append('feature_indexes', arr_feature_indexes.join(","));
+	
+	var arr_sel_targets = [];
+	// ==== Target for filtering data before LDA 
+	$('input[name="target_strat"]:checked').each(function() {
+		arr_sel_targets.push($(this).val());
+	});
+	form_data.append('target_strat', arr_sel_targets.join(","));
+	
+	
+
+	// ===== Radio for Target Label
+	var $selected_col_row = $('input[name="target_lda_label"]:checked').attr('id');
+	if($selected_col_row == undefined){
+		msg = {msg_error: "Please select target label."};
+		alert_message(msg);
+		return false;
+	}
+	var row_idx = $selected_col_row.split(NAME_IDX_SEPARATOR)[1];
+	form_data.append('column_index', row_idx);
+	
+	// ===== Number Type
+//	var number_type = $('#dimnumtype_'+row_idx).val();
+//	form_data.append('numtype', number_type);
+	// ===== Array Number Type for stratification
+	var arr_numtype = [];
+	$('select[name^="numtypes"').each(function(idx){
+		arr_numtype.push($(this).val());
+	});
+	form_data.append('numtypes', arr_numtype.join(","));
+	
+	// ===== Criterion
+	// Criteria for each target column to filter data
+	var arr_criterion_name = [];
+	$("input[name^='criterion']").each(function(idx, ele){
+		arr_criterion_name.push($(this).attr('name'));
+	});
+	// Get only unique name to prevent duplicated result for checkbox
+	var arr_unique_name = $.unique(arr_criterion_name); 
+	var arr_criterion = [];
+	for (var idx in arr_unique_name){
+		var ele_name = arr_unique_name[idx];
+		var $target = $("input[name='"+ele_name+"']");
+		var ele_type = $target.attr('type');
+		if(ele_type == 'checkbox'){
+			// Get checked value data and serialize to 1d text
+			// arr_criterion.push($("input[name='"+ele_name+"']:checked").serialize());
+			var arr_checked_vals = [];
+			$("input[name='"+ele_name+"']:checked").each(function(idx){
+				arr_checked_vals.push($(this).val());
+			});
+			
+			arr_criterion.push(arr_checked_vals.join(","));
+		}else if(ele_type == 'text'){
+			var text_val = $target.val().replace("-", ",");
+			// Submit with format "1,2&2,3&...
+			arr_criterion.push(text_val);
+		}
+	}
+
+	form_data.append('criterion', arr_criterion.join("&"));
+	form_data.append('dim_algo', selected_algo);
+	
+	return form_data;
+}
+*/
 /**
  * Plot bar chart of stratification result in group of radiomic feature
  * @param traces
@@ -455,9 +734,13 @@ function plot_strat_mean_bar(traces){
 		var layout = {
 				  autosize: true,
 				  showlegend: true,
+				  title: {
+					    text:'Mean Value of Radiomic Features'
+				  },
 //				  width: 1200,
 //				  height: 500,
 				  xaxis: {
+//					 title: 'Mean Value of Radiomic Features',
 //					type: 'category', // error for this
 //					automargin: true,
 					tickangle: 35,
@@ -473,6 +756,68 @@ function plot_strat_mean_bar(traces){
 				};
 		
 		Plotly.newPlot('plot_strat_mean_bar', data, layout);
+			
+	}	
+}
+
+/**
+ * Plot bar chart of framingham risk score, corresponding to stratification result
+ * @param traces
+ * @returns
+ */
+function plot_radiomics_fmh(traces){
+	if(traces != undefined && traces.length > 0){
+		// data for keeping all traces
+		var data = [];
+		for(t_idx in traces){
+			temp_trace = traces[t_idx];
+			// Generate array of duplicate trace name for grouping bar in case there are many groups
+			var t_name = temp_trace.trace_name
+			var len_group_item = temp_trace.feature_names.length
+			var arr_t_name = []
+			for(var i = 0; i < len_group_item; i++){
+				arr_t_name.push(temp_trace.feature_names[i]);
+			}
+			var trace = {
+					  x: [arr_t_name, temp_trace.x_labels],
+					  y: temp_trace.y_values,
+//					  title: {
+//						    text:'Mean value of each features'
+//					  },
+//					  marker: {
+//						  color: get_fmh_marker_color(temp_trace.framingham_risk_score)
+//					  },
+					  text: temp_trace.n_members, // show text on bar
+					  textposition: 'top center',
+					  name: t_name,
+					  type: 'bar'
+					  //width: 0.3
+				};
+			data.push(trace);
+		}// end of for
+		
+		var layout = {
+				  autosize: true,
+				  showlegend: true,
+				  title: {
+					    text:'Framingham 10-year risk in %'
+				  },
+				  xaxis: {
+//					type: 'category', // error for this
+//					automargin: true,
+					tickangle: 35,
+//				    tickson: "boundaries",
+//				    ticklen: 10,
+				    showdividers: false, // vertical line between group
+//				    dividercolor: 'grey',
+//				    dividerwidth: 0
+				  }, 
+				  barmode: 'group',
+//				  bargap: 0.25,
+				  bargroupgap: 0.25
+				};
+		
+		Plotly.newPlot('plot_fmh_mean_bar', data, layout);
 			
 	}	
 }
@@ -498,11 +843,11 @@ function plot_strat_mean_fmh_bar(traces){
 				arr_t_name.push(t_name);
 			}
 			var trace = {
-					  x: [arr_t_name, temp_trace.x_labels],
+					  x: [temp_trace.x_labels, temp_trace.x_labels],
 					  y: temp_trace.framingham_risk_score,
-					  title: {
-						    text:'Mean value of each features'
-					  },
+//					  title: {
+//						    text:'Mean value of each features'
+//					  },
 //					  marker: {
 //						  color: get_fmh_marker_color(temp_trace.framingham_risk_score)
 //					  },
@@ -569,7 +914,7 @@ function plot_feature_variance_bar(feature_variance){
 		//}
 		var layout = {
 				  autosize: true,
-				  showlegend: true,
+				  //showlegend: true,
 				  title: {
 					    text:'Feature Variance Max - Min'
 				  },
@@ -593,26 +938,27 @@ function plot_feature_variance_bar(feature_variance){
 	}	
 }
 
-var fhm_color_4 = 'rgba(251,52,4,1)';
-var fhm_color_3 = 'rgba(255,123,127,1)';
-var fhm_color_2 = 'rgba(143,245,143,1)';
-var fhm_color_1 = 'rgba(2,191,2,1)';
-function get_fmh_marker_color(arr_y_values){
-	var arr_fhm_risk_color = [];
-	if(arr_y_values != undefined && arr_y_values.length > 0){
-		for(var idx in arr_y_values){
-			var val = arr_y_values[idx];
-			if(val > 20){
-				arr_fhm_risk_color.push(fhm_color_3);
-			}else if(val >=10 && val <= 20){
-				arr_fhm_risk_color.push(fhm_color_2);
-			}else if(val < 10){
-				arr_fhm_risk_color.push(fhm_color_1);
-			} 
-		}
-	}
-	return arr_fhm_risk_color;
-}
+//var fhm_color_4 = 'rgba(251,52,4,1)';
+//var fhm_color_3 = 'rgba(255,123,127,1)';
+//var fhm_color_2 = 'rgba(143,245,143,1)';
+//var fhm_color_1 = 'rgba(2,191,2,1)';
+//
+//function get_fmh_marker_color(arr_y_values){
+//	var arr_fhm_risk_color = [];
+//	if(arr_y_values != undefined && arr_y_values.length > 0){
+//		for(var idx in arr_y_values){
+//			var val = arr_y_values[idx];
+//			if(val > 20){
+//				arr_fhm_risk_color.push(fhm_color_3);
+//			}else if(val >=10 && val <= 20){
+//				arr_fhm_risk_color.push(fhm_color_2);
+//			}else if(val < 10){
+//				arr_fhm_risk_color.push(fhm_color_1);
+//			} 
+//		}
+//	}
+//	return arr_fhm_risk_color;
+//}
 
 /**
  * Plot nominal or interval

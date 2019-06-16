@@ -1,0 +1,53 @@
+	<div id="sel_target_labels_modal" class="modal fade">
+		<div class="modal-dialog">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		        <h4 id="alert-modal-title" class="modal-title">Please select target label(s) for feature selection</h4>
+		      </div>
+		      <div id="alert-modal-body" class="modal-body">
+				<div>
+					<!-- <p></p> -->
+					<div>
+						<p>Number of features:
+						<input type="text" id="n_feature_selection" name="n_feature_selection" value=""/>
+						</p>
+						
+					
+					</div>
+					<div id="target_label_list"></div>
+				</div>
+		      </div>
+		      <div class="modal-footer">
+        		<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        		<button id="btn_fs_execute" type="submit" class="btn btn-default" data-dismiss="modal">Execute</button>
+      		  </div>
+		    </div>
+	  	</div>
+  	</div>
+  	
+  	<div id="sel_lda_target_label_modal" class="modal fade">
+		<div class="modal-dialog">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		        <h4 id="alert-modal-title" class="modal-title">Please select target label</h4>
+		      </div>
+		      <div id="alert-modal-body" class="modal-body">
+				<div>
+					<div>
+						<!-- <p>Number of features:
+						<input type="text" id="n_feature_selection" name="n_feature_selection" value=""/>
+						</p>
+						 -->
+					</div>
+					<div id="target_lda_label_list"></div>
+				</div>
+		      </div>
+		      <div class="modal-footer">
+        		<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        		<button id="btn_lda_execute" type="submit" class="btn btn-default" data-dismiss="modal">Execute</button>
+      		  </div>
+		    </div>
+	  	</div>
+  	</div>

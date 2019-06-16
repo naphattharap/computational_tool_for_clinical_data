@@ -3,65 +3,66 @@
 // Slider or Checkbox 
 var pca_criterion_name = "pca_criterion";
 
-/**
- * Bind event when clicks on Render Plot of tab#2 
- * then plot scatter plot
- * @returns none
- */
-function bind_button_pca_plot(){
-	
-	
-	$('#btn_pca_plot, #btn_pca_lda_plot').on('click', function(e){
-		var btn_id = $(this).attr("id");
-		console.log(btn_id);
-		var selected_algo = ""
-		if(btn_id == "btn_pca_plot"){
-			selected_algo = "PCA";
-		} else if(btn_id == "btn_pca_lda_plot"){
-			selected_algo = "LDA";
-		}else{
-			console.error("Selected algorithm is not defined.")
-			return false;
-		}
-		
-		e.preventDefault();
-		// Add parameter to form
-		var form = document.getElementById('form_upload_file');
-		var form_data = get_pca_form_data(form, selected_algo);
-		// Get target URL that processes the file
-		var url = $('#data_attr').attr('data-url-dim');
-		// Upload file
-		$.ajax({
-			url : url,
-			method : form.method, // POST
-			processData : false,  // important
-			contentType : false,
-			data : form_data,
-			beforeSend: function(e){
-				$(".spinner").show();
-			},
-			complete:function(){
-				$(".spinner").hide();
-			},
-			success : function(resp) {
-				console.log(resp);
-				if(resp.msg_error != undefined &&  resp.msg_error !== ""){
-					alert_message(resp);
-					return;
-				}else{
-					//Hide previous display error (if any)
-					alert_message(resp);
-				}
-				
-				plot_reduced_dim_space(plot_reduced_dim, resp.plot_data, radiomic_layout);
-				
-			},
-			error : function(resp) {
-				alert_error_message(resp);
-			}
-		});
-	});
-}
+///**
+// * Bind event when clicks on Render Plot of tab#2 
+// * then plot scatter plot
+// * @returns none
+// */
+//function bind_button_pca_plot(){
+//	
+//	$('#btn_lda_execute').on('click', function(e){
+//	//$('#btn_pca_plot, #btn_pca_lda_plot, #btn_lda_execute').on('click', function(e){
+//		var btn_id = $(this).attr("id");
+//		console.log(btn_id);
+//		var selected_algo = ""
+//
+//		if(btn_id == "btn_pca_plot"){
+//			selected_algo = "PCA";
+//		} else if(btn_id == "btn_pca_lda_plot" || btn_id == "btn_lda_execute"){
+//			selected_algo = "LDA";
+//		}else{
+//			console.error("Selected algorithm is not defined.")
+//			return false;
+//		}
+//		
+//		e.preventDefault();
+//		// Add parameter to form
+//		var form = document.getElementById('form_upload_file');
+//		var form_data = get_pca_form_data(form, selected_algo);
+//		// Get target URL that processes the file
+//		var url = $('#data_attr').attr('data-url-dim');
+//		// Upload file
+//		$.ajax({
+//			url : url,
+//			method : form.method, // POST
+//			processData : false,  // important
+//			contentType : false,
+//			data : form_data,
+//			beforeSend: function(e){
+//				$(".spinner").show();
+//			},
+//			complete:function(){
+//				$(".spinner").hide();
+//			},
+//			success : function(resp) {
+//				console.log(resp);
+//				if(resp.msg_error != undefined &&  resp.msg_error !== ""){
+//					alert_message(resp);
+//					return;
+//				}else{
+//					//Hide previous display error (if any)
+//					alert_message(resp);
+//				}
+//				
+//				plot_reduced_dim_space(plot_reduced_dim, resp.plot_data, radiomic_layout);
+//				
+//			},
+//			error : function(resp) {
+//				alert_error_message(resp);
+//			}
+//		});
+//	});
+//}
 
 /***
  * Select features by XGBoostClassifer or XGBoostRegressor.
@@ -187,8 +188,93 @@ function set_features(sorted_important_col_names, sorted_important_indexes, n_fe
 		}
 	}
 }
-
-function get_pca_form_data(form, selected_algo){
+//function get_pca_form_data(form, selected_algo){
+//
+//	
+//	// Add parameter to form
+//	var form = document.getElementById('form_upload_file');
+//	
+//	// crsf bind here
+//	var form_data = new FormData(form);
+//	
+//	// Source file
+//	form_data.append('source_file', $('#source_file').val());
+//	
+//	var target_file = document.getElementById('target_file').files[0];
+//	form_data.append('target_file', target_file);
+//	
+//	// Source and target criterion
+//	var arr_feature_indexes = [];
+//	$('input[name="feature_indexes"]:checked').each(function() {
+//		arr_feature_indexes.push($(this).val());
+//	});
+//	
+//	form_data.append('pca_feature_indexes', arr_feature_indexes.join(","));
+//	
+//	var arr_sel_targets = [];
+//	// ==== Target for filtering data before LDA 
+//	$('input[name="target_strat"]:checked').each(function() {
+//		arr_sel_targets.push($(this).val());
+//	});
+//	form_data.append('target_strat', arr_sel_targets.join(","));
+//	
+//	
+//
+//	// ===== Radio for Target Label
+//	var $selected_col_row = $('input[name="target_lda_label"]:checked').attr('id');
+//	if($selected_col_row == undefined){
+//		msg = {msg_error: "Please select target label."};
+//		alert_message(msg);
+//		return false;
+//	}
+//	var row_idx = $selected_col_row.split(NAME_IDX_SEPARATOR)[1];
+//	form_data.append('column_index', row_idx);
+//	
+//	// ===== Number Type
+////	var number_type = $('#dimnumtype_'+row_idx).val();
+////	form_data.append('numtype', number_type);
+//	// ===== Array Number Type for stratification
+//	var arr_numtype = [];
+//	$('select[name^="numtypes"').each(function(idx){
+//		arr_numtype.push($(this).val());
+//	});
+//	form_data.append('numtypes', arr_numtype.join(","));
+//	
+//	// ===== Criterion
+//	// Criteria for each target column to filter data
+//	var arr_criterion_name = [];
+//	$("input[name^='criterion']").each(function(idx, ele){
+//		arr_criterion_name.push($(this).attr('name'));
+//	});
+//	// Get only unique name to prevent duplicated result for checkbox
+//	var arr_unique_name = $.unique(arr_criterion_name); 
+//	var arr_criterion = [];
+//	for (var idx in arr_unique_name){
+//		var ele_name = arr_unique_name[idx];
+//		var $target = $("input[name='"+ele_name+"']");
+//		var ele_type = $target.attr('type');
+//		if(ele_type == 'checkbox'){
+//			// Get checked value data and serialize to 1d text
+//			// arr_criterion.push($("input[name='"+ele_name+"']:checked").serialize());
+//			var arr_checked_vals = [];
+//			$("input[name='"+ele_name+"']:checked").each(function(idx){
+//				arr_checked_vals.push($(this).val());
+//			});
+//			
+//			arr_criterion.push(arr_checked_vals.join(","));
+//		}else if(ele_type == 'text'){
+//			var text_val = $target.val().replace("-", ",");
+//			// Submit with format "1,2&2,3&...
+//			arr_criterion.push(text_val);
+//		}
+//	}
+//
+//	form_data.append('criterion', arr_criterion.join("&"));
+//	form_data.append('dim_algo', selected_algo);
+//	
+//	return form_data;
+//}
+function get_pca_form_data_old(form, selected_algo){
 
 		
 		// Add parameter to form

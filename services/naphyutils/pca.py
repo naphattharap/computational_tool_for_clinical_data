@@ -10,7 +10,7 @@ class LdaUtil:
             Reduced dimension by default setting from LDA
         """
         lda = LinearDiscriminantAnalysis(n_components=n_components)
-        X_lda = lda.fit(X, y).transform(X)
+        X_lda = lda.fit_transform(X, y)
         return X_lda
     
     

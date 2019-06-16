@@ -11,6 +11,8 @@ var pca_feature_list;
 
 // Plot
 var strat_mean_bar;
+var feature_variance_bar;
+var fmh_mean_bar;
 var plot_reduced_dim;
 
 // Flag to check if it is new plot or not 
@@ -76,6 +78,9 @@ $(document).ready(function() {
 	pca_feature_list = $('#pca_feature_list');
 	
 	strat_mean_bar = document.getElementById('plot_strat_mean_bar');
+	feature_variance_bar = document.getElementById('plot_feature_variance_bar');
+	fmh_mean_bar = document.getElementById('plot_fmh_mean_bar');
+	
 	plot_reduced_dim = document.getElementById('plot_reduced_dim');
 	// Toggle to show or hide target sect
 	// Toggle to show or hide target sections
@@ -97,6 +102,20 @@ $(document).ready(function() {
 			  height: $(strat_mean_bar).height()  
 		  });
 		}
+		
+		if (feature_variance_bar != undefined && $(feature_variance_bar).html() != ""){
+			  Plotly.relayout(feature_variance_bar, {
+				  width: $(feature_variance_bar).width(), 
+				  height: $(feature_variance_bar).height()  
+			  });
+			}
+		
+		if (fmh_mean_bar != undefined && $(fmh_mean_bar).html() != ""){
+			  Plotly.relayout(fmh_mean_bar, {
+				  width: $(fmh_mean_bar).width(), 
+				  height: $(fmh_mean_bar).height()  
+			  });
+			}
 	});
 	
 	// ========== Tab Select Event Handlers ============
@@ -633,6 +652,12 @@ function bind_file_upload_event(){
 				bind_mean_bar_criterion_sliders();
 				// Event for groupby column, to enable/disable readonly of Bin column
 				bind_mean_bar_groupby_events();
+				// Bind event click for XGBoost
+				bind_xgboost_regressor();
+				// Bind event for LDA button
+				render_modal_lda();
+				// Bind execute button for LDA
+				//bind_button_lda_execute();
 				
 
 				// =============== Tab 2: PCA===============
@@ -645,6 +670,7 @@ function bind_file_upload_event(){
 				
 				// Bind button events
 				bind_select_features_by_xgboost();
+				
 				
 				
 				// ============== Common events that bind for all bar ========

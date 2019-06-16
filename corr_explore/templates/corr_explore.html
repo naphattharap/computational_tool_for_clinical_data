@@ -78,6 +78,11 @@
 	  <option value="NOMINAL" selected>Nominal</option>
 <!-- 	  <option value="ORDINAL">Ordinal</option> -->
 	</select>
+	
+	<!-- Include LDA Modal -->
+	{% include "corr_explore_modal.html" %}
+
+
 
 	<!-- Use container-fluid for full screen -->
 	<div class="container-fluid">
@@ -100,10 +105,10 @@
 								<div class="col-sm-7">
 									
 									<!-- Default checked -->
-									<div class="custom-control custom-checkbox">
+									<!-- <div class="custom-control custom-checkbox">
 									  	<input type="checkbox" id="source_column_header"  name="source_column_header" class="custom-control-input" checked>
 									  	<label class="custom-control-label" for="source_column_header">Data file contains table header</label>
-									</div>
+									</div> -->
 									<input id="source_file" name="source_file" type="file" class="file_chooser"/>
 								</div>
 							</div>
@@ -112,10 +117,10 @@
 								<p class="col-sm-2">Target</p>
 								<div class="col-sm-7">
 									<!-- Default checked -->
-									<div class="custom-control custom-checkbox">
+									<!-- <div class="custom-control custom-checkbox">
 									  	<input type="checkbox" id="target_column_header"  name="target_column_header" class="custom-control-input" checked>
 									  	<label class="custom-control-label" for="target_column_header">Data file contains table header</label>
-									</div>
+									</div> -->
 									<input id="target_file" name="target_file" type="file" class="file_chooser"/>
 									<div style="margin-top: 15px;">
 										<button id="process_data" class="btn btn-primary" style="width: 150px;" type="submit">Process</button>
@@ -131,14 +136,13 @@
 	
 	
 	<div id="process_result_tabs" class="container-fluid">
-		<ul class="nav nav-tabs" style="margin-bottom: 15px;">
-			<li class="active"><a data-toggle="tab" href="#tab_1">Mean Bar Chart</a></li>
-			<li><a data-toggle="tab" href="#tab_2">Principle Component Analysis</a></li>
+		<!-- <ul class="nav nav-tabs" style="margin-bottom: 15px;"> -->
+			<!-- <li class="active"><a data-toggle="tab" href="#tab_1">Mean Bar Chart</a></li> -->
+			<!-- <li><a data-toggle="tab" href="#tab_2">Principle Component Analysis</a></li> -->
 			<!-- <li><a data-toggle="tab" href="#tab_3">Feature Analysis</a></li> -->
-			
-		</ul>
+		<!-- </ul> -->
 		
-		<div id="tab_1" class="tab-pane fade in active">
+		<!-- <div id="tab_1" class="tab-pane fade in active"> -->
 			<!-- Toggle -->
 			<p>
 				<a id="source_target_selection_title" href="#" class="toggle_text">Features and Criterion</a>
@@ -152,11 +156,12 @@
 								<div>
 									<h5 class="h_section_title">FEATURES</h5>
 									
-
 									<div class="form-group row top_bottom_lines">
 										<div style="display: -webkit-inline-box;">
-											<div><a id="lnk_clear_features" href="#">Clear All</a></div>
-											<div><a id="lnk_select_all_features" href="#">Select All</a></div>
+											<input type="checkbox" id="chk_all_features" 
+													name="chk_all_features"/>
+							      			<label for="chk_all_features">Check/Uncheck All</label>
+											<!-- <div><a id="lnk_select_all_features" href="#">Select All</a></div> -->
 											<!-- <div><img width="25px" src="{% static "images/alphabetical-order.png"%}"/></div> -->
 										</div>					
 									</div>
@@ -172,7 +177,10 @@
 							<table id="tbl_criterion">
 							  <thead>
 							    <tr>
-							      <th>Include</th>
+							      <th>Include<br/>
+							      	<input type="checkbox" id="chk_inc_all_targets" name="chk_inc_all_targets" checked/>
+							      	<label for="chk_inc_all_targets">Check/Uncheck All</label>
+							      </th>
 							      <th>Column</th>
 							      <th>Number Type</th>
 							      <th>Criterion</th>
@@ -189,97 +197,31 @@
 				</div>
 				<!-- ====== End of Source/Target selection ====== -->
 				<div style="width:100%; text-align: center;margin-top:10px;margin-bottom: 10px;">
+					<button id="btn_xgboostregressor" class="btn btn-primary" style="width: 150;" type="submit">XGBoost Regressor</button>
 					<button id="btn_mean_bar" class="btn btn-primary" style="width: 150;" type="submit">Group Mean Value Plot</button>
 					<button id="btn_fmh_score" class="btn btn-primary" style="width: 150;" type="submit">Framingham Risk Score</button>
-					<a href="#">About Framingham</a>
-					<button id="btn_feature_variance" class="btn btn-primary" style="width: 150;" type="submit">Features Variance</button>
+					<button id="btn_fmh_radiomics_corr" class="btn btn-primary" style="width: 150;" type="submit">Radioimics & Framingham Risk Score Correlation</button>
+					<!-- <a href="#">About Framingham</a> -->
+					<button id="btn_pca_plot" class="btn btn-primary" style="width: 150px;" type="submit">PCA Plot</button>
+					<button id="btn_lda_plot" class="btn btn-primary" style="width: 150px;" type="submit">LDA Plot</button>
+					<!-- <button id="btn_feature_variance" class="btn btn-primary" style="width: 150;" type="submit">Group Variance</button> -->
 				</div>
 			</div>
 			<div id="plot_strat_mean_bar" ></div>
-			<div id="plot_fmh_mean_bar" ></div>
 			<div id="plot_feature_variance_bar" ></div>
-		</div>
+			<div id="plot_fmh_mean_bar" ></div>
+			<div id="plot_fmh_female_bar" ></div>
+			<div id="plot_fmh_male_bar" ></div>
+			<div id="plot_fmh_correlation_bar" ></div>
+			<div id="plot_reduced_dim_pca" ></div>
+			<div id="plot_reduced_dim_lda" ></div>
+			
+		<!-- </div> -->
 		<!-- ===== End of tab 1 ===== -->
 
 
 		
-		<div id="tab_2" class="tab-pane">
-			<!-- Toggle -->
-			<p>
-				<a id="pca_selection_title" href="#"  class="toggle_text">Features and Criterion</a>
-			</p>
-			<!-- =============== Data column selection ============== -->
-			<div id="pca_group_outer" class="form-group-border">
-				<div id="pca_group">
-					<div id="main_left">
-						<div id="pca_feature_group" >
-							<div id="pca_feature_group_section">
-								<div>
-									<h5 class="h_section_title">FEATURES</h5>
-									<div style="display: -webkit-inline-box;width: 100%;">
-										<div style="width: 45%; margin-left: 10px;">
-											<p>Select By</p>
-										</div>
-										<div style="display: -webkit-inline-box;">
-											<div><img id="reload_feature_selection" src="{% static "images/reload.png"%}" style="width: 20px;margin-right: 10px;cursor: pointer;"/></div>
-											<select id="pca_feature_selection_algo" name="pca_feature_selection_algo">
-												<option value="MANUAL">Manual Select</option>
-												<option value="RANDOMFOREST">Random Forest</option>
-												<option value="XGBOOST">XGBoost</option>
-											</select>
-										</div>
-									</div>
-									<div class="form-group row top_bottom_lines">
-										<div>
-											<a id="lnk_clear_pca_features" href="#">Clear All</a> |
-											<a id="lnk_select_all" href="#">Select All</a>|
-											<a id="lnk_sort_az" href="#">A-Z</a>
-										</div>					
-									</div>
-								</div>
-								<div id="pca_feature_list">
-								</div>
-							</div>
-						</div>
-					</div>
-					<div id="main_right">
-						<div id="main_right_table">
-							<h5 class="h_section_title">CRITERIONS</h5>
-							<table id="tbl_pca_criterion">
-							  <thead>
-							    <tr>
-							    	<th width="100px;">Select Label</th>
-							      	<th>Column Name</th>
-							      	<th>Number Type</th>
-							      	<th>Criterion</th>
-							    </tr>
-							  </thead>
-							  <tbody>
-							  </tbody>
-							</table>
-						</div>
-<!-- 						<div>
-							<h5 class="h_section_title">DIMENSIONALITY REDUCTION TECHNIQUE</h5>
-							<div class="form-group-border">
-								<input type="radio" id="pca" name="dimalgo" value="PCA">
-								<label for="pca">PCA</label>
-								<input type="radio" id="lda" name="dimalgo" value="LDA" style="margin-left: 20px;">
-								<label for="lda">LDA</label>
-							</div>
-						</div> -->
-					</div>
-					<!-- ======= End of main_right ====== -->
-				</div>
-				<!-- ====== End of Source/Target selection ====== -->
-				<div style="width:100%; text-align: center;margin-top:10px;margin-bottom: 10px;">
-					<!-- <button id="btn_sel_feature_xgboost" class="btn btn-primary" style="width: 250px;" type="submit">Select Features by XGBoost</button> -->
-					<button id="btn_pca_plot" class="btn btn-primary" style="width: 150px;" type="submit">PCA Plot</button>
-					<button id="btn_pca_lda_plot" class="btn btn-primary" style="width: 150px;" type="submit">LDA Plot</button>
-				</div>
-			</div>
-			<div id="plot_reduced_dim" ></div>
-		</div>
-		<!-- End tab#2 -->
+		
 		
 	</div>
 	

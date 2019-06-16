@@ -17,6 +17,7 @@ from . import views
 from .forms import FormUploadFile, FormStratifyData, DimensionReductionForm, FeatureSelectionForm
 from .helpers import Helper
 import constants.const_msg as msg
+# from framingham import framingham_cvd_score_gender
 
 from sklearn.preprocessing import MinMaxScaler
 
@@ -95,18 +96,22 @@ def stratify_data(request):
         bins = form.cleaned_data['bin']  # format: 'INTERVAL', 'NOMINAL', ...
         criterion = form.cleaned_data['criterion']  # Format Male,Female&1938,1969&45,104&50,112 
         groupby = form.cleaned_data['groupby']  
-       # str_calc_framingham = form.cleaned_data['is_calc_framingham']
+        # str_calc_framingham = form.cleaned_data['is_calc_framingham']
         target_action = form.cleaned_data['target_action']
+        # For XG Boost Regressor
+        target_labels = form.cleaned_data['target_labels']
+        n_feature_selection = form.cleaned_data['n_feature_selection']
         
         is_calc_framingham = False
         if target_action == "framingham":
             is_calc_framingham = True
-        
-        arr_sel_target_col = target_strat.split(",")
+       
         arr_sel_source_col = feature_indexes.split(",")
+        arr_sel_target_col = target_strat.split(",")
         arr_groupby = groupby.split(",")
         arr_numtype = numtypes.split(",")
         arr_bin = bins.split(",")
+        arr_target_labels = target_labels.split(",")
         
         if all('' == s or s.isspace() for s in arr_sel_target_col):
             form._errors["Include"] = form.error_class(["Target columns to group data must be selected."])
@@ -114,14 +119,19 @@ def stratify_data(request):
             return JsonResponse(resp)
         
         # Validate group by, if all group by values are space, show error
-        if all('' == s or s.isspace() for s in arr_groupby):
-            form._errors["Group By"] = form.error_class(["Group By must be entered."])
-            resp[msg.ERROR] = escape(form._errors)
-            return JsonResponse(resp)
-        
-        else:
-            # If group by is not empty and number is interval number, but Bin is empty.
-            # Show error
+        source_col_indexes = None
+        if (target_action == 'stratify' or target_action == 'framingham'):
+            if all('' == s or s.isspace() for s in arr_sel_source_col):
+                form._errors["Features"] = form.error_class(["Please select features"])
+                resp[msg.ERROR] = escape(form._errors)
+                return JsonResponse(resp)
+            
+            elif all('' == s or s.isspace() for s in arr_groupby):
+                form._errors["Group By"] = form.error_class(["Group By must be entered."])
+                resp[msg.ERROR] = escape(form._errors)
+                return JsonResponse(resp)
+                        # If group by is not empty and number is interval number, but Bin is empty.
+            # Validate bin
             for row_idx in range(0, len(arr_groupby)):
                 if arr_groupby[row_idx] != ""  \
                     and (arr_numtype[row_idx] == "INTERVAL" or arr_numtype[row_idx] == "ORDINAL") \
@@ -129,6 +139,8 @@ def stratify_data(request):
                     form._errors["Bin"] = form.error_class(["Number of Bin must be entered when group by an interval number."])
                     resp[msg.ERROR] = escape(form._errors)
                     return JsonResponse(resp)
+            # Convert source column to int
+            source_col_indexes = list(map(int, arr_sel_source_col)) 
         
         # print(feature_indexes, "/", criterion)
         df_source, df_target = get_source_target_dataframe(form)
@@ -141,24 +153,56 @@ def stratify_data(request):
         
         # Process data with the criterions
         arr_criterion = criterion.split("&")
-
         arr_groupby = groupby.split(",")
+        
+        target_col_indexes = list(map(int, arr_sel_target_col))
+       
         try:
-            
-            arr_traces = Helper.startify_mean(df_source, df_target, arr_sel_source_col, arr_sel_target_col, arr_numtype, \
-                                               arr_criterion, arr_bin, arr_groupby, is_calc_framingham)
-            
-            # If the target result is for plotting variance of stratified result
-            # continue to calculate variance bar
-            if target_action == "feature_variance":
+            arr_traces = None
+            if target_action == "stratify":  # target_action == "feature_variance"
+                arr_traces = Helper.startify_mean(df_source, df_target, source_col_indexes, target_col_indexes, arr_numtype, \
+                                               arr_criterion, arr_bin, arr_groupby, target_calculation="mean")
+                # If the target result is for plotting variance of stratified result
+                # continue to calculate variance bar
+                # if target_action == "feature_variance":
                 arr_name, arr_value = get_strat_variance(arr_traces)
                 resp['feature_variances'] = {'features': arr_name, 'values': arr_value}
                 
-            resp['traces'] = arr_traces
+                resp['traces'] = arr_traces
+            elif target_action == "framingham":
+                
+                arr_traces = Helper.startify_mean(df_source, df_target, source_col_indexes, target_col_indexes, arr_numtype, \
+                                               arr_criterion, arr_bin, arr_groupby, target_calculation="framingham")
+                resp['traces'] = arr_traces
+            elif target_action == "xgboost":
+                # Select all features for df_source to find feature by xgboost
+                # Source
+                # arr_selected_source_col = list(df_source.columns)
+                # Target
+                int_target_col_idx = list(map(int, arr_sel_target_col))
+                df_selected_target = df_target.iloc[:, int_target_col_idx]
+                arr_selected_target_col = list(df_selected_target.columns)
+                # Join
+                df_data = df_source.join(df_selected_target)
+               
+                # Filter by column name in  arr_selected_target_col
+                df_strat_res = Helper.get_filtered_data(df_data, arr_numtype, arr_selected_target_col, arr_criterion)
+                
+                # split radiomic and target label after filter
+                df_res_source = df_strat_res.loc[:, df_source.columns]
+                # get target
+                df_res_target = df_strat_res.loc[:, df_selected_target.columns]
+                arr_fs_col_name, arr_fs_col_idx, train_score, test_score = FeatureSelectionUtil.select_by_xgboost_regressor(df_res_source, df_res_target, n_feature_selection)
+                resp['feature_selection'] = {'col_name': arr_fs_col_name, 'col_idx': arr_fs_col_idx,
+                                             'train_score': train_score, 'test_score': test_score}
+                # resp['sorted_important_indexes'] = list(sorted_indexes)
+                # resp['sorted_important_col_names'] = list(arr_sorted_columns)
+    
         except BizValidationExption as be:
             label, err_msg = be.args
             resp[msg.ERROR] = escape(format_html_err_msg(label, err_msg))
         except Exception as e:
+            
            # Print error to console
             exc_type, exc_value, exc_traceback = sys.exc_info()
 #             print(repr(traceback.format_tb(exc_traceback)))
@@ -166,8 +210,13 @@ def stratify_data(request):
 #                                           exc_traceback))
             traceback.print_exc(limit=10, file=sys.stdout)
             # Return error
-            err_msg = e.args
-            resp[msg.ERROR] = escape(format_html_err_msg("", err_msg[0]))
+            len_args = len(e.args)
+            if len_args == 2:
+                label, err_msg = e.args
+                resp[msg.ERROR] = escape(format_html_err_msg(label, err_msg))
+            else:
+                err_msg = e.args
+                resp[msg.ERROR] = escape(format_html_err_msg("", err_msg[0]))
                 
     else:
         resp[msg.ERROR] = escape(form._errors)
@@ -209,13 +258,14 @@ def select_features(request):
         arr_numtypes = numtypes.split(",");
         numtype = arr_numtypes[label_column_index]
         df_source, df_target = get_source_target_dataframe(form)
+         # get single label
         df_y = df_target[[df_target.columns.values[label_column_index]]].copy()
         if algorithm == "RANDOMFOREST":
             X_new, arr_sorted_columns, arr_sorted_val, sorted_indexes = FeatureSelectionUtil.select_by_random_forest_regressor(df_source, df_y, n_features, numtype)
             resp['sorted_important_indexes'] = list(sorted_indexes)
             resp['sorted_important_col_names'] = list(arr_sorted_columns)
         elif algorithm == "XGBOOST":
-            pass
+            selected_features = FeatureSelectionUtil.select_by_xgboost_regressor(df_source, df_y, n_features)
     else:
         resp[msg.ERROR] = escape(form._errors)
         
@@ -236,9 +286,11 @@ def reduce_dimension(request):
     form = DimensionReductionForm(request.POST, request.FILES)
     # If form is valid, continue processing
     if form.is_valid():
-        pca_feature_indexes = form.cleaned_data['pca_feature_indexes']
+        # Target columns used for filtering data
+        target_strat = form.cleaned_data['target_strat']
+        feature_indexes = form.cleaned_data['feature_indexes']
         target_label_index = form.cleaned_data['column_index']  # single value
-        dimalgo = form.cleaned_data['dim_algo']  # Hardcode for PCA for now
+        dimalgo = form.cleaned_data['dim_algo'] 
         
          # Array value for stratification
         numtypes = form.cleaned_data['numtypes'] 
@@ -249,7 +301,7 @@ def reduce_dimension(request):
         df_source, df_target = get_source_target_dataframe(form);
 
         # ======= Validation ===========
-        arr_feature_indexes = pca_feature_indexes.split(",");
+        arr_feature_indexes = feature_indexes.split(",");
         n_selected_features = len(arr_feature_indexes)
         if n_selected_features < 3:
             form._errors["Number of selected features"] = form.error_class(["Number of selected features must be equal or greater than 3 for 3D space."])
@@ -258,41 +310,48 @@ def reduce_dimension(request):
         if df_source.shape[0] != df_target.shape[0] or not (df_target.shape[0] > 0): 
             form._errors["Number of row data"] = form.error_class(["Row data in files must be equal."])
 
-        # Validate number of selected column if it's less than 3, error
-#         if len(pca_feature_indexes.split(",")) < 3: 
-#             form._errors["Number of features"] = form.error_class(["Number of selected features must be greater than 3."])
-        
         if not form.is_valid():
             resp[msg.ERROR] = escape(form._errors)
             return JsonResponse(resp)
-    
-#         # ======= Validation ===========
-#         if len(FormUploadFile.cleaned_data['pca_feature_indexes'].split(",")) < 3:
-#             form._errors["Number of selected features"] = form.error_class(["Number of selected features must be equal or greater than 3 for 3D space."])
-#         
-#         # Validate both source and target row
-#         if df_source.shape[0] != df_target.shape[0] or not (df_target.shape[0] > 0): 
-#             form._errors["Number of row data"] = form.error_class(["Row data in files must be equal."])
-#             resp[msg.ERROR] = escape(form._errors)
-#             return JsonResponse(resp)
-#         
-#         # Validate number of selected column if it's less than 3, error
-#         if len(pca_feature_indexes.split(",")) < 3: 
-#             form._errors["Number of features"] = form.error_class(["Number of selected features must be greater than 3."])
-#             resp[msg.ERROR] = escape(form._errors)
-#             return JsonResponse(resp)
         
         # Process request data
+        arr_target_filter_col = target_strat.split(",")
         arr_criterion = criterion.split("&")
         arr_numtypes = numtypes.split(",")
         int_target_label_index = int(target_label_index)
-        # label = df_target.iloc[:, int_target_label_index]
-        numtype = arr_numtypes[int_target_label_index]  # single value for labeling
+        
+        numtype = ""
+        if df_target.iloc[:, int_target_label_index].dtype == 'object':
+            numtype = "ORDINAL"
+        else:
+            numtype = "INTERVAL"
+
         # target_label_index is not used for now because it's PCA
-        dim_3d, label = Helper.get_stratify_3d_data(df_source, df_target, pca_feature_indexes, \
-                                              target_label_index, arr_numtypes, arr_criterion, dimalgo)
-        resp['plot_data'] = {'x': list(dim_3d[:, 0]), 'y': list(dim_3d[:, 1]), 'z': list(dim_3d[:, 2]), 'label': label.ix[:, 0].to_json(), 'number_type': numtype}
-        return JsonResponse(resp)
+        n_components = 3
+        try:
+            dim_3d, label = Helper.get_reduced_dim_data(df_source, df_target, feature_indexes,
+                                            target_label_index, arr_target_filter_col,
+                                            arr_numtypes, arr_criterion,
+                                            dimalgo, n_components)
+        
+            resp['plot_data'] = {'x': list(dim_3d[:, 0]), 'y': list(dim_3d[:, 1]), 'z': list(dim_3d[:, 2]), 'label': label.ix[:, 0].to_json(), 'number_type': numtype}
+            return JsonResponse(resp)
+        
+        except BizValidationExption as be:
+            label, err_msg = be.args
+            resp[msg.ERROR] = escape(format_html_err_msg(label, err_msg))
+        except Exception as e:
+           # Print error to console
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            traceback.print_exc(limit=10, file=sys.stdout)
+            # Return error
+            len_args = len(e.args)
+            if len_args == 2:
+                label, err_msg = e.args
+                resp[msg.ERROR] = escape(format_html_err_msg(label, err_msg))
+            else:
+                err_msg = e.args
+                resp[msg.ERROR] = escape(format_html_err_msg("", err_msg[0]))
     
     else:
         resp[msg.ERROR] = escape(form._errors)
@@ -304,28 +363,30 @@ def get_source_target_dataframe(form):
     
     source_file = form.cleaned_data["source_file"]
     target_file = form.cleaned_data["target_file"]
-    source_column_header = form.cleaned_data['source_column_header']
-    target_column_header = form.cleaned_data['target_column_header']
-           
-    df_source = pd.DataFrame()  # Source file
-    df_target = pd.DataFrame()  # Target file
-    
-    if source_file:
-        # Check if data contains header
-        source_column_header_idx = None
-        if source_column_header == "on":
-            source_column_header_idx = 0
-            
-        df_source = DataFrameUtil.file_to_dataframe(source_file, header=source_column_header_idx)
-        
-    if target_file:
-        # Check if data contains header
-        target_column_header_idx = None
-        if target_column_header == "on":
-            target_column_header_idx = 0
-            
-        df_target = DataFrameUtil.file_to_dataframe(target_file, header=target_column_header_idx)
-         
+    df_source = DataFrameUtil.file_to_dataframe(source_file, header=0)
+    df_target = DataFrameUtil.file_to_dataframe(target_file, header=0)
+#     source_column_header = form.cleaned_data['source_column_header']
+#     target_column_header = form.cleaned_data['target_column_header']
+#            
+#     df_source = pd.DataFrame()  # Source file
+#     df_target = pd.DataFrame()  # Target file
+#     
+#     if source_file:
+#         # Check if data contains header
+#         source_column_header_idx = None
+#         if source_column_header == "on":
+#             source_column_header_idx = 0
+#             
+#         df_source = DataFrameUtil.file_to_dataframe(source_file, header=source_column_header_idx)
+#         
+#     if target_file:
+#         # Check if data contains header
+#         target_column_header_idx = None
+#         if target_column_header == "on":
+#             target_column_header_idx = 0
+#             
+#         df_target = DataFrameUtil.file_to_dataframe(target_file, header=target_column_header_idx)
+#          
     return  df_source, df_target
 
 
@@ -353,10 +414,20 @@ def get_strat_variance(arr_traces):
         
     # Default range is 0, 1
     scaler = MinMaxScaler()
-    val_scaled = scaler.fit_transform(arr_y_values)
-    
-    # Find variance => var = mean(abs(x - x.mean())**2)
-    arr_variance = np.var(val_scaled, axis=1)
+    # To do min max scaler need to do (1,n) for each group data
+    is_first_obj = True
+    arr_val_scaled = None
+    arr_variance = []
+    for group_var in arr_y_values:
+        arr_group_scaler = np.array(group_var)
+        min_max_scaled = scaler.fit_transform(arr_group_scaler[:, np.newaxis])
+        # Find variance => var = mean(abs(x - x.mean())**2)
+        arr_variance.append(np.var(min_max_scaled, axis=0)[0])
+#         if is_first_obj:
+#             arr_val_scaled = min_max_scaled
+#         else:
+#             arr_val_scaled = np.append(arr_val_scaled, min_max_scaled, axis=0)
+
     # min_max_index = np.argsort()
     min_max_idx = np.argsort(arr_variance)
     max_min_idx = min_max_idx[::-1]
@@ -371,3 +442,26 @@ def get_strat_variance(arr_traces):
         arr_value.append(arr_variance[idx])
     
     return arr_name, arr_value
+
+
+def framingham_cvd1(df_source, df_target, feature_indexes, label_indexes, arr_numtypes, arr_criterions):
+    # Filter data by condition
+    # Get target source column name for calc radiomics mean
+    df_selected_source = df_source.iloc[:, feature_indexes]
+    arr_selected_source_col_name = list(df_selected_source.columns)
+    
+    # Get target column name for filtering data by condition
+    df_selected_target = df_target.iloc[:, label_indexes]
+    arr_criterion_col_name = list(df_selected_target.columns)
+    
+    # Join data together as input of filter
+    df_data = df_selected_source.join(df_selected_target)
+#     arr_int_target_col_idx = list(map(int, arr_sel_target_col))
+    
+    # Filter by column name in  arr_selected_target_col
+    df_strat_res = Helper.get_filtered_data(df_data, label_indexes, \
+                                            arr_criterion_col_name, \
+                                            arr_numtypes, arr_criterions)
+    
+    result = framingham_cvd_score_gender(df_source, arr_selected_source_col_name)
+    return result

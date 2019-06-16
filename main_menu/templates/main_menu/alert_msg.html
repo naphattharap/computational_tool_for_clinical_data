@@ -23,7 +23,7 @@
 <i class="spinner" style="display:none;"></i>
 
 
-<div id="alert-modal" class="modal fade">
+<div id="alert-modal" class="modal fade" style="z-index: 2147483647;">
 	<!-- <div class="alert alert-danger alert-dismissible" >
 			<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
   			<strong>[Error]</strong> <div id="result-msg-error" style="display: inline-block;"></div>
@@ -91,36 +91,30 @@ function alert_message(resp){
 		$("#result-msg-success").text(resp.msg_success);
 		$("div.alert.alert-success").show();
 		$('#alert-modal').modal('show');
+		
 	}else if (resp.msg_info != undefined && resp.msg_info != ""){
-		$("#result-msg-info").text(resp.msg_info);
+		$("#result-msg-info").html('');
+		var html_text = $('<div />').html(resp.msg_info).text();
+		$("#result-msg-info").append(html_text);
 		$("div.alert.alert-info").show();
+		
+/* 		$("#result-msg-info").text(resp.msg_info);
+		$("div.alert.alert-info").show(); */
 		$('#alert-modal').modal('show');
+		
 	}else if (resp.msg_warning != undefined && resp.msg_warning != ""){
 		$("#result-msg-warning").text(resp.msg_warning);
 		$("div.alert.alert-info").show();
 		$('#alert-modal').modal('show');
+		
 	}else if (resp.msg_error != undefined && resp.msg_error != ""){
 		// Remove previous error
-		//var div_error = $('<div />').html(resp.msg_error).text();
-		//console.log(div_error);
-		
-		//$("#result-msg-error").after(div_error);
-		
-		
+
 		$("#result-msg-error").html('');
 		var html_text = $('<div />').html(resp.msg_error).text();
 		$("#result-msg-error").append(html_text);
-		//$('#alert-modal').modal('show');
-		//$("#result-msg-error").text(resp.msg_error);
 		$("div.alert.alert-danger").show();
-		
-		/* $('#alert-modal').modal('show');
-		$("#result-msg-error").append(resp.msg_error);
-		//$('#alert-modal').modal('show');
-		$("#result-msg-error").html(resp.msg_error);
-		//$('#alert-modal').modal('show');
-		$("#result-msg-error").text(resp.msg_error);
-		$("div.alert.alert-danger").show(); */
+
 		
 		$('#alert-modal').modal('show');
 	}
