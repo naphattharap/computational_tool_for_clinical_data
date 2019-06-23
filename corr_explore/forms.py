@@ -26,10 +26,10 @@ class FormStratifyData(forms.Form):
     bin = forms.CharField(label="Bin", required=False)
     groupby = forms.CharField(label="Group By Level", required=False)
     # is_calc_framingham = forms.CharField(label="Framingham Risk Score Calculation Flag")
-    target_action = forms.CharField(label="Target action")
+    target_action = forms.CharField(label="Target action", required=False)
     target_labels = forms.CharField(label="Target Label(s)", required=False)
     n_feature_selection = forms.IntegerField(label="Number of Features", required=False)
-
+    
 
 class DimensionReductionForm(FormUploadFile):
     # Target labels for filtering
@@ -37,7 +37,8 @@ class DimensionReductionForm(FormUploadFile):
     # Radiomics feature selected feature index
 
     feature_indexes = forms.CharField(label="Feature")
-    column_index = forms.CharField(label="Select Column Name")
+    # Only require for LDA
+    column_index = forms.CharField(label="Select Column Name", required=False)
     dim_algo = forms.CharField(label="Dimensionality Reduction Algorithm")
     numtypes = forms.CharField(label="Number Type")
     criterion = forms.CharField(label="Criterion")

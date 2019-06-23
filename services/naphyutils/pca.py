@@ -27,13 +27,31 @@ class PcaUtil:
     """
 
     @staticmethod
+    def reduce_dimension_by_percent(X, percent):
+        """
+        Get principle components
+        """
+        pca = PCA()
+        new_X = pca.fit_transform(X)
+        arr_ratio = pca.explained_variance_ratio_
+        sum_val = 0
+        for idx in range(0, len(arr_ratio)):
+            sum_val = sum_val + arr_ratio[idx]
+            if sum_val > percent:
+                break
+            
+        new_X = new_X[:, 0:idx]
+            
+        return new_X, pca
+    
+    @staticmethod
     def reduce_dimension(X, n_components=None):
         """
         Get principle components
         """
         pca = PCA(n_components=n_components)
         new_X = pca.fit_transform(X)
-        return new_X
+        return new_X, pca
     
     @staticmethod
     def get_fit_transfrom_pca(X, n_components=None):

@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.views import View
 from django.utils.html import escape
 from django.views.decorators.csrf import csrf_exempt
-
+from decimal import Decimal, ROUND_HALF_UP
 import numpy as np
 import pandas as pd
 
@@ -15,6 +15,7 @@ from services.naphyutils.feature_selection import FeatureSelectionUtil
 from services.naphyutils.biz_exception import BizValidationExption
 from . import views
 from .forms import FormUploadFile, FormStratifyData, DimensionReductionForm, FeatureSelectionForm
+from naphyutils.framingham import FraminghamRiskScore
 from .helpers import Helper
 import constants.const_msg as msg
 # from framingham import framingham_cvd_score_gender
@@ -34,50 +35,6 @@ def home_hander(request):
     """
    
     return render(request, template_name=MAIN_PAGE)
-
-
-def get_source_target(request):
-    """
-    The function is called via AJAX and return JSON as result.
-    Return result structure:
-        resp.data.feature_columns : Array of string for feature columns from source file
-        resp.data.criterions : Array of objects (dict) for rendering criterion table
-            |- object: { column_label: 'string', 
-                        number_type: 'INTERVAL' | 'NOMINAL' | 'ORDINAL',
-                        nominal_values: 'FEMALE' | 'MALE', # for example
-                        min: 1,        # only valid when number type is 'ORDINAL' or 'INTERVAL'
-                        max: 9999      # only valid when number type is 'ORDINAL' or 'INTERVAL'
-                        }
-    
-    """
-    # Validate data
-    form = FormUploadFile(request.POST, request.FILES)
-    
-    # Init response data
-    resp = dict();
-    data = dict();
-    resp['data'] = data
-    
-    # If form is valid, continue processing
-    if form.is_valid():
-        # Get parameter from form through cleaned_data to get correct data type
-        df_source, df_target = get_source_target_dataframe(form)
-        
-        # Validate both source and target row
-        if df_source.shape[0] != df_target.shape[0]: 
-            form._errors["Number of row data"] = form.error_class(["Row data in files must be equal."])
-            resp[msg.ERROR] = escape(form._errors)
-            return JsonResponse(resp)  
-          
-        data['feature_columns'] = list(df_source.columns)
-            
-        arr_criterion = Helper.get_criterion_data(df_target)
-        data['criterions'] = arr_criterion  
-        
-    else:
-        resp[msg.ERROR] = escape(form._errors)
-        
-    return JsonResponse(resp)
 
 
 def stratify_data(request):
@@ -179,8 +136,8 @@ def stratify_data(request):
                 # Source
                 # arr_selected_source_col = list(df_source.columns)
                 # Target
-                int_target_col_idx = list(map(int, arr_sel_target_col))
-                df_selected_target = df_target.iloc[:, int_target_col_idx]
+                int_target_filter_col_idx = list(map(int, arr_sel_target_col))
+                df_selected_target = df_target.iloc[:, int_target_filter_col_idx]
                 arr_selected_target_col = list(df_selected_target.columns)
                 # Join
                 df_data = df_source.join(df_selected_target)
@@ -191,10 +148,24 @@ def stratify_data(request):
                 # split radiomic and target label after filter
                 df_res_source = df_strat_res.loc[:, df_source.columns]
                 # get target
-                df_res_target = df_strat_res.loc[:, df_selected_target.columns]
-                arr_fs_col_name, arr_fs_col_idx, train_score, test_score = FeatureSelectionUtil.select_by_xgboost_regressor(df_res_source, df_res_target, n_feature_selection)
-                resp['feature_selection'] = {'col_name': arr_fs_col_name, 'col_idx': arr_fs_col_idx,
-                                             'train_score': train_score, 'test_score': test_score}
+                
+                int_target_fs_col_idx = list(map(int, arr_target_labels))
+                arr_fs_target_col = df_target.iloc[:, int_target_fs_col_idx].columns
+                df_fs_target = df_strat_res.loc[:, arr_fs_target_col]
+                
+                # Select only type of number of selected target label to use for xgboost model 
+                # NORMILAL uses XGBoostClassifer, otherwise XGBoostRegressor
+                arr_numtype_flag = []
+                for t_label_idx in arr_target_labels:
+                    numpty_idx = arr_sel_target_col.index(t_label_idx)
+                    arr_numtype_flag.append(arr_numtype[numpty_idx])
+                
+                arr_fs_col_name, arr_fs_col_idx, train_score, test_score, dup_feature_names = FeatureSelectionUtil.select_by_xgboost(df_res_source, df_fs_target, arr_numtype_flag, n_feature_selection)
+                # round_train_score = Decimal(str(train_score)).quantize(Decimal('1.11'), rounding=ROUND_HALF_UP) * 100
+                # round_test_score = Decimal(str(test_score)).quantize(Decimal('1.11'), rounding=ROUND_HALF_UP) * 100
+                # Convert type of arr_fs_col_idx to int to solve JSON error
+                resp['feature_selection'] = {'col_name': list(arr_fs_col_name), 'col_idx': list(map(int, arr_fs_col_idx)),
+                                             'train_score': train_score, 'test_score': test_score, "duplicated_features": dup_feature_names}
                 # resp['sorted_important_indexes'] = list(sorted_indexes)
                 # resp['sorted_important_col_names'] = list(arr_sorted_columns)
     
@@ -222,19 +193,6 @@ def stratify_data(request):
         resp[msg.ERROR] = escape(form._errors)
         
     return JsonResponse(resp)
-
-
-def format_html_err_msg(label, msg):
-    if label != "" and msg != "":
-        return '<ul class="errorlist"><li>' + label \
-                +'<ul class="errorlist"><li>' \
-                +msg + "</li></ul></li></ul>"
-    else:
-        return '<ul class="errorlist"><li>' + msg + '</li></ul>'
-                # +'<ul class="errorlist"><li>' \
-               
-                # '</li></ul>'
-    # return '<strong>hey</strong>'
 
 
 def select_features(request):
@@ -314,17 +272,14 @@ def reduce_dimension(request):
             resp[msg.ERROR] = escape(form._errors)
             return JsonResponse(resp)
         
+        # Info message
+        if n_selected_features == 3: 
+            resp[msg.WARNING] = escape(format_html_err_msg("Reduce dimension", "System cannot reduce dimension when number of features are 3."))
+        
         # Process request data
         arr_target_filter_col = target_strat.split(",")
         arr_criterion = criterion.split("&")
         arr_numtypes = numtypes.split(",")
-        int_target_label_index = int(target_label_index)
-        
-        numtype = ""
-        if df_target.iloc[:, int_target_label_index].dtype == 'object':
-            numtype = "ORDINAL"
-        else:
-            numtype = "INTERVAL"
 
         # target_label_index is not used for now because it's PCA
         n_components = 3
@@ -333,8 +288,17 @@ def reduce_dimension(request):
                                             target_label_index, arr_target_filter_col,
                                             arr_numtypes, arr_criterion,
                                             dimalgo, n_components)
-        
+            
+            # Find index of select target label
+            int_target_label_index = arr_target_filter_col.index(target_label_index)
+            numtype = arr_numtypes[int_target_label_index]
+#             if df_target.iloc[:, int_target_label_index].dtype == 'object':
+#                 numtype = "ORDINAL"
+#             else:
+#                 numtype = "INTERVAL"
+                    
             resp['plot_data'] = {'x': list(dim_3d[:, 0]), 'y': list(dim_3d[:, 1]), 'z': list(dim_3d[:, 2]), 'label': label.ix[:, 0].to_json(), 'number_type': numtype}
+            
             return JsonResponse(resp)
         
         except BizValidationExption as be:
@@ -353,6 +317,146 @@ def reduce_dimension(request):
                 err_msg = e.args
                 resp[msg.ERROR] = escape(format_html_err_msg("", err_msg[0]))
     
+    else:
+        resp[msg.ERROR] = escape(form._errors)
+        
+    return JsonResponse(resp)
+
+
+def framingham_radiomics(request):
+    """
+    Plot correlation between Framingham Score and Radiomics
+    - Filter data by criterion
+    - Group data
+    - Calculate framing risk score for individial
+    - Find correlation 
+    """
+    # Init response data
+    resp = dict();
+    form = FormStratifyData(request.POST, request.FILES)
+    
+    # If form is valid, continue processing
+    if form.is_valid():
+         # Get parameter from form through cleaned_data to get correct data type
+         
+         # String contains column index of row in criterion table
+        target_strat = form.cleaned_data['target_strat']
+        # String contains Radiomics feature index
+        feature_indexes = form.cleaned_data['feature_indexes']
+        numtypes = form.cleaned_data['numtypes']  # format: 'INTERVAL', 'NOMINAL', ...
+        criterion = form.cleaned_data['criterion']  # Format Male,Female&1938,1969&45,104&50,112
+        # bins = form.cleaned_data['bin']  # format: 'INTERVAL', 'NOMINAL', ...
+        
+        # groupby = form.cleaned_data['groupby']  
+
+        # Split string input to array
+        # Radiomics feature
+        arr_sel_source_col = feature_indexes.split(",")
+        # Criterion
+        arr_criterion_value = criterion.split("&")
+        arr_sel_target_col = target_strat.split(",")
+        arr_numtypes = numtypes.split(",")
+        # arr_groupby = groupby.split(",")
+        # arr_bin = bins.split(",")
+
+        # ========== Validation ========== 
+        # Features must be selected
+        source_col_indexes = None
+        if all('' == s or s.isspace() for s in arr_sel_source_col):
+            form._errors["Features"] = form.error_class(["Please select features"])
+            resp[msg.ERROR] = escape(form._errors)
+            return JsonResponse(resp)
+        
+        # Criterion Row: Selected row in criterion can't be empty.
+        if all('' == s or s.isspace() for s in arr_sel_target_col):
+            form._errors["Include"] = form.error_class(["Target columns to group data must be selected."])
+            resp[msg.ERROR] = escape(form._errors)
+            return JsonResponse(resp)
+    
+        # Group By: Validate group by, if all group by values are space, show error
+#         if all('' == s or s.isspace() for s in arr_groupby):
+#             form._errors["Group By"] = form.error_class(["Group By must be entered."])
+#             resp[msg.ERROR] = escape(form._errors)
+#             return JsonResponse(resp)
+        # If group by is not empty and number is interval number, but Bin is empty.
+        
+        # Validate bin: Valid when group by interval 
+#         for row_idx in range(0, len(arr_groupby)):
+#             if arr_groupby[row_idx] != ""  \
+#                 and (arr_numtype[row_idx] == "INTERVAL" or arr_numtype[row_idx] == "ORDINAL") \
+#                 and arr_bin[row_idx] == "":
+#                 form._errors["Bin"] = form.error_class(["Number of Bin must be entered when group by an interval number."])
+#                 resp[msg.ERROR] = escape(form._errors)
+#                 return JsonResponse(resp)
+        
+        # Convert feature index column from string to int
+        source_col_indexes = list(map(int, arr_sel_source_col)) 
+        
+        # Get dataframe from source and target files
+        df_source, df_target = get_source_target_dataframe(form)
+
+        # Validate both source and target row
+        if df_source.shape[0] != df_target.shape[0] or not (df_target.shape[0] > 0): 
+            form._errors["Number of row data"] = form.error_class(["Row data in files must be equal."])
+            resp[msg.ERROR] = escape(form._errors)
+            return JsonResponse(resp)
+        
+        target_col_indexes = list(map(int, arr_sel_target_col))
+       
+        try:
+            # Filter data 
+            # Select only the selected source columns in radiomics
+            df_selected_source = Helper.get_selected_columns_data(df_source, feature_indexes)
+            df_selected_target = Helper.get_selected_columns_data(df_target, target_strat)
+           
+            df_data = df_selected_source.join(df_selected_target)
+            arr_criterion_column_names = list(df_selected_target.columns)
+            
+            FraminghamRiskScore.validate_csv_column_for_framingham(df_selected_target,
+                                                                   FraminghamRiskScore.FMH_CVD_COLUMNS)
+            
+            df_filtered_data = Helper.get_filtered_data(df_data, arr_numtypes, arr_criterion_column_names, arr_criterion_value)
+            
+            # Calculate individual FHM
+            n_rows = df_filtered_data.shape[0]
+            # Create new column to store risk score
+            df_filtered_data['FMH'] = np.nan
+            
+            for row in range(0, n_rows):
+                sex, age, systolic_blood_pressure, smoking_status, treat_bp, bmi, diabetes = FraminghamRiskScore.get_cvd_factors(df_filtered_data, row)
+                risk_score = FraminghamRiskScore.framingham_cvd_risk_score(sex, age, systolic_blood_pressure, smoking_status, treat_bp, bmi, diabetes) 
+                df_filtered_data.loc[row, ['FMH']] = risk_score
+            
+            # Find correlation for radiomics and FMH
+            corr_col_name = list(df_selected_source.columns.values)
+            corr_col_name.append('FMH')
+            df_corr = df_filtered_data[corr_col_name]
+            corr = df_corr.corr()
+            len_exc_fmh = corr.shape[0] - 1 
+            corr_fmh_val = corr[['FMH']].values[0:len_exc_fmh].ravel()
+            arr_index_names = corr[['FMH']].index.values[0:len_exc_fmh]
+            
+            arr_name, arr_value = Helper.sort_max_min(arr_index_names, corr_fmh_val)
+            corr_res = dict()
+            corr_res['values'] = arr_value
+            corr_res['index_names'] = arr_name
+            resp['framingham_radiomics_corr'] = corr_res
+        except BizValidationExption as be:
+            label, err_msg = be.args
+            resp[msg.ERROR] = escape(format_html_err_msg(label, err_msg))
+        except Exception as e:
+           # Print error to console
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            traceback.print_exc(limit=10, file=sys.stdout)
+            # Return error
+            len_args = len(e.args)
+            if len_args == 2:
+                label, err_msg = e.args
+                resp[msg.ERROR] = escape(format_html_err_msg(label, err_msg))
+            else:
+                err_msg = e.args
+                resp[msg.ERROR] = escape(format_html_err_msg("", err_msg[0]))
+                
     else:
         resp[msg.ERROR] = escape(form._errors)
         
@@ -429,18 +533,18 @@ def get_strat_variance(arr_traces):
 #             arr_val_scaled = np.append(arr_val_scaled, min_max_scaled, axis=0)
 
     # min_max_index = np.argsort()
-    min_max_idx = np.argsort(arr_variance)
-    max_min_idx = min_max_idx[::-1]
-    # argsort(axis=0).argsort(axis=0)
-    # max_min_index = np.fliplr(min_max_index)
-    
-    # prepare result for x, y
-    arr_name = []
-    arr_value = []
-    for idx in max_min_idx:
-        arr_name.append(arr_temp_trace_name[idx])
-        arr_value.append(arr_variance[idx])
-    
+#     min_max_idx = np.argsort(arr_variance)
+#     max_min_idx = min_max_idx[::-1]
+#     # argsort(axis=0).argsort(axis=0)
+#     # max_min_index = np.fliplr(min_max_index)
+#     
+#     # prepare result for x, y
+#     arr_name = []
+#     arr_value = []
+#     for idx in max_min_idx:
+#         arr_name.append(arr_temp_trace_name[idx])
+#         arr_value.append(arr_variance[idx])
+    arr_name, arr_value = Helper.sort_max_min(arr_temp_trace_name, arr_variance)
     return arr_name, arr_value
 
 
@@ -465,3 +569,60 @@ def framingham_cvd1(df_source, df_target, feature_indexes, label_indexes, arr_nu
     
     result = framingham_cvd_score_gender(df_source, arr_selected_source_col_name)
     return result
+
+
+def get_source_target(request):
+    """
+    The function is called via AJAX and return JSON as result.
+    Return result structure:
+        resp.data.feature_columns : Array of string for feature columns from source file
+        resp.data.criterions : Array of objects (dict) for rendering criterion table
+            |- object: { column_label: 'string', 
+                        number_type: 'INTERVAL' | 'NOMINAL' | 'ORDINAL',
+                        nominal_values: 'FEMALE' | 'MALE', # for example
+                        min: 1,        # only valid when number type is 'ORDINAL' or 'INTERVAL'
+                        max: 9999      # only valid when number type is 'ORDINAL' or 'INTERVAL'
+                        }
+    
+    """
+    # Validate data
+    form = FormUploadFile(request.POST, request.FILES)
+    
+    # Init response data
+    resp = dict();
+    data = dict();
+    resp['data'] = data
+    
+    # If form is valid, continue processing
+    if form.is_valid():
+        # Get parameter from form through cleaned_data to get correct data type
+        df_source, df_target = get_source_target_dataframe(form)
+        
+        # Validate both source and target row
+        if df_source.shape[0] != df_target.shape[0]: 
+            form._errors["Number of row data"] = form.error_class(["Row data in files must be equal."])
+            resp[msg.ERROR] = escape(form._errors)
+            return JsonResponse(resp)  
+          
+        data['feature_columns'] = list(df_source.columns)
+            
+        arr_criterion = Helper.get_criterion_data(df_target)
+        data['criterions'] = arr_criterion  
+        
+    else:
+        resp[msg.ERROR] = escape(form._errors)
+        
+    return JsonResponse(resp)
+
+
+def format_html_err_msg(label, msg):
+    if label != "" and msg != "":
+        return '<ul class="errorlist"><li>' + label \
+                +'<ul class="errorlist"><li>' \
+                +msg + "</li></ul></li></ul>"
+    else:
+        return '<ul class="errorlist"><li>' + msg + '</li></ul>'
+                # +'<ul class="errorlist"><li>' \
+               
+                # '</li></ul>'
+    # return '<strong>hey</strong>'

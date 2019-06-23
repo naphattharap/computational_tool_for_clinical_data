@@ -97,14 +97,17 @@ function alert_message(resp){
 		var html_text = $('<div />').html(resp.msg_info).text();
 		$("#result-msg-info").append(html_text);
 		$("div.alert.alert-info").show();
-		
-/* 		$("#result-msg-info").text(resp.msg_info);
-		$("div.alert.alert-info").show(); */
 		$('#alert-modal').modal('show');
 		
 	}else if (resp.msg_warning != undefined && resp.msg_warning != ""){
-		$("#result-msg-warning").text(resp.msg_warning);
+/* 		$("#result-msg-warning").text(resp.msg_warning);
 		$("div.alert.alert-info").show();
+		$('#alert-modal').modal('show'); */
+		
+		$("#result-msg-warning").html('');
+		var html_text = $('<div />').html(resp.msg_warning).text();
+		$("#result-msg-warning").append(html_text);
+		$("div.alert.alert-warning").show();
 		$('#alert-modal').modal('show');
 		
 	}else if (resp.msg_error != undefined && resp.msg_error != ""){

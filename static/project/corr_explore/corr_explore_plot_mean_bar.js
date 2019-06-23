@@ -280,10 +280,8 @@ function bind_mean_bar_groupby_events(){
  * @returns none
  */
 function bind_render_mean_bar_plot(){
-	$('#btn_lda_execute, #btn_fs_execute, #btn_mean_bar, #btn_fmh_score, #btn_feature_variance').on('click', function(e){
+	$('#btn_reduced_dim_execute, #btn_fs_execute, #btn_mean_bar, #btn_fmh_score, #btn_feature_variance, #btn_fmh_radiomics_corr').on('click', function(e){
 		// Get target URL that processes the file
-		
-		
 		//$('#form_upload_file').submit(function(e){
 			// Upload file and render result
 			e.preventDefault();
@@ -322,23 +320,34 @@ function bind_render_mean_bar_plot(){
 				}
 				//alert(n_feature_selection);
 				form_data.append('n_feature_selection', n_feature_selection);
+				
 			}else if (btn_id == "btn_fmh_score"){
 				url = $('#data_attr').attr('data-url-strat');
 				//is_calc_framingham = true;
 				//form_data.append('is_calc_framingham', 'yes');
 				target_action =  "framingham";
 				form_data.append("target_action",target_action);
+				
 			}else if(btn_id == "btn_feature_variance"){
 				url = $('#data_attr').attr('data-url-strat');
 				//form_data.append('is_calc_framingham', 'no');
 				target_action = "feature_variance";
 				form_data.append("target_action", target_action);
+				
 			}else if(btn_id == "btn_mean_bar"){
 				url = $('#data_attr').attr('data-url-strat');
 				target_action = "stratify";
 				form_data.append("target_action", target_action);
-			}else if(btn_id == "btn_lda_execute"){
-				var $selected_col_row = $('input[name="target_lda_label"]:checked').attr('id');
+			}
+			
+//			else if (btn_id == "btn_pca_plot"){
+//				form_data.append('dim_algo', 'PCA');
+//				target_action = "pca";
+//				url = $('#data_attr').attr('data-url-dim');
+//
+//			}
+			else if(btn_id == "btn_reduced_dim_execute"){
+				var $selected_col_row = $('input[name="target_reduced_dim_label"]:checked').attr('id');
 				if($selected_col_row == undefined){
 					msg = {msg_error: "Please select a target label."};
 					alert_message(msg);
@@ -346,9 +355,21 @@ function bind_render_mean_bar_plot(){
 				}
 				var row_idx = $selected_col_row.split(NAME_IDX_SEPARATOR)[1];
 				form_data.append('column_index', row_idx);
-				form_data.append('dim_algo', 'LDA');
-				target_action = "lda";
+				
+				form_data.append('dim_algo', dim_algo);
+				if(dim_algo == "LDA"){
+					target_action = "lda";
+				}else if(dim_algo == "PCA"){
+					target_action = "pca";
+				} 
+				
+				
+				
 				url = $('#data_attr').attr('data-url-dim');
+				
+			}else if(btn_id == 'btn_fmh_radiomics_corr'){
+				target_action = "framingham_radiomics";
+				url = $('#data_attr').attr('data-url-fmhradiomics');
 			}
 			
 			// Source and target criterion
@@ -440,35 +461,42 @@ function bind_render_mean_bar_plot(){
 						plot_strat_mean_bar(resp.traces);
 						plot_feature_variance_bar(resp.feature_variances);
 						//$("#plot_fmh_mean_bar").html("")
-					}else if((target_action == "framingham")){
-						// Plot value with framingham
-						// plot_strat_mean_bar(resp.traces);
-						//plot_feature_variance_bar(resp.feature_variances);
-						// plot_strat_mean_fmh_bar(resp.traces);
-						plot_radiomics_fmh(resp.traces);
+					}else if(target_action == "framingham"){
+						// For all gender
+						//plot_radiomics_fmh(resp.traces);
+						plot_radiomics_fmh_female(resp.traces);
+						plot_radiomics_fmh_male(resp.traces);
+						
 					//}else if(target_action == "feature_variance"){
 					//	plot_feature_variance_bar(resp.feature_variances);
 					}else if(target_action == "xgboost"){
 						// check at target feature
 						select_features_xgboost(resp.feature_selection.col_name, 
 												resp.feature_selection.col_idx);
-						// Alert info
-//						msg_text = "";
-//						for(var i in resp.feature_selection.col_name){
-//							for(var j in resp.feature_selection.col_name[i]){
-//								var res_fs_col_name = resp.feature_selection.col_name[i][j];
-//								msg_text += res_fs_col_name + "<br/>" ;
-//							}
-//						}
 						// Prepare message for information dialog
 						score_msg = "Train Score: "+ resp.feature_selection.train_score +
-							"&lt;br&gt;Test Score: " + resp.feature_selection.test_score + "&lt;br&gt;";	
+						HTML_BR + "Test Score: " + resp.feature_selection.test_score + HTML_BR;	
+						
+						// Duplicated features
+						var dup_features = resp.feature_selection.duplicated_features
+						if (dup_features != undefined && dup_features.length > 0){
+							str_dup_features =  dup_features.join(",");
+							str_dup_features = str_dup_features.replace(/,/gi,", "+HTML_BR);
+							score_msg += "Duplicated features: " + str_dup_features + HTML_BR ;
+							
+						}
+						score_msg += "Selected Features: " + HTML_BR;
 						str_msg = resp.feature_selection.col_name.join(",");
 						str_msg = str_msg.replace(/,/gi,", &lt;br&gt;");
 						msg = {msg_info: score_msg + str_msg};
 						alert_message(msg);
 					}else if(target_action == "lda"){
-						plot_reduced_dim_space(plot_reduced_dim, resp.plot_data, radiomic_layout);
+						plot_reduced_dim_space(plot_reduced_dim_lda, resp.plot_data, "LDA Radiomics Space");
+					}else if( target_action == "pca"){
+						plot_reduced_dim_space(plot_reduced_dim_pca, resp.plot_data, "PCA Radiomics Space");
+					}
+					else if(target_action = "framingham_radiomics"){
+						plot_radiomics_fmh_corr(resp.framingham_radiomics_corr);
 					}
 				},
 				error : function(resp) {
@@ -528,11 +556,19 @@ function bind_xgboost_regressor(){
  * Render radio button for select label of LDA algo.
  * @returns
  */
-function render_modal_lda(){
-	$('#btn_lda_plot').on('click', function(e){
+function bind_reduced_dim(){
+	$('#btn_lda_plot,  #btn_pca_plot').on('click', function(e){
+		// Set flag to global param
+		var myid = $(this).attr('id');
+		if (myid == "btn_lda_plot"){
+			dim_algo = "LDA";
+		}else if(myid == "btn_pca_plot"){
+			dim_algo = "PCA";
+		}
+		
 		// get checked stratified column
-		var target_label_name = "target_lda_label";
-		var $div_target = $('#target_lda_label_list');	
+		var target_label_name = "target_reduced_dim_label";
+		var $div_target = $('#target_reduced_dim_label_list');	
 		// clear previous html
 		$div_target.html('');
 		var elements = $('input[name="target_strat"]:checked').each(function(e){
@@ -550,7 +586,7 @@ function render_modal_lda(){
 			$label.text(col_name);
 			$div_target.append($radio).append($label);
 		});
-		$('#sel_lda_target_label_modal').modal('show');	
+		$('#sel_reduced_dim_target_label_modal').modal('show');	
 	});
 }
 
@@ -781,17 +817,10 @@ function plot_radiomics_fmh(traces){
 			var trace = {
 					  x: [arr_t_name, temp_trace.x_labels],
 					  y: temp_trace.y_values,
-//					  title: {
-//						    text:'Mean value of each features'
-//					  },
-//					  marker: {
-//						  color: get_fmh_marker_color(temp_trace.framingham_risk_score)
-//					  },
 					  text: temp_trace.n_members, // show text on bar
 					  textposition: 'top center',
 					  name: t_name,
 					  type: 'bar'
-					  //width: 0.3
 				};
 			data.push(trace);
 		}// end of for
@@ -803,21 +832,147 @@ function plot_radiomics_fmh(traces){
 					    text:'Framingham 10-year risk in %'
 				  },
 				  xaxis: {
-//					type: 'category', // error for this
-//					automargin: true,
 					tickangle: 35,
-//				    tickson: "boundaries",
-//				    ticklen: 10,
 				    showdividers: false, // vertical line between group
-//				    dividercolor: 'grey',
-//				    dividerwidth: 0
 				  }, 
 				  barmode: 'group',
-//				  bargap: 0.25,
 				  bargroupgap: 0.25
 				};
 		
 		Plotly.newPlot('plot_fmh_mean_bar', data, layout);
+			
+	}	
+}
+
+
+function plot_radiomics_fmh_female(traces){
+	if(traces != undefined && traces.length > 0){
+		// data for keeping all traces
+		var data = [];
+		for(t_idx in traces){
+			temp_trace = traces[t_idx];
+			// If gender is not female, continue by skipping to add trace
+			if(temp_trace.sex != 0){
+				continue;
+			}
+			// Generate array of duplicate trace name for grouping bar in case there are many groups
+			var t_name = temp_trace.trace_name
+			var len_group_item = temp_trace.feature_names.length
+			var arr_t_name = []
+			for(var i = 0; i < len_group_item; i++){
+				arr_t_name.push(temp_trace.feature_names[i]);
+			}
+			var trace = {
+					  x: [arr_t_name, temp_trace.x_labels],
+					  y: temp_trace.y_values,
+					  text: temp_trace.n_members, // show text on bar
+					  textposition: 'top center',
+					  name: t_name,
+					  type: 'bar'
+				};
+			data.push(trace);
+		}// end of for
+		
+		var layout = {
+				  autosize: true,
+				  showlegend: true,
+				  title: {
+					    text:'Framingham 10-year risk in % for Female'
+				  },
+				  xaxis: {
+					tickangle: 35,
+				    showdividers: false, // vertical line between group
+				  }, 
+				  barmode: 'group',
+				  bargroupgap: 0.25
+				};
+		
+		Plotly.newPlot('plot_fmh_female_bar', data, layout);
+			
+	}
+}
+	
+function plot_radiomics_fmh_male(traces){
+		if(traces != undefined && traces.length > 0){
+			// data for keeping all traces
+			var data = [];
+			for(t_idx in traces){
+				temp_trace = traces[t_idx];
+				// If gender is not male, continue by skipping to add trace
+				if(temp_trace.sex != 1){
+					continue;
+				}
+				// Generate array of duplicate trace name for grouping bar in case there are many groups
+				var t_name = temp_trace.trace_name
+				var len_group_item = temp_trace.feature_names.length
+				var arr_t_name = []
+				for(var i = 0; i < len_group_item; i++){
+					arr_t_name.push(temp_trace.feature_names[i]);
+				}
+				var trace = {
+						  x: [arr_t_name, temp_trace.x_labels],
+						  y: temp_trace.y_values,
+						  text: temp_trace.n_members, // show text on bar
+						  textposition: 'top center',
+						  name: t_name,
+						  type: 'bar'
+					};
+				data.push(trace);
+			}// end of for
+			
+			var layout = {
+					  autosize: true,
+					  showlegend: true,
+					  title: {
+						    text:'Framingham 10-year risk in % for Male'
+					  },
+					  xaxis: {
+						tickangle: 35,
+					    showdividers: false, // vertical line between group
+					  }, 
+					  barmode: 'group',
+					  bargroupgap: 0.25
+					};
+			
+			Plotly.newPlot('plot_fmh_male_bar', data, layout);
+				
+}
+}
+
+/**
+ * Plot bar chart of framingham risk score, corresponding to stratification result
+ * @param traces
+ * @returns
+ */
+function plot_radiomics_fmh_corr(corr){
+	if(corr != undefined){
+		// data for keeping all traces
+		var data = [];
+		var trace = {
+				  x: corr.index_names,
+				  y: corr.values,
+				  //text: temp_trace.n_members, // show text on bar
+				  textposition: 'top center',
+				  //name: '',
+				  type: 'bar'
+				  //width: 0.3
+		};
+		data.push(trace);
+		var layout = {
+				  autosize: true,
+				//  showlegend: true,
+				  title: {
+					    text:'Framingham 10-year risk score and Radiomics Correlation'
+				  },
+				  xaxis: {
+					tickangle: 35,
+				    showdividers: false, // vertical line between group
+				  }, 
+				  barmode: 'group',
+				  bargroupgap: 0.25
+				};
+		
+		Plotly.newPlot('plot_fmh_correlation_bar', data, layout);
 			
 	}	
 }
@@ -1089,3 +1244,120 @@ function plot_3d($target, plot_data, layout){
 		Plotly.newPlot($target, data_traces, layout);
 	}
 }*/
+
+
+/**
+ * Plot nominal or interval
+ * @param plot_data.x, plot_data.y, plot_data.z
+ * 		  plot_data.label
+ * 		  plot_data.number_type (INTERVAL, NOMINAL)
+ * 
+ * 		  In case of INTERVAL, colorscale bar will be plotted.
+ * 		  In case of NOMINAL, legend will be plotted. 
+ * @returns
+ */
+function plot_reduced_dim_space($target, plot_data, title){
+
+	// colorscale contains value in target column to make different color 
+	var arr_colorscale = get_obj_values(JSON.parse(plot_data.label));
+	
+	// Check if target column is categorical data or numeric
+	// In case of categorical data => display legend 
+	// In case of numeric => display legend 
+	var is_cate = false;
+	if(plot_data.number_type == 'NOMINAL'){
+		is_cate = true;
+	}
+	
+	var layout = {
+		   	scene: {
+				xaxis:{ title: '',
+					 //backgroundcolor: "rgb(200, 200, 230)",
+					 backgroundcolor: 'rgb(230, 230,230)',
+					 gridcolor: "rgb(255, 255, 255)",
+					 showbackground: true,
+					 zerolinecolor: "rgb(255, 255, 255)"
+				},
+				yaxis:{title: '',
+					//backgroundcolor: "rgb(230, 200,230)",
+					backgroundcolor: 'rgb(230, 230,230)',
+					gridcolor: "rgb(255, 255, 255)",
+					showbackground: true,
+					zerolinecolor: "rgb(255, 255, 255)"
+				},
+				zaxis:{title: '',
+				 	//backgroundcolor: "rgb(230, 230,200)",
+					backgroundcolor: 'rgb(230, 230,230)',
+				 	gridcolor: "rgb(255, 255, 255)",
+				 	showbackground: true,
+				 	zerolinecolor: "rgb(255, 255, 255)"
+				}},
+				 
+			  autosize : true,
+			  title: title,
+			  hovermode: 'closest', /*Change default on hover to the data point itself*/		  
+	};
+	
+	var update;
+	if(is_cate){
+		// categorical data, data will be clustered.
+		// clear data_traces
+		var traces = [];
+		//plot3d_marker_cate.color = arr_colorscale;
+		// call common_graph.js to get array of {x: arr_cx, y:arr_cy, z: arr_cz, label: label, arr_id:arr_cid}
+		var arr_x = plot_data.x;
+		var arr_y = plot_data.y;
+		var arr_z = plot_data.z;
+		
+		// Label take from clinical items 
+		var arr_label = arr_colorscale;
+		// var arr_ids = get_obj_values(plot_data.labels);
+		
+		// Call common_graph.js to get cluster by label.
+		var clusters = get_3d_cluster_data(arr_x, arr_y, arr_z, arr_label);
+		for(var cidx in clusters){
+			// create trace
+			var curr_cluster = clusters[cidx];
+			trace = {
+					  x: curr_cluster.x,
+					  y: curr_cluster.y,
+					  z: curr_cluster.z,
+					  name: curr_cluster.label,
+					  legendgroup: curr_cluster.label,
+					  mode: 'markers+text',
+					  marker: {
+							size: marker_size,
+							opacity: marker_opacity},
+					  type: 'scatter3d',
+					  //ids: curr_cluster.arr_id,
+					  //text: curr_cluster.arr_id,
+					  textposition: 'top center',
+			}//end trace
+			traces.push(trace);
+		}
+
+		
+		layout['showlegend'] = true;
+		Plotly.newPlot($target,traces, layout);
+
+
+	}else{
+		// Data type is INTERVAL, no need to cluster data for trace
+		layout['showlegend'] = false;
+		plot3d_marker.color = arr_colorscale;
+//		Plotly.newPlot($target,traces, layout);
+//		if(is_new_plot){
+//			
+		plot_3d($target, plot_data, layout);
+//			is_new_plot = false;
+//		}else{
+//			update = {
+//					marker: plot3d_marker
+//			}
+//			Plotly.update($target,update, layout);
+//		}
+	}
+
+	
+	//disable_colorscales_button($button);
+}

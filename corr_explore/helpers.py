@@ -341,20 +341,23 @@ class Helper:
             arr_x_labels = []
             arr_y_vals = []
             arr_n_group_member = []
-            # arr_fmh_avg_score = np.zeros(shape=(len(arr_selected_source_col), len_group))
             arr_fmh_traces = []
             # In case of categorical groupkeys = dict_keys(['Current', 'Never'])
             # 2 Level (Cate => Interval) ==> 
             for group_keys in groups.keys():
                 print("key:", group_keys)
                 
-                # Generate label for x in chat
+                # Generate label for x in chart
                 str_label_key = ""
                 if isinstance(group_keys, str):
                     str_label_key = group_keys
+                    
+                elif isinstance(group_keys, int):
+                     str_label_key = str_label_key + str(group_keys) + "|"
                 else:
                     for key in group_keys:
-                        str_label_key = str_label_key + key + "|"
+                        # str_label_key = str_label_key + group_keys + "|"
+                        str_label_key = str_label_key + str(key) + "|"
 #                 idx_gb_col = 0
                 
 #                 if isinstance(group_keys, str):
@@ -398,7 +401,15 @@ class Helper:
                         # Add Framingham Risk Score
                         try:
                             radiomics_feature, fmh_avg_score, radiomics_mean = FraminghamRiskScore.framingham_cvd_score(groupped_data, arr_selected_source_col)
-                            arr_fmh.append({"feature_names": radiomics_feature, "score": fmh_avg_score, "feature_mean_value": radiomics_mean, 'n_members': n_members})
+                            current_sex = ""
+                            if (isinstance(group_keys, str) and group_keys == "sex0.0-0.0") or  group_keys[0] == "sex0.0-0.0":
+                                current_sex = 0
+                            elif (isinstance(group_keys, str) and group_keys == "sex1.0-1.0") or  group_keys[0] == "sex1.0-1.0":
+                                current_sex = 1
+                                
+                            arr_fmh.append({"feature_names": radiomics_feature, "score": fmh_avg_score,
+                                            "feature_mean_value": radiomics_mean, "sex": current_sex,
+                                            'n_members': n_members})
                             
                         except BizValidationExption as be:
                             raise be
@@ -430,6 +441,7 @@ class Helper:
                 trace['y_values'] = arr_fmh[idx]['feature_mean_value']  # radiomics
                 trace['feature_names'] = arr_fmh[idx]['feature_names']
                 trace['n_members'] = arr_fmh[idx]['n_members']
+                trace['sex'] = arr_fmh[idx]['sex']
                # trace['n_group_member'] = list(arr_n_group_member)
                 arr_traces.append(trace)
             return arr_traces
@@ -474,7 +486,7 @@ class Helper:
             pca_helper = PcaUtil()
             if reduce_dim_algorithm == PCA:
                 # Get X transformed by PCA
-                dim_3d = pca_helper.reduce_dimension(X_scaled, n_components=n_components)
+                dim_3d, pca = pca_helper.reduce_dimension(X_scaled, n_components=n_components)
                 
             elif reduce_dim_algorithm == LDA:
                 new_y = None
@@ -498,7 +510,7 @@ class Helper:
                     raise BizValidationExption("LDA", "To reduce dimension by LDA to 3 dimensions, number of classes must be greater than 3.")
                 
                 # Dont specify , n_components=n_components in PCA because the result is different
-                X_transformed = pca_helper.reduce_dimension(X_scaled, n_components=100)
+                X_transformed, pca = pca_helper.reduce_dimension(X_scaled)
                 dim_3d = LdaUtil.reduce_dimension(X_transformed, new_y.ravel(), n_components=n_components)
         
         return dim_3d, y
@@ -559,4 +571,15 @@ class Helper:
         arr_int_col_idx = list(map(int, str_column_indexes))
         df_selected_data = df_data.iloc[:, arr_int_col_idx]
         return df_selected_data
-        
+    
+    @staticmethod
+    def sort_max_min(arr_col_names, arr_col_values):
+            min_max_idx = np.argsort(arr_col_values)
+            max_min_idx = min_max_idx[::-1]
+            arr_name = []
+            arr_value = []
+            for idx in max_min_idx:
+                arr_name.append(arr_col_names[idx])
+                arr_value.append(arr_col_values[idx])
+            
+            return arr_name, arr_value    

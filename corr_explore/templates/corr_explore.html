@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>Correlation Exploration</title>
+<title>Radiomic Features and Target Factors Analysis</title>
 <meta charset="utf-8" />
 {% load static %} {% include "main_menu/global_script.html" %}
 
@@ -61,13 +61,14 @@
 			data-url-upload="{%url 'corr_explore_analyze_source_target' %}"
 			data-url-strat="{%url 'corr_explore_stratify_data' %}" 
 			data-url-dim="{%url 'corr_explore_reduce_dim_data' %}"
+			data-url-fmhradiomics="{%url 'corr_explore_framingham_radiomics' %}"
 			data-url-fselection1="{%url 'corr_explore_feature_selection' %}"/>
 			
 	<!-- Include naviation bar to the page -->		
 	{% include "main_menu/nav_bar.html" %}
 	
 	<!--  Text for current page name  -->
-	<h3 class="page_title">Correlation Analysis</h3>
+	<h3 class="page_title">Radiomic Features and Target Factors Analysis</h3>
 	
 	<!-- Notification message -->
 	{% include "main_menu/alert_msg.html" %}
@@ -195,18 +196,19 @@
 					</div>
 					<!-- ======= End of main_right ====== -->
 				</div>
-				<!-- ====== End of Source/Target selection ====== -->
+			</div>
+			
+			<!-- ====== End of Source/Target selection ====== -->
 				<div style="width:100%; text-align: center;margin-top:10px;margin-bottom: 10px;">
-					<button id="btn_xgboostregressor" class="btn btn-primary" style="width: 150;" type="submit">XGBoost Regressor</button>
+					<button id="btn_xgboostregressor" class="btn btn-primary" style="width: 150;" type="submit">XGBoost Feature Selection</button>
 					<button id="btn_mean_bar" class="btn btn-primary" style="width: 150;" type="submit">Group Mean Value Plot</button>
 					<button id="btn_fmh_score" class="btn btn-primary" style="width: 150;" type="submit">Framingham Risk Score</button>
-					<button id="btn_fmh_radiomics_corr" class="btn btn-primary" style="width: 150;" type="submit">Radioimics & Framingham Risk Score Correlation</button>
+					<button id="btn_fmh_radiomics_corr" class="btn btn-primary" style="width: 150;" type="submit">Radioimics & Framingham Risk Score for Stratified Data</button>
 					<!-- <a href="#">About Framingham</a> -->
 					<button id="btn_pca_plot" class="btn btn-primary" style="width: 150px;" type="submit">PCA Plot</button>
 					<button id="btn_lda_plot" class="btn btn-primary" style="width: 150px;" type="submit">LDA Plot</button>
 					<!-- <button id="btn_feature_variance" class="btn btn-primary" style="width: 150;" type="submit">Group Variance</button> -->
 				</div>
-			</div>
 			<div id="plot_strat_mean_bar" ></div>
 			<div id="plot_feature_variance_bar" ></div>
 			<div id="plot_fmh_mean_bar" ></div>
