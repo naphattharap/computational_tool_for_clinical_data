@@ -325,9 +325,14 @@ class Helper:
                 idx_selected_groupby = idx_selected_groupby + 1
             elif numtype == NOMINAL:
                     arr_new_groupby.append(col_name)
+
+        # ========== End of generating key for group by ==========
+        # ========================================================
         
+         # ========== If group data is valid then loop through all groups for calc data ==========
         # To store result from FHS calc
-        arr_fmh = []
+        arr_fmh_male = []
+        arr_fmh_female = []
         if len(arr_new_groupby) > 0:
             df_groupped = df_strat_res.groupby(arr_new_groupby)  # Group data by column G1, G2 (our new column)
             groups = df_groupped.groups
@@ -358,27 +363,8 @@ class Helper:
                     for key in group_keys:
                         # str_label_key = str_label_key + group_keys + "|"
                         str_label_key = str_label_key + str(key) + "|"
-#                 idx_gb_col = 0
-                
-#                 if isinstance(group_keys, str):
-#                     str_label_key = group_keys 
-# 
-#                 elif isinstance(group_keys, pd.Interval):
-#                     str_label_key = str(group_keys.left + 1) + "-" + str(group_keys.right)
-#                 else:     
-#                     for key in group_keys:
-#                         type_key = type(key)
-# #                         str_label_key = str_label_key + arr_selected_groupby[idx_gb_col] + ":"
-#                         str_label_key = arr_selected_groupby[idx_gb_col] + ":"
-#                         if isinstance(key, str):
-# #                             str_label_key = str_label_key + key + " | "
-#                             str_label_key = key + " | "
-#                         elif isinstance(key, pd.Interval):  
-#                             # +1 for left because the label that want to display and how pd.cut works are different.
-#                             # pd.cut does not include left but we display left as included in range
-#                             str_label_key = str_label_key + str(int(key.left) + 1) + "-" + str(int(key.right)) + " | "
-#                         idx_gb_col = idx_gb_col + 1  
-#                 # Label of each bar
+
+                # Label of each bar
                 arr_x_labels.append(str_label_key)
                 
                 # If data in group is empty, skip calc mean
@@ -402,21 +388,30 @@ class Helper:
                         try:
                             radiomics_feature, fmh_avg_score, radiomics_mean = FraminghamRiskScore.framingham_cvd_score(groupped_data, arr_selected_source_col)
                             current_sex = ""
-                            if (isinstance(group_keys, str) and group_keys == "sex0.0-0.0") or  group_keys[0] == "sex0.0-0.0":
+                            if (isinstance(group_keys, int) and group_keys == 0) or (isinstance(group_keys, tuple) and group_keys[0] == 0):
+                                current_sex = 0
+                            elif (isinstance(group_keys, int) and group_keys == 1)or (isinstance(group_keys, tuple) and group_keys[0] == 1):
+                                current_sex = 1
+                            elif (isinstance(group_keys, str) and group_keys == "sex0.0-0.0") or  group_keys[0] == "sex0.0-0.0":
                                 current_sex = 0
                             elif (isinstance(group_keys, str) and group_keys == "sex1.0-1.0") or  group_keys[0] == "sex1.0-1.0":
                                 current_sex = 1
-                                
-                            arr_fmh.append({"feature_names": radiomics_feature, "score": fmh_avg_score,
+                             
+                            if current_sex == 0:
+                                 arr_fmh_female.append({"feature_names": radiomics_feature, "score": fmh_avg_score,
                                             "feature_mean_value": radiomics_mean, "sex": current_sex,
-                                            'n_members': n_members})
+                                            'n_members': n_members, "x_label": str_label_key})
+                            elif current_sex == 1:
+                                arr_fmh_male.append({"feature_names": radiomics_feature, "score": fmh_avg_score,
+                                            "feature_mean_value": radiomics_mean, "sex": current_sex,
+                                            'n_members': n_members, "x_label": str_label_key})
                             
                         except BizValidationExption as be:
                             raise be
                         # arr_fmh_avg_score[s_idx][idx_arr_x] = avg_risk_percent
                     
                 idx_arr_x = idx_arr_x + 1
-            
+                
         # Prepare trace data for plot
         if target_calculation == "mean":
             # Result object
@@ -431,20 +426,67 @@ class Helper:
                 arr_traces.append(trace)
             return arr_traces
          
+         # Change structure of result
         if target_calculation == "framingham":
             # Result object
-            arr_traces = [] 
-            for idx in range(0, len(arr_fmh)):
-                trace = dict()
-                trace['trace_name'] = arr_x_labels[idx]  # Stratfication group by level
-                trace['x_labels'] = arr_fmh[idx]['score']  # FMH score
-                trace['y_values'] = arr_fmh[idx]['feature_mean_value']  # radiomics
-                trace['feature_names'] = arr_fmh[idx]['feature_names']
-                trace['n_members'] = arr_fmh[idx]['n_members']
-                trace['sex'] = arr_fmh[idx]['sex']
-               # trace['n_group_member'] = list(arr_n_group_member)
-                arr_traces.append(trace)
+            arr_traces = dict()
+            # 1. Loop through all features
+            # 2. In each feature get score and mean value of stratified data
+            # Get 2 group for male and female
+
+            if len(arr_fmh_female) > 0:
+                traces = Helper.get_fmh_trace_by_gender(arr_selected_source_col, arr_fmh_female, 0)
+                arr_traces['traces_female'] = traces
+            if len(arr_fmh_male) > 0:     
+                traces = Helper.get_fmh_trace_by_gender(arr_selected_source_col, arr_fmh_male, 1)
+                arr_traces['traces_male'] = traces 
+                
             return arr_traces
+         
+#          # Group by sex + age
+#         elif target_calculation == "framingham_x":
+#             # Result object
+#             arr_traces = [] 
+#             for idx in range(0, len(arr_fmh)):
+#                 trace = dict()
+#                 trace['trace_name'] = arr_x_labels[idx]  # Stratfication group by level
+#                 trace['x_labels'] = arr_fmh[idx]['score']  # FMH score
+#                 trace['y_values'] = arr_fmh[idx]['feature_mean_value']  # radiomics
+#                 trace['feature_names'] = arr_fmh[idx]['feature_names']
+#                 trace['n_members'] = arr_fmh[idx]['n_members']
+#                 trace['sex'] = arr_fmh[idx]['sex']
+#                # trace['n_group_member'] = list(arr_n_group_member)
+#                 arr_traces.append(trace)
+#             return arr_traces
+        
+    @staticmethod
+    def get_fmh_trace_by_gender(arr_selected_source_col, arr_fmh, sex):
+        traces = []
+        n_features = len(arr_selected_source_col)
+        for f_idx in range(0, n_features):
+            n_strat_group = len(arr_fmh)
+            trace = dict()
+            trace['trace_name'] = arr_selected_source_col[f_idx]
+            x_values = []
+            y_values = []
+            x_labels = []
+            x_text = []  # Mouseover
+            for strat_idx in range(0, n_strat_group): 
+                feature_score = arr_fmh[strat_idx]['score'][f_idx]
+                x_values.append(feature_score)
+                feature_amount = arr_fmh[strat_idx]['feature_mean_value'][f_idx]
+                y_values.append(feature_amount)
+                x_labels.append(arr_fmh[strat_idx]['x_label'])
+                item_text = "Member: " + str(arr_fmh[strat_idx]['n_members']) + ", Score: " + str(feature_score)
+                x_text.append(item_text)
+           
+            trace['y_values'] = y_values
+            trace['x_labels'] = x_labels
+            trace['x_values'] = x_values
+            trace['x_text'] = x_text
+            trace['sex'] = sex
+            traces.append(trace)
+        return traces
 
     @staticmethod
     def get_reduced_dim_data(df_source, df_target, feature_indexes,

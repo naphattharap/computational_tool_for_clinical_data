@@ -464,8 +464,8 @@ function bind_render_mean_bar_plot(){
 					}else if(target_action == "framingham"){
 						// For all gender
 						//plot_radiomics_fmh(resp.traces);
-						plot_radiomics_fmh_female(resp.traces);
-						plot_radiomics_fmh_male(resp.traces);
+						plot_radiomics_fmh_by_gender(resp.traces.traces_female, 'Framingham 10-year risk in % for Female', 0);
+						plot_radiomics_fmh_by_gender(resp.traces.traces_male, 'Framingham 10-year risk in % for Male', 1);
 						
 					//}else if(target_action == "feature_variance"){
 					//	plot_feature_variance_bar(resp.feature_variances);
@@ -475,19 +475,22 @@ function bind_render_mean_bar_plot(){
 												resp.feature_selection.col_idx);
 						// Prepare message for information dialog
 						score_msg = "Train Score: "+ resp.feature_selection.train_score +
-						HTML_BR + "Test Score: " + resp.feature_selection.test_score + HTML_BR;	
+						HTML_BR + "Test Score: " + resp.feature_selection.test_score;	
 						
 						// Duplicated features
 						var dup_features = resp.feature_selection.duplicated_features
 						if (dup_features != undefined && dup_features.length > 0){
 							str_dup_features =  dup_features.join(",");
 							str_dup_features = str_dup_features.replace(/,/gi,", "+HTML_BR);
-							score_msg += "Duplicated features: " + str_dup_features + HTML_BR ;
+							score_msg = score_msg + HTML_BR + HTML_BR + "Duplicated features: "+ HTML_BR + str_dup_features;
 							
 						}
-						score_msg += "Selected Features: " + HTML_BR;
+						
+						score_msg = score_msg + HTML_BR + HTML_BR + "Selected Features: " + HTML_BR;
+						
 						str_msg = resp.feature_selection.col_name.join(",");
-						str_msg = str_msg.replace(/,/gi,", &lt;br&gt;");
+						str_msg = str_msg.replace(/,/gi,", "+HTML_BR);
+						
 						msg = {msg_info: score_msg + str_msg};
 						alert_message(msg);
 					}else if(target_action == "lda"){
@@ -844,23 +847,19 @@ function plot_radiomics_fmh(traces){
 	}	
 }
 
-
-function plot_radiomics_fmh_female(traces){
+function plot_radiomics_fmh_by_gender(traces, plot_title, gender){
 	if(traces != undefined && traces.length > 0){
 		// data for keeping all traces
 		var data = [];
 		for(t_idx in traces){
 			temp_trace = traces[t_idx];
-			// If gender is not female, continue by skipping to add trace
-			if(temp_trace.sex != 0){
-				continue;
-			}
+			
 			// Generate array of duplicate trace name for grouping bar in case there are many groups
-			var t_name = temp_trace.trace_name
-			var len_group_item = temp_trace.feature_names.length
+			var t_name = temp_trace.trace_name;
+			var len_group_item = temp_trace.x_labels.length;
 			var arr_t_name = []
 			for(var i = 0; i < len_group_item; i++){
-				arr_t_name.push(temp_trace.feature_names[i]);
+				arr_t_name.push(t_name);
 			}
 			var trace = {
 					  x: [arr_t_name, temp_trace.x_labels],
@@ -877,7 +876,7 @@ function plot_radiomics_fmh_female(traces){
 				  autosize: true,
 				  showlegend: true,
 				  title: {
-					    text:'Framingham 10-year risk in % for Female'
+					    text: plot_title
 				  },
 				  xaxis: {
 					tickangle: 35,
@@ -886,58 +885,113 @@ function plot_radiomics_fmh_female(traces){
 				  barmode: 'group',
 				  bargroupgap: 0.25
 				};
-		
-		Plotly.newPlot('plot_fmh_female_bar', data, layout);
+		if (gender == 0){
+			Plotly.newPlot('plot_fmh_female_bar', data, layout);
+		}else{
+			Plotly.newPlot('plot_fmh_male_bar', data, layout);
+		}
 			
+	}else{
+		msg = {msg_error: "Data for plotting ["+title+"] is invalid."};
+		alert_message(msg);
 	}
 }
+//
+//function plot_radiomics_fmh_female(traces){
+//	if(traces != undefined && traces.length > 0){
+//		// data for keeping all traces
+//		var data = [];
+//		for(t_idx in traces){
+//			temp_trace = traces[t_idx];
+//			// If gender is not female, continue by skipping to add trace
+////			if(temp_trace.sex != 0){
+////				continue;
+////			}
+//			// Generate array of duplicate trace name for grouping bar in case there are many groups
+//			var t_name = temp_trace.trace_name
+////			var len_group_item = temp_trace.x_labels.length
+////			var arr_t_name = []
+////			for(var i = 0; i < len_group_item; i++){
+////				//arr_t_name.push(temp_trace.feature_names[i]);
+////				
+////			}
+//			var trace = {
+////					  x: [arr_t_name, temp_trace.x_labels],
+//					  x: [temp_trace.x_values, temp_trace.x_labels],
+//					  y: temp_trace.y_values,
+//					  text: temp_trace.n_members, // show text on bar
+//					  textposition: 'top center',
+//					  name: t_name,
+//					  type: 'bar'
+//				};
+//			data.push(trace);
+//		}// end of for
+//		
+//		var layout = {
+//				  autosize: true,
+//				  showlegend: true,
+//				  title: {
+//					    text:'Framingham 10-year risk in % for Female'
+//				  },
+//				  xaxis: {
+//					tickangle: 35,
+//				    showdividers: false, // vertical line between group
+//				  }, 
+//				  barmode: 'group',
+//				  bargroupgap: 0.25
+//				};
+//		
+//		Plotly.newPlot('plot_fmh_female_bar', data, layout);
+//			
+//	}
+//}
 	
-function plot_radiomics_fmh_male(traces){
-		if(traces != undefined && traces.length > 0){
-			// data for keeping all traces
-			var data = [];
-			for(t_idx in traces){
-				temp_trace = traces[t_idx];
-				// If gender is not male, continue by skipping to add trace
-				if(temp_trace.sex != 1){
-					continue;
-				}
-				// Generate array of duplicate trace name for grouping bar in case there are many groups
-				var t_name = temp_trace.trace_name
-				var len_group_item = temp_trace.feature_names.length
-				var arr_t_name = []
-				for(var i = 0; i < len_group_item; i++){
-					arr_t_name.push(temp_trace.feature_names[i]);
-				}
-				var trace = {
-						  x: [arr_t_name, temp_trace.x_labels],
-						  y: temp_trace.y_values,
-						  text: temp_trace.n_members, // show text on bar
-						  textposition: 'top center',
-						  name: t_name,
-						  type: 'bar'
-					};
-				data.push(trace);
-			}// end of for
-			
-			var layout = {
-					  autosize: true,
-					  showlegend: true,
-					  title: {
-						    text:'Framingham 10-year risk in % for Male'
-					  },
-					  xaxis: {
-						tickangle: 35,
-					    showdividers: false, // vertical line between group
-					  }, 
-					  barmode: 'group',
-					  bargroupgap: 0.25
-					};
-			
-			Plotly.newPlot('plot_fmh_male_bar', data, layout);
-				
-}
-}
+//function plot_radiomics_fmh_male(traces){
+//		if(traces != undefined && traces.length > 0){
+//			// data for keeping all traces
+//			var data = [];
+//			for(t_idx in traces){
+//				temp_trace = traces[t_idx];
+//				// If gender is not male, continue by skipping to add trace
+//				if(temp_trace.sex != 1){
+//					continue;
+//				}
+//				// Generate array of duplicate trace name for grouping bar in case there are many groups
+//				var t_name = temp_trace.trace_name
+//				var len_group_item = temp_trace.feature_names.length
+//				var arr_t_name = []
+//				for(var i = 0; i < len_group_item; i++){
+//					arr_t_name.push(temp_trace.feature_names[i]);
+//				}
+//				var trace = {
+//						  x: [arr_t_name, temp_trace.x_labels],
+//						  y: temp_trace.y_values,
+//						  text: temp_trace.n_members, // show text on bar
+//						  textposition: 'top center',
+//						  name: t_name,
+//						  type: 'bar'
+//					};
+//				data.push(trace);
+//			}// end of for
+//			
+//			var layout = {
+//					  autosize: true,
+//					  showlegend: true,
+//					  title: {
+//						    text:'Framingham 10-year risk in % for Male'
+//					  },
+//					  xaxis: {
+//						tickangle: 35,
+//					    showdividers: false, // vertical line between group
+//					  }, 
+//					  barmode: 'group',
+//					  bargroupgap: 0.25
+//					};
+//			
+//			Plotly.newPlot('plot_fmh_male_bar', data, layout);
+//				
+//}
+//}
 
 /**
  * Plot bar chart of framingham risk score, corresponding to stratification result

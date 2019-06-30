@@ -161,11 +161,16 @@ def stratify_data(request):
                     arr_numtype_flag.append(arr_numtype[numpty_idx])
                 
                 arr_fs_col_name, arr_fs_col_idx, train_score, test_score, dup_feature_names = FeatureSelectionUtil.select_by_xgboost(df_res_source, df_fs_target, arr_numtype_flag, n_feature_selection)
-                # round_train_score = Decimal(str(train_score)).quantize(Decimal('1.11'), rounding=ROUND_HALF_UP) * 100
-                # round_test_score = Decimal(str(test_score)).quantize(Decimal('1.11'), rounding=ROUND_HALF_UP) * 100
+                fmt_train_score = []
+                fmt_test_score = []
+                for i in range(0, len(train_score)):
+                    fmt_train_score.append(Decimal(str(train_score[i])).quantize(Decimal('1.11'), rounding=ROUND_HALF_UP))
+                    fmt_test_score.append(Decimal(str(test_score[i])).quantize(Decimal('1.11'), rounding=ROUND_HALF_UP))
+                # round_train_score = Decimal(str(train_score)).quantize(Decimal('1.11'), rounding=ROUND_HALF_UP)
+                
                 # Convert type of arr_fs_col_idx to int to solve JSON error
                 resp['feature_selection'] = {'col_name': list(arr_fs_col_name), 'col_idx': list(map(int, arr_fs_col_idx)),
-                                             'train_score': train_score, 'test_score': test_score, "duplicated_features": dup_feature_names}
+                                             'train_score': fmt_train_score, 'test_score': fmt_test_score, "duplicated_features": dup_feature_names}
                 # resp['sorted_important_indexes'] = list(sorted_indexes)
                 # resp['sorted_important_col_names'] = list(arr_sorted_columns)
     
