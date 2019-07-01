@@ -1,0 +1,11 @@
+.control-label{
+	width: 25%
+}
+
+.col-sm-10{
+	width: 75%
+}
+
+#result_detail{
+	margin-left: 10px;
+}

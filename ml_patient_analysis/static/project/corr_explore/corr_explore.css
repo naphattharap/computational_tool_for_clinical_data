@@ -1,0 +1,216 @@
+/* height is related to svg canvas height here = svg + 20
+see #plotjs_container height
+*/
+/* #process_result{
+	display: -webkit-inline-box;
+    height: 420px;
+} */
+
+.toggle_text{
+	margin-left: 15px;
+    font-size: medium;
+    font-weight: 700;
+}
+
+#process_result_tabs{
+	/* margin-top: 30px; */
+}
+#plot_strat_mean_bar, #plot_feature_variance_bar, 
+#plot_fmh_mean_bar, #plot_fmh_correlation_bar {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+/*======== Tab 1 =============*/
+#source_target_selection_group > #main_left, #pca_group > #main_left{
+	width: 30%;
+    /* height: 100%; */
+    border-right: 1px solid #ccc;
+    min-height: 300px; /*set same value as main_right*/
+}
+
+
+#source_target_selection_group #main_left .row{
+	margin-bottom: 5px !important;
+    width: 95% !important;
+    display: -webkit-inline-box;
+
+}
+
+#source_target_selection_group #main_left .col_label{
+    width: 30%;
+}
+
+#source_target_selection_group, #pca_group{
+	display: -webkit-inline-box;
+	width: 100%;
+	min-height: 200px;
+}
+  
+#source_target_selection_group #feature_list, #pca_group #pca_feature_list{
+
+    max-height: 420px;
+    overflow: scroll;
+}
+
+.top_bottom_lines{
+	border-bottom: 1px solid #ccc;
+    border-top: 1px solid #ccc;
+    width: 90% !important;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+#source_target_selection_group > #main_right, #pca_group > #main_right{
+	width: 70%;
+    height: 100%;
+    padding: 10px;
+    min-height: 300px; /*set same value as main_left*/
+}
+
+#source_target_selection_group #main_right_table, #pca_group  #main_right_table{
+   max-height: 500px;
+   overflow: scroll;
+}
+#source_target_selection_group #tbl_criterion, #pca_group  #tbl_pca_criterion{
+	width: 100%;
+}
+#source_target_selection_group #tbl_criterion th, #pca_group #tbl_pca_criterion th {
+	text-align: center;
+	background-color: #ddebfd;
+}
+#source_target_selection_group #tbl_criterion th, td{
+	padding: 5px;
+	border: 1px solid #ccc;
+}
+
+#pca_group #tbl_pca_criterion th, td{
+	padding: 5px;
+	border: 1px solid #ccc;
+}
+
+.criterion_checkbox_label{
+	margin-right: 15px;
+}
+.txb_slider{
+	border:0; 
+	color:#2196f3;
+	font-weight:bold;
+	width: 100%;
+}
+
+.txb_num_fix_small{
+	width: 50px;
+    text-align: right;
+}
+
+.txb_inactive{
+    background-color: #f5f5f5;
+    border: 1px solid #ccc;
+}
+
+.txb_active_require{
+	background: #f9c6c6;
+}
+
+.unselected_row{
+   background-color: #f5f5f5;
+}
+
+/*overwrite jquery slider*/
+.ui-corner-all{
+	width: 90%;
+}
+
+/* 
+#tab_1, #tab_2, #tab_3{
+	min-height: 1000px;
+} */
+
+
+
+/*overwrite default*/
+.row{
+    margin-left: 10px !important;
+    margin-top: 5px;
+    margin-bottom: 5px !important;
+}
+
+.h_section_title{
+	color: #555555;
+    margin-top: 20px;
+    margin-left: 10px;
+    text-align: center;
+}
+
+.file_chooser{
+	width: 100%;
+    border-color: #ddd;
+    border-width: thin;
+    border-style: solid;
+    height: 30px;
+    background-color: #f6f6f6;;
+    border-radius: 0.25em;
+}
+
+::-webkit-file-upload-button {
+  padding: 5px;
+  width: 150px
+}
+
+.cell-title {
+      font-weight: bold;
+}
+    
+.cell-effort-driven {
+      text-align: center;
+}
+
+.cell-selection {
+      border-right-color: silver;
+      border-right-style: solid;
+      background: #f5f5f5;
+      color: gray;
+      text-align: right;
+      font-size: 10px;
+}
+
+.slick-row.selected .cell-selection {
+      background-color: transparent; /* show default selected row background */
+}
+
+
+/* ============ Tab 2 ============ */
+/* #pca_group #pca_feature_list{
+    max-height: 500px;
+    overflow: scroll;
+} */
+
+#plot_reduced_dim{
+	height: 500px;
+}
+
+
+/* Overwrite slickgrid style for 3 rows text*/
+.slick-header-column {
+  height: 40px !important;
+  text-align: center;
+}
+
+.slick-row.odd {
+    background: #eef7fb !important;
+}
+
+
+
+/* Remove border of header row, it's thick*/
+.slick-header.ui-state-default {
+    overflow: inherit;
+    border: 0px;
+}
+
+/*====== Plotly.js =========*/
+/*Overwrite to remove Aa text above legend*/
+g.pointtext {
+	display: none;
+}
