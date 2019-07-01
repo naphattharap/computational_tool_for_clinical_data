@@ -25,7 +25,7 @@ SECRET_KEY = 'muyg&jl5qm=cm*+@k_w$$&m5a@%#v1$h05&%nqx!vhrh1g^+gv'
 DEBUG = True
 
 # radiomics-exploration.herokuapp.com
-ALLOWED_HOSTS = ['radiomics-exploration.herokuapp.com', '0.0.0.0']
+ALLOWED_HOSTS = ['.herokuapp.com', '0.0.0.0', 'localhost', '127.0.0.1', '[::1]']
 
 # Application definition
 
