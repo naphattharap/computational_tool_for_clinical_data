@@ -139,7 +139,6 @@ numexpr==2.6.8
 numpy==1.15.4
 numpydoc==0.7.0
 oauthlib==2.1.0
-odo==0.5.1
 olefile==0.45.1
 opencv-contrib-python==3.4.3.18
 opencv-python==3.4.3.18
