@@ -43,8 +43,6 @@ dash-html-components==0.15.0
 dash-renderer==0.22.0
 dash-table==3.6.0
 dash-table-experiments==0.6.0
-dask==0.19.2
-datashape==0.5.4
 decorator==4.3.0
 dill==0.2.8.2
 distributed==1.20.2
