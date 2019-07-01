@@ -864,10 +864,12 @@ function plot_radiomics_fmh_by_gender(traces, plot_title, gender){
 			var trace = {
 					  x: [arr_t_name, temp_trace.x_labels],
 					  y: temp_trace.y_values,
-					  text: temp_trace.n_members, // show text on bar
+					  text:temp_trace.x_values, // show text on bar
 					  textposition: 'top center',
 					  name: t_name,
-					  type: 'bar'
+					  type: 'bar',
+					  textposition: 'auto',
+					  hoverinfo: temp_trace.x_text
 				};
 			data.push(trace);
 		}// end of for
@@ -892,7 +894,7 @@ function plot_radiomics_fmh_by_gender(traces, plot_title, gender){
 		}
 			
 	}else{
-		msg = {msg_error: "Data for plotting ["+title+"] is invalid."};
+		msg = {msg_info: "Data for plotting ["+ plot_title +"] is invalid."};
 		alert_message(msg);
 	}
 }
