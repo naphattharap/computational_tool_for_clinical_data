@@ -11,7 +11,6 @@ astropy==2.0.3
 attrs==17.4.0
 Babel==2.5.3
 backports.shutil-get-terminal-size==1.0.0
-basemap==1.2.0
 beautifulsoup4==4.6.3
 bitarray==0.8.1
 bkcharts==0.2
