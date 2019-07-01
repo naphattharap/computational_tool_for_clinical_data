@@ -1,1 +1,1 @@
-python website/manage.py runserver 84.89.157.250:8000
+web: python subfolder/manage.py runserver 0.0.0.0:$PORT
