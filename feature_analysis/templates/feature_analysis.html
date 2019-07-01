@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Feature Analysis</title>
+<meta charset="utf-8" />
+{% load static %}
+{% include "main_menu/global_script.html" %}
+<!-- Jquery UI for autocomplete -->
+<script src="{% static "external_library/jquery/ui/1.12.1/jquery-ui.js"%}"></script>
+<link rel="stylesheet" type="text/css" href="{% static "external_library/jquery/ui/1.12.1/jquery-ui.min.css"%}"></link>
+<!--  Plotly -->
+<script type="text/javascript" src="{% static "external_library/plotly/plotly-1.47.3.min.js"%}"></script>
+
+
+<!-- SlickGrid -->
+<!-- can't remove 1.11.3 -->
+<script src="{% static "external_library/slickgrid/2.4.3/lib/jquery-ui-1.11.3.min.js"%}"></script>
+<script src="{% static "external_library/slickgrid/2.4.3/lib/jquery.event.drag-2.3.0.js"%}"></script>
+<script type="text/javascript" src="{% static "external_library/slickgrid/2.4.3/slick.core.js"%}"></script>
+<script type="text/javascript" src="{% static "external_library/slickgrid/2.4.3/slick.grid.js"%}"></script>
+<script type="text/javascript" src="{% static "external_library/slickgrid/2.4.3/slick.formatters.js"%}"></script>
+<script type="text/javascript" src="{% static "external_library/slickgrid/2.4.3/slick.editors.js"%}"></script>
+<script type="text/javascript" src="{% static "external_library/slickgrid/2.4.3/plugins/slick.rowselectionmodel.js"%}"></script>
+<script type="text/javascript" src="{% static "external_library/slickgrid/2.4.3/slick.dataview.js"%}"></script>
+<script type="text/javascript" src="{% static "external_library/slickgrid/2.4.3/controls/slick.pager.js"%}"></script>
+<script type="text/javascript" src="{% static "external_library/slickgrid/2.4.3/controls/slick.columnpicker.js"%}"></script>
+<!-- Plug in to group column -->
+<!-- https://github.com/naresh-n/slickgrid-column-group/blob/master/examples/example-1.html -->
+<script type="text/javascript" src="{% static "external_library/slickgrid/slick.columngroup.js"%}"></script>
+
+<script type="text/javascript" src="{% static "external_library/d3js/d3.v3.js"%}"></script>
+
+
+
+<script type="text/javascript" src="{% static "feature_analysis/feature_analysis_grid.js"%}"></script>
+<script type="text/javascript" src="{% static "feature_analysis/feature_analysis.js"%}"></script>
+<script type="text/javascript" src="{% static "feature_analysis/feature_analysis_dashboard.js"%}"></script>
+<link rel="stylesheet" type="text/css" href="{% static "feature_analysis/feature_analysis.css"%}"></link>
+
+<!-- JExcel Scripts -->
+<script src="{% static "jexcel/2.0.2/js/jquery.jexcel.js"%}"></script>
+<link rel="stylesheet" href="{% static "jexcel/2.0.2/css/jquery.jexcel.css"%}" type="text/css"></link>
+<script type="text/javascript" src="{% static "theme/common-jexcel-ext.js"%}"></script>
+<script type="text/javascript" src="{% static "theme/common_graph.js"%}"></script>
+
+
+<link rel="stylesheet" href="{% static "external_library/slickgrid/2.4.3/slick.grid.css"%}" type="text/css"/>
+<link rel="stylesheet" href="{% static "external_library/slickgrid/2.4.3/slick-default-theme.css"%}" type="text/css"/>
+<link rel="stylesheet" href="{% static "external_library/slickgrid/2.4.3/controls/slick.pager.css"%}" type="text/css"/>
+<link rel="stylesheet" href="{% static "external_library/slickgrid/2.4.3//controls/slick.columnpicker.css"%}" type="text/css"/>
+<link rel="stylesheet" href="{% static "external_library/jquery/ui/1.12.1/jquery-ui.theme.css"%}" type="text/css"/>
+
+</head>
+<body>
+	<!-- Hidden fields used in JS -->
+	<input type="hidden" id="process_data_url" data-url="{%url 'feature_analysis_process' %}" />
+	{% include "main_menu/nav_bar.html" %}
+	<h3 class="page_title">Feature Analysis</h3>
+	{% include "main_menu/alert_msg.html" %}
+	
+	<div class="container-fluid">
+		<div>
+			<div id="dataset_group">
+				<form id="form_upload_file" method="post"
+					action="{% url 'feature_analysis_process' %}" enctype="multipart/form-data">
+					{% csrf_token %}
+					
+					<!-- Upload file section -->
+					<div id="upload_file_group" class="form-group-border">
+						<p>
+							<a id="upload_file_title" href="#">Dataset Hide/Show</a>
+						</p>
+						<div  id="upload_file_section">
+							
+							<h4 class="h_section_title">UPLOAD DATA</h4>
+							
+							<!-- Radiomic -->
+							<div class="form-group row">
+								<label class="col-sm-3">Radiomic Data</label>
+								<div class="col-sm-7">
+									
+									<!-- Default checked -->
+									<div class="custom-control custom-checkbox">
+									  	<input type="checkbox" id="data_column_header"  name="data_column_header" class="custom-control-input" checked>
+									  	<label class="custom-control-label" for="data_column_header">Data file contains table header</label>
+									</div>
+									<input id="data_file" name="data_file" type="file" class="file_chooser"/>
+								</div>
+							</div>
+							
+				
+							<!-- Outcomes -->
+							<div class="form-group row">
+								<label  class="col-sm-3">Clinical Outcomes</label>
+								<div class="col-sm-7">
+									<!-- Default checked -->
+									<div class="custom-control custom-checkbox">
+									  	<input type="checkbox" id="outcomes_column_header"  name="outcomes_column_header" class="custom-control-input" checked>
+									  	<label class="custom-control-label" for="outcomes_column_header">Data file contains table header</label>
+									</div>
+									<input id="outcomes_file" name="outcomes_file" type="file" class="file_chooser"/>
+								</div>
+							</div>
+							
+							<!-- Button -->
+							<div  class="form-group row">
+								<label class="col-sm-3"></label>
+								<div class="col-sm-7">
+									
+									<!-- Default checked -->
+									<div class="custom-control custom-checkbox">
+									</div>
+									<div style="margin-top: 15px;">
+										<button id="btn_process_data" class="btn btn-primary" style="width: 150px;" type="submit">Process</button>
+									</div>
+								</div>
+							</div>
+							
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+
+	<div id="process_result">
+		<div id="main_left_result" class="form-group-border">
+			<div id="plot_feature_ranking"></div>
+		</div>
+	   <!-- Graph search -->
+<!-- 		<div id="main_left_result" class="form-group-border">
+			<div id="search_group" >
+				<p>
+				</p>
+				<div id="search_group_section">
+						<div class="form-group" style="margin-bottom: 5px;">
+							<div class="col-sm-8">
+								<label for="btn_hide_text_on_dot">Show text over the
+									dots</label>
+							</div>
+							<div>
+								<label class="switch"> <input id="btn_hide_text_on_dot"
+									name="btn_hide_text_on_dot" type="checkbox" checked> <span
+									class="slider round"></span>
+								</label>
+							</div>
+						</div>
+
+						<div class="form-group row">
+							<div class="col_label">
+								<label for="search_id">Search ID</label>
+							</div>
+							<div>
+	  							<input id="search_id" name="search_id" type="text" class="form-control"></input>
+							 </div>
+						</div>
+						
+						
+						<div class="form-group row">
+							<div class="col_label">
+								<label for="txt_search">Text Search</label>
+							</div>
+							<div>
+				  				<input id="txt_search" name="txt_search" type="text" class="form-control">
+							 </div>
+						</div>
+						
+					
+						<div class="form-group row">
+							<div class="col_label">
+								<label for="sel_gender">Gender</label>
+							</div>
+							<div>
+				  				<select id="sel_gender" name="sel_gender">
+		  							<option value="" selected>All</option>
+		  							<option value="Male">Male</option>
+		  							<option value="Female">Female</option>
+		  						</select>
+							 </div>
+						</div>
+				
+				
+						<div class="form-group row">
+							<div class="col_label">
+								<label for="range_age">Age(year)</label>
+							</div>
+							<div>
+				  				<input type="text" id="range_age" name="range_age" readonly style="border:0; color:#2196f3;; font-weight:bold;">
+								<div id="slider-range-age"></div>
+							 </div>
+						</div>
+					
+					
+					  	<div class="form-group row">
+							<div class="col_label">
+								<label for="range_height">Height(cm)</label>
+							</div>
+							<div>
+				  				<input type="text" id="range_height" name="range_height" readonly style="border:0; color:#2196f3;; font-weight:bold;">
+								<div id="slider-range-height"></div>
+							 </div>
+						</div>
+					
+
+					  	<div class="form-group row">
+							<div class="col_label">
+								<label for="range_weight">Weight(kg)</label>
+							</div>
+							<div>
+				  				<input type="text" id="range_weight" name="range_weight" readonly style="border:0; color:#2196f3;; font-weight:bold;">
+								<div id="slider-range-weight"></div>
+							 </div>
+						</div>
+											
+					
+						<div class="form-group row">
+							<div class="center_button">
+								<button id="btn_reset_filter" name="btn_reset_filter" class="btn btn-primary">Clear</button>
+							</div>					
+						</div>
+				</div>
+			</div>
+		</div> -->
+		
+		
+		<div id="main_right_result" class="form-group-border" style="margin-left: 5px;">
+			<div id="colorscale_buttons"></div>
+			<div id="plotjs_container"></div>
+		</div>
+	</div>
+		
+		<div id="process_result_tabs" class="container-fluid">
+			<ul class="nav nav-tabs">
+				<li><a data-toggle="tab" href="#tab_dashboard_analytic1">Analytic Dashboard</a></li>
+				<li class="active"><a data-toggle="tab" href="#tab_grid_radiomic_result">Radiomic Result</a></li>
+				<!-- <li><a data-toggle="tab" href="#tab_grid_clinical_outcomes">Clinical Outcomes</a></li> -->
+				<!-- <li><a data-toggle="tab" href="#tab_grid_similar_properties">Mutual Information(Not yet)</a></li> -->
+				
+			</ul>
+			<div id="gridContainer">
+				<div id="tab_grid_radiomic_result" class="tab-pane fade in active">
+					<div>
+					    <div id="grid_radiomic_result"></div>
+					    <div id="pager_grid_radiomic_result" style="width:100%;height:20px;"></div>
+					    <br/>
+					    <div id="grid_clinical_outcomes"></div>
+				    	<div id="pager_clinical_outcomes" style="width:100%;height:20px;"></div>
+					  </div>
+				</div>
+				
+<!-- 				<div id="tab_grid_clinical_outcomes" class="tab-pane fade" style="display:none;">
+				  <div>
+				    <div id="grid_clinical_outcomes" style="width:100%;height:500px;"></div>
+				    <div id="pager_clinical_outcomes" style="width:100%;height:20px;"></div> 
+				  </div>
+				</div> -->
+				
+<!-- 
+				
+				<div id="tab_dashboard_analytic1" class="tab-pane fade in active">
+					<div id="dashboard_header">
+					   	<div id="dashboard">
+				   			<div class="dashboard_row">
+				   				<div class="dashboard_column">
+						   			<div class="dashboard_row_block" style="width: 50%;">
+							   			<div  class="dashboard_row_block_header">
+							   				<p class="dashboard_group_title">General Information</p>
+							   			</div>
+								   		<div class="dashboard_row_block_body">
+								   			<div id="plot_gender"></div>
+								   			<div id="plot_gender_age"></div>
+								   		</div>
+									 </div>
+							</div>
+							<div class="dashboard_column" style="border-left: 3px solid #cccccc;">
+								 
+								 <div class="dashboard_row_block" style="width: 50%;">
+						   			<div  class="dashboard_row_block_header">
+						   				<p class="dashboard_group_title">Physical Measurement</p>
+						   			</div>
+							   		<div class="dashboard_row_block_body">
+							   			
+							   			<div class="block_pulse_rate_blood_pressure">
+							   				<div id="plot_pulse_rate">
+							   					<img src="{% static "images/cardiogram.png"%}" width="50"/>
+							   					<p id="pulse_rate">70</p>
+							   				</div>
+							   				<div id="plot_blood_pressure">
+							   					<img src="{% static "images/blood-pressure.png"%}" width="50"/>
+							   					<p id="blood_pressure">80</p>
+							   				</div>
+							   			</div>
+							   			<div id="plot_bmi"></div>
+					   				</div>
+								 </div>
+								</div>
+					   		</div>
+					   		
+					   		
+					   		<div class="dashboard_row">
+						   		<div class="dashboard_row_block">
+						   			<div  class="dashboard_row_block_header">
+							   			<p class="dashboard_group_title">Life Style</p>
+						   			</div>
+							   		<div class="dashboard_row_block_body" style="width: 800; height: 500px;">
+							   			<div id="plot_nutrition_factor_bar" ></div>
+							   		</div>
+							   	</div>
+					   		</div>
+					   		
+					   		
+					   		
+					   	</div>
+					   
+			
+					</div>
+				</div>
+				
+-->
+				
+				
+			</div>
+		</div>
+</div>
+	
+
+<script>
+/* 
+var male_color = "rgb(86, 179, 247)";
+var female_color = "rgb(238, 187, 247)";
+
+
+var trace_pie_gender = {
+		  values: [19, 26],
+		  labels: ['Male', 'Female'],
+		  type: 'pie',
+		  domain: {
+			  row: 0,
+			  column: 0
+			  },
+			  marker: {
+				    colors: [male_color, female_color]
+				  },
+		  hoverinfo: 'none',
+		  textinfo: 'label+percent+value' //'label+percent+name',
+		  
+		};
+	
+	var layout = {
+			title: 'Total ' + 45,
+			 width: 250,
+	 		// grid: {rows: 2, columns: 3, pattern: 'independent'},
+	  		showlegend: false
+	};
+	// {displayModeBar: false} = hide toolbox
+	Plotly.newPlot('plot_gender', [trace_pie_gender], layout,{displayModeBar: false});
+	
+	// x = arg range
+	// y =
+
+	var male = {
+	  x: ["<= 20", "21 - 40", "41 - 60", " > 60"],
+	  y: [20, 14, 23, 1],
+	  name: "Male",
+	  type: "bar",
+	  marker: {color: male_color},
+	  barmode: "stack",
+	  domain: {
+		    row: 0,
+		    column: 1
+	 } 
+		
+	};
+	 var female = {
+	  x: ["<= 20", "21 - 40", "41 - 60", " > 60"],
+	  y: [12, 18, 29, 2],
+	  name: "Female",
+	  type: "bar",
+	  marker: {color: female_color},
+	  barmode: "stack",
+	  domain: {
+		    row: 0,
+		    column: 1
+		  }
+	}; 
+	 
+	 var layout_gender_age = {
+		  title: 'Gender vs Age',
+		  width: 400,
+		   barmode: "stack",
+	       
+		  showlegend: true ,
+		  xaxis: {domain: [0.8, 0.1]} // size of stacked bar
+		};
+	
+	Plotly.newPlot('plot_gender_age', [male, female], layout_gender_age, {displayModeBar: false});
+	//Plotly.plot('gender_graph', trace4, layout);
+	// barmode: "stack"
+	
+	
+	// ======== BMI
+	var data_bmi = [{
+	  values: [1,2,3,4],
+	  labels: ["Underweight", "Normal", "Overweight", "Obese"],
+	  //domain: {column: 0},
+	  name: '',
+	  marker: {colors: ["rgb(1, 128, 191)", "rgb(1, 163, 103)", "rgb(249, 225, 44)", "rgb(193, 21, 1)"]},
+	  hoverinfo: 'label+percent+name',
+	  hole: .5,
+	  type: 'pie'
+	}];
+
+var layout_bmi = {
+  title: '',
+  //autosize: true,
+  height: 300,
+  width: 350,
+  showlegend: true,
+  //grid: {rows: 1, columns: 2}
+  annotations: [
+	    {
+	      font: {
+	        size: 18
+	      },
+	      showarrow: false,
+	      text: 'BMI',
+	      x: 0.5,
+	      y: 0.5
+	    }
+	  ]
+};
+
+Plotly.newPlot('plot_bmi', data_bmi, layout_bmi, {displayModeBar: false});
+
+
+
+// ===========
+	var trace_name_alco = "Alcohol intake";
+	var trace9 = {
+	  x: [
+	    [	trace_name_alco, trace_name_alco, trace_name_alco,
+	    	trace_name_alco,
+	    ],
+	    [	'Never',
+	    	'...', 
+	    	'.....', 
+	    	'Daily or almost daily' ]
+	  ],
+	  y: [1, 5, 5, 29],
+	  name: trace_name_alco,
+	  type: 'bar',
+	  width: 0.3
+};
+	
+var trace_name = "Never eat eggs, dairy, wheat, sugar";
+var trace1 = {
+  x: [
+      	[   trace_name, trace_name, trace_name, trace_name],
+    	[	'I eat all of the above', 
+    		'Sugar or foods/drinks containing sugar',
+    		'Wheat products', 
+    		'Eggs or foods containing eggs']
+  ],
+  y: [8, 24, 5, 3],
+  name: trace_name,
+  text: ["a", "b", "c", "d"],
+  textinfo: 'label+percent+value',
+  type: 'bar',
+  width: 0.3
+};
+
+var trace_name2 = "sleep duration"
+var trace2 = {
+  x: [
+    [trace_name2, trace_name2, trace_name2],
+    ['<5', '5 - 10', '> 10']
+  ],
+  y: [8, 22, 5,5],
+  name: trace_name2,
+  type: 'bar',
+  width: 0.3
+};
+
+
+var trace_name3 = "activity 3"
+	var trace3 = {
+	  x: [
+	    [trace_name3, trace_name3, trace_name3],
+	    ['<5', '5 - 10', '> 10']
+	  ],
+	  y: [5,5, 20, 10],
+	  name: trace_name3,
+	  type: 'bar',
+	  width: 0.3
+	};
+	
+var trace_name4 = "activity 4"
+	var trace4 = {
+	  x: [
+	    [trace_name4, trace_name4, trace_name4],
+	    ['<5', '5 - 10', '> 10']
+	  ],
+	  y: [10, 20, 5,5],
+	  name: trace_name4,
+	  type: 'bar',
+	  width: 0.3
+	};
+	
+var trace_name5 = "activity 5"
+	var trace5 = {
+	  x: [
+	    [trace_name5, trace_name5, trace_name5],
+	    ['<5', '5 - 10', '> 10']
+	  ],
+	  y: [15, 15, 5,5],
+	  name: trace_name5,
+	  type: 'bar',
+	  width: 0.3
+};
+
+var trace_name6 = "Beek intake in a week";
+	var trace6 = {
+	  x: [
+	    [	trace_name6, trace_name6, trace_name6,
+	    	trace_name6, trace_name6, trace_name6,
+	    ],
+	    [	'Never',
+	    	'Less than once a week', 
+	    	'once a week', 
+	    	'2-4 times a week',
+	    	'5-6 times a week',
+	    	'Once or more daily' ]
+	  ],
+	  y: [1, 5, 5,5, 10, 14],
+	  name: trace_name6,
+	  type: 'bar',
+	  width: 0.3
+};
+	
+	
+	var trace_name7 = "Poultry intake in a week";
+	var trace7 = {
+	  x: [
+	    [	trace_name7, trace_name7, trace_name7,
+	    	trace_name7, trace_name7, trace_name7,
+	    ],
+	    [	'Never',
+	    	'Less than once a week', 
+	    	'once a week', 
+	    	'2-4 times a week',
+	    	'5-6 times a week',
+	    	'Once or more daily' ]
+	  ],
+	  y: [1, 5, 5,5, 10, 14],
+	  name: trace_name7,
+	  type: 'bar',
+	  width: 0.3
+};
+	
+// processed meat intake
+	var trace_name8 = "Processed meat intake";
+	var trace8 = {
+	  x: [
+	    [	trace_name8, trace_name8, trace_name8,
+	    	trace_name8, trace_name8, trace_name8,
+	    ],
+	    [	'Never',
+	    	'Less than once a week', 
+	    	'once a week', 
+	    	'2-4 times a week',
+	    	'5-6 times a week',
+	    	'Once or more daily' ]
+	  ],
+	  y: [1, 5, 5,5, 10, 14],
+	  name: trace_name8,
+	  type: 'bar',
+	  width: 0.3
+};
+
+//cheese intake
+
+var data = [trace9, trace1, trace2, trace3, trace4, trace5, trace6, trace7, trace8];
+var layout3 = {
+ // autoresize: true,
+  showlegend: true,
+  width: 1200,
+  height: 500,
+  xaxis: {
+     tickson: "boundaries",
+    ticklen: 10,
+    showdividers: true,
+    dividercolor: 'grey',
+    dividerwidth: 0
+  }, 
+  barmode: 'group',
+  bargap: 0.25,
+  bargroupgap: 0.1
+};
+
+Plotly.newPlot('plot_nutrition_factor_bar', data, layout3);
+ */
+// ===================
+	
+	
+
+	
+</script>
+</body>
+</html>
