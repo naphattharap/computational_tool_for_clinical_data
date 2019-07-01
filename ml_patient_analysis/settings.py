@@ -24,7 +24,8 @@ SECRET_KEY = 'muyg&jl5qm=cm*+@k_w$$&m5a@%#v1$h05&%nqx!vhrh1g^+gv'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['radiomics-exploration.herokuapp.com']
+# radiomics-exploration.herokuapp.com
+ALLOWED_HOSTS = ['radiomics-exploration.herokuapp.com', '0.0.0.0']
 
 # Application definition
 
