@@ -7,7 +7,7 @@ from django.http import JsonResponse
 from diabetes_logic.diabetes_logic import DiabetesLogic
 import codecs, json 
 from django.core import serializers
-from services.naphyutils.file import FileStorage
+from naphyutils.file import FileStorage
 from naphyutils.dataframe import DataFrameUtil
 from naphyutils.pca import PcaUtil
 from naphyutils.file import FileStorage

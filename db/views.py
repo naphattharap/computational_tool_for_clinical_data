@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import JsonResponse
-from services.naphyutils.dataframe import DataFrameUtil
+from naphyutils.dataframe import DataFrameUtil
 
 from naphyutils.file import FileStorage
 import constants.const_msg as msg 

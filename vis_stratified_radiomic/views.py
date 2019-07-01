@@ -8,10 +8,10 @@ from django.views.decorators.csrf import csrf_exempt
 
 import pandas as pd
 
-from services.naphyutils.dataframe import DataFrameUtil
-from services.naphyutils.model import ModelUtils
-from services.naphyutils.pca import PcaUtil
-from services.naphyutils.standardization import PreProcessingUtil
+from naphyutils.dataframe import DataFrameUtil
+from naphyutils.model import ModelUtils
+from naphyutils.pca import PcaUtil
+from naphyutils.standardization import PreProcessingUtil
 import naphyutils.algorithm_pipeline
 from . import views
 from .forms import VisInputForm

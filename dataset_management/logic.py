@@ -5,7 +5,7 @@ Created on Feb 6, 2019
 '''
 from django.core.files.storage import FileSystemStorage
 from naphyutils.dataframe import DataFrameUtil as df_util
-from services.naphyutils.file import FileStorage
+from naphyutils.file import FileStorage
 from config.constant import UploadFileConst
 
 

@@ -1,8 +1,8 @@
 import numpy as np
 import pandas as pd
 from random import randint
-from services.naphyutils.pca import PcaUtil, LdaUtil
-from services.naphyutils.standardization import PreProcessingUtil
+from naphyutils.pca import PcaUtil, LdaUtil
+from naphyutils.standardization import PreProcessingUtil
 from naphyutils.standardization import EncodingCategoricalFeatures
 from naphyutils.framingham import FraminghamRiskScore
 from naphyutils.biz_exception import BizValidationExption

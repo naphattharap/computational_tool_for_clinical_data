@@ -5,12 +5,12 @@ from django.utils.html import escape
 from django.views.decorators.csrf import csrf_exempt
 
 from .forms import DataForm, KMeanForm, ElbowMethodForm, SilhouetteAnalysisForm
-from services.naphyutils.file import FileStorage
-from services.naphyutils.dataframe import DataFrameUtil
-from services.naphyutils.pca import PcaUtil
-from services.naphyutils.clustering import MeanShiftUtil, HierarchycalAnalysisUtil, KMeanUtil
-from services.naphyutils.standardization import PreProcessingUtil
-import services.constants.const_msg as msg
+from naphyutils.file import FileStorage
+from naphyutils.dataframe import DataFrameUtil
+from naphyutils.pca import PcaUtil
+from naphyutils.clustering import MeanShiftUtil, HierarchycalAnalysisUtil, KMeanUtil
+from naphyutils.standardization import PreProcessingUtil
+import constants.const_msg as msg
 import plotly
 import plotly.figure_factory as ff
 import plotly.graph_objs as go

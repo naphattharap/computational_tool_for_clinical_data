@@ -9,10 +9,10 @@ from decimal import Decimal, ROUND_HALF_UP
 import numpy as np
 import pandas as pd
 
-from services.naphyutils.dataframe import DataFrameUtil
-from services.naphyutils.model import ModelUtils
-from services.naphyutils.feature_selection import FeatureSelectionUtil
-from services.naphyutils.biz_exception import BizValidationExption
+from naphyutils.dataframe import DataFrameUtil
+from naphyutils.model import ModelUtils
+from naphyutils.feature_selection import FeatureSelectionUtil
+from naphyutils.biz_exception import BizValidationExption
 from . import views
 from .forms import FormUploadFile, FormStratifyData, DimensionReductionForm, FeatureSelectionForm
 from naphyutils.framingham import FraminghamRiskScore
