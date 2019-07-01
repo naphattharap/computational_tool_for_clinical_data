@@ -2,7 +2,6 @@
 # - graphviz for displaying tree graph
 # import graphviz 
 # - pyplot for ploting graphs
-# import matplotlib.pyplot as plt
 # - numpy for scientific computing
 import numpy as np
 # - package for decision tree
@@ -22,7 +21,6 @@ import pandas as pd
 from sklearn.metrics import confusion_matrix
 # import seaborn as sns; sns.set()
 from sklearn.model_selection import cross_val_score
-# import matplotlib.image as mpimg
 from IPython.display import Image
 # import pydotplus
 # import pydot
