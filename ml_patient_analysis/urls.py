@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
-from vis_brain import urls as vis_brain_urls
+# from vis_brain import urls as vis_brain_urls
 from main_menu import urls as main_menu_urls
 from dataset_management import urls as dataset_management_urls
 from model_mgt import urls as model_mgt_urls
@@ -36,7 +36,7 @@ urlpatterns = [
     
     # go to main page
     # our project app urls path
-    path("", include(vis_brain_urls)),
+   # path("", include(vis_brain_urls)),
     path("", include(main_menu_urls)),
     path("", include(dataset_management_urls)),
     path("", include(model_mgt_urls)),

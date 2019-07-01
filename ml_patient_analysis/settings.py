@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'django_extensions',
     # our project apps
     'corr_explore.apps.CorrExploreConfig',
-    'vis_brain.apps.VisBrainConfig',
+    # 'vis_brain.apps.VisBrainConfig',
     'main_menu.apps.MainMenuConfig',
     'dataset_management.apps.DatasetManagementConfig',
     'core_bokeh.apps.CoreBokehConfig',
