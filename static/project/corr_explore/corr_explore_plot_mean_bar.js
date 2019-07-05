@@ -864,7 +864,7 @@ function plot_radiomics_fmh_by_gender(traces, plot_title, gender){
 			var trace = {
 					  x: [arr_t_name, temp_trace.x_labels],
 					  y: temp_trace.y_values,
-					  text:temp_trace.x_values, // show text on bar
+					  text:temp_trace.x_text, // show text on bar
 					  textposition: 'top center',
 					  name: t_name,
 					  type: 'bar',
