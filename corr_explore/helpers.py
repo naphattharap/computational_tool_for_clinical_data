@@ -396,7 +396,10 @@ class Helper:
                                 current_sex = 0
                             elif (isinstance(group_keys, str) and group_keys == "sex1.0-1.0") or  group_keys[0] == "sex1.0-1.0":
                                 current_sex = 1
-                             
+                            
+                            if current_sex == "":
+                                current_sex = np.unique(df_strat_res['sex'])[0] 
+
                             if current_sex == 0:
                                  arr_fmh_female.append({"feature_names": radiomics_feature, "score": fmh_avg_score,
                                             "feature_mean_value": radiomics_mean, "sex": current_sex,
@@ -433,7 +436,12 @@ class Helper:
             # 1. Loop through all features
             # 2. In each feature get score and mean value of stratified data
             # Get 2 group for male and female
-
+            
+            # When sex is filtered, fix by checking filtered data  
+#             sex_code = None
+#             if len(arr_fmh_female) == 0 or len(arr_fmh_male) == 0:
+#                 sex_code = np.unique(df_strat_res['sex'])[0] 
+            
             if len(arr_fmh_female) > 0:
                 traces = Helper.get_fmh_trace_by_gender(arr_selected_source_col, arr_fmh_female, 0)
                 arr_traces['traces_female'] = traces
