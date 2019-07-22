@@ -24,7 +24,7 @@ var NAME_IDX_SEPARATOR = "-";
 var HTML_BR = "&lt;br&gt;"
 
 
-var marker_size = 8;
+var marker_size = 4;
 var marker_opacity = 0.7;
 var plot3d_marker = { 
 	      size: marker_size,
