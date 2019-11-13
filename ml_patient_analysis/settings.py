@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_extensions',
     # our project apps
+    'login.apps.LoginConfig',
     'corr_explore.apps.CorrExploreConfig',
     # 'vis_brain.apps.VisBrainConfig',
     'main_menu.apps.MainMenuConfig',
