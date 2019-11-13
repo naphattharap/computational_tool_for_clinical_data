@@ -143,7 +143,11 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_TMP = os.path.join(BASE_DIR, 'static')  # solve error when deploy to heroku
 STATIC_URL = '/static/'
+
+os.makedirs(STATIC_TMP, exist_ok=True)  # solve error when deploy to heroku
+os.makedirs(STATIC_ROOT, exist_ok=True)  # solve error when deploy to heroku
 
 # Extra places for collectstatic to find static files.
 STATICFILES_DIRS = (
@@ -153,8 +157,8 @@ STATICFILES_DIRS = (
 # STATICFILES_DIRS = [
 #     os.path.join(PROJECT_DIR, "static"),
 # ]
-print(BASE_DIR)
-print(STATIC_ROOT)
-print(STATIC_URL)
-print(STATICFILES_DIRS)
+# print(BASE_DIR)
+# print(STATIC_ROOT)
+# print(STATIC_URL)
+# print(STATICFILES_DIRS)
 
