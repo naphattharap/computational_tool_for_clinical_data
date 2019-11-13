@@ -1,0 +1,74 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Main Page</title>
+<meta charset="utf-8" />
+{% include "main_menu/global_script.html" %}
+<script src="{% static "main_menu/main_menu_action.js" %}"></script>
+</head>
+<body>
+
+	<!-- Container for content -->
+	<div class="container-fluid" align="center">
+		<br> <br>
+		<p>
+			<strong><font color="dodgerblue" size="7">Hello,
+					welcome to The Insight!</font></strong>
+		</p>
+		<p>
+			<font color="black" size="5">The application for Machine
+				Learning Model Selection and Data Visualization</font>
+		</p>
+		<p>
+			<font color="red">"some features are still under construction"</font>
+		</p>
+		<div id="my_message_outer" align="center" style="width: 600px">
+			<div id="my_message" align="left" style="margin-top: 20px">
+				<p>
+					<font size="4">My inspiration for this application</font>
+				</p>
+				<p>
+					&nbsp;&nbsp;&nbsp;&nbsp;As we have known that to build Machine
+					Learning models, it is trial and error. <br> Instead of
+					modifying, writing similar source code or doing the same kind of
+					tasks again and again, I am summarizing basic steps in Machine
+					Learning and developing this application to help Machine Learning
+					Engineers or Data Scientists do some basic tasks e.g. basic
+					analysis data, visualize data, model selection pipeline etc.
+				<p>
+					Here is an example that I used this tool for finding features based
+					on target variable. <br> It is customized for selecting
+					radiomics features based on selected clinical outcomes<br> For
+					more details, please visit my master's thesis at <a
+						href="https://repositori.upf.edu/handle/10230/42547"
+						target="_blank">https://repositori.upf.edu/handle/10230/42547</a>
+				</p>
+
+				<p>
+					I would be more than happy if anyone has any ideas or suggestions
+					to make it be an awesome free platform. <br>
+
+				</p>
+
+				<div align="center">
+					Contact: <a href="mailto:theinsight.ad@gmail.com">theinsight.ad@gmail.com</a>
+				</div>
+			</div>
+		</div>
+
+
+		<div class="center_button" style="margin-top: 50px">
+			<div>
+				<form action="{%url 'main' %}">
+					<button id="btn_enter" type="submit" class="btn btn-primary">Enter
+						to the application</button>
+				</form>
+
+			</div>
+		</div>
+	</div>
+
+
+</body>
+</html>

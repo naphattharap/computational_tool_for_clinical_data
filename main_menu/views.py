@@ -14,8 +14,9 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 
-class MainMenuView(View):
-    
-    def get(self, request):
-        return render(request, template_name='main_menu/main.html')
+def go_to_homepage(request):
+    return render(request, template_name='main_menu/index.html')
+
    
+def go_to_main(request):
+    return render(request, template_name='main_menu/main.html')
