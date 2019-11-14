@@ -1,3 +1,38 @@
+/* For solving background floating top */
+html{ 
+ height: 100%;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    background: #fff; 
+    /* #70bg32 */
+    background-repeat:no-repeat;
+    background: -webkit-linear-gradient( to left top, #cccccc38,#e7fbfb);
+    background: -moz-linear-gradient( to left top, #cccccc38,#e7fbfb);
+    background: -ms-linear-gradient( to left top, #cccccc38,#e7fbfb);
+    background: -o-linear-gradient( to left top, #cccccc38,#e7fbfb);
+    background: linear-gradient( to left top, #cccccc38,#e7fbfb);
+}
+
+body{
+  background: 
+	linear-gradient(0deg,#cccccc38,#e7fbfb)
+    ,url('../images/home/artificial-intelligence-bg.jpg');
+  min-height: 100%;
+}
+
+.space-top{
+	margin-top:30px;
+}
+
+#category{
+	background-color: white;
+    border-radius: 1em;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    height: 620px;
+}
 .img-main-category{
     width: 180px;
     height: 180px;
@@ -17,9 +52,6 @@
     vertical-align: top;
 }
 
-.space-top{
-	margin-top:40px;
-}
 
 .btn_app_home{
 	font-size: larger;
@@ -33,15 +65,17 @@
 }
 
 .nav-container{
-	background-color: #afeeee;
+	/* background-color: #afeeee; */
+	background-color: #48d1cc;
 }
 .font_header{
 	font-weight: bolder;
-    color: #008b8b !important;
+    /* color: #008b8b !important; */
+    color: white !important;
     font-size: x-large;
 }
 .font_header:hover{
-	color:#ffffff !important;
+	color:#008b8b !important;
 }
 
 #div_edu{
@@ -81,4 +115,15 @@
 
 .ul-prog-list{
 	text-align:left;
+}
+
+
+footer{
+	/* background-color: #2f4f4f; */
+	background-color: #008b8b;
+    color: white;
+    padding: 15px;
+	bottom: 0px !important;
+    position: fixed !important;
+    width: 100% !important;
 }
