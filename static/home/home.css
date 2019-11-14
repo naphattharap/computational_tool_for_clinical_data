@@ -129,6 +129,9 @@ body{
 	text-align:left;
 }
 
+.ul-prog-list > li{
+	margin-bottom: 10px;
+}
 
 footer{
 	/* background-color: #2f4f4f; */
