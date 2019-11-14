@@ -61,6 +61,7 @@
     vertical-align: middle;
     padding: 10px;
     margin-bottom: 5px;
+    border-radius: 1em;
 }
 .preview-youtube-text{
     display: flex;
