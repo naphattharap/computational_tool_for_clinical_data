@@ -1,0 +1,33 @@
+.img-main-category{
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 50%;
+    border-color: initial;
+    border-width: 4px;
+    border-style: outset;
+    margin-left: 35px;
+    margin-right: 35px;
+}
+
+.cate-display-inline{
+	display: flex;
+    justify-content: center;
+    /* align-items: center; */
+    vertical-align: top;
+}
+
+.space-top{
+	margin-top:80px;
+}
+
+.btn_app_home{
+	font-size: larger;
+    font-weight: bolder;
+    padding-top: 10px;
+    border-radius: 1em;
+    padding-bottom: 10px;
+    width: 250px;
+    background-color: crimson;
+    color: white;
+}

@@ -5,70 +5,101 @@
 <title>The Insight</title>
 <meta charset="utf-8" />
 {% include "main_menu/global_script.html" %}
+
+<link rel="stylesheet" href="{% static "home/home.css"%}"></link>
 <script src="{% static "main_menu/main_menu_action.js" %}"></script>
+
 </head>
 <body>
 
 	<!-- Container for content -->
 	<div class="container-fluid" align="center">
-		<br> <br>
-		<p>
-			<strong><font color="dodgerblue" size="7">Hello,
-					welcome to The Insight!</font></strong>
-		</p>
-		<p>
-			<font color="black" size="5">The application for Machine
-				Learning Model Selection and Data Visualization</font>
-		</p>
-		<p>
-			<font color="red">"some features are still under construction"</font>
-		</p>
-		<div id="my_message_outer" align="center" style="width: 600px">
-			<div id="my_message" align="left" style="margin-top: 20px">
-				<p>
-					<font size="4">My inspiration for this application</font>
-				</p>
-				<p>
-					&nbsp;&nbsp;&nbsp;&nbsp;As we have known that to build Machine
-					Learning models, it is trial and error. <br> Instead of
-					modifying, writing similar source code or doing the same kind of
-					tasks again and again, I am summarizing basic steps in Machine
-					Learning and developing this application to help Machine Learning
-					Engineers or Data Scientists do some basic tasks e.g. basic
-					analysis data, visualize data, model selection pipeline etc.
-				<p>
-					Here is an example that I used this tool for finding features based
-					on target variable. <br> It is customized for selecting
-					radiomics features based on selected clinical outcomes<br> For
-					more details, please visit my master's thesis at <a
-						href="https://repositori.upf.edu/handle/10230/42547"
-						target="_blank">https://repositori.upf.edu/handle/10230/42547</a>
-				</p>
-
-				<p>
-					I would be more than happy if anyone has any ideas or suggestions
-					to make it be an awesome free platform. <br>
-
-				</p>
-
-				<div align="center">
-					Contact: <a href="mailto:theinsight.ad@gmail.com">theinsight.ad@gmail.com</a>
-				</div>
+		<div id="category" class="cate-display-inline space-top">
+			<div id="div_edu">
+				<img class="img-main-category" src='{% static "images/home/coffee-com-book.jpg" %}' alt="Education" />
+				<p id="edu_title"><font color="" size="4">Learning Path</font></p>
+				<ul>
+					<li>Artificial Intelligence Introduction(Thai version) <br>
+						<iframe width="" height="" src="https://www.youtube.com/embed/op_VjbkdsOw"></iframe>
+					</li>
+					<li>Machine Learning for Beginners (Thai version) <br>
+						<iframe width="" height="" src="https://www.youtube.com/embed/JBkj1Dax4AE"></iframe>
+					</li>
+				</ul>
+			</div>
+			
+			<div id="div_prog">
+				<img class="img-main-category" src='{% static "images/home/programming.jpg" %}' alt="Application" />
+				<p id="title_prog"><font color="" size="4">Programming (Jupyter Notebook)</font></p>
+					<ul>
+						<li><a href="https://github.com/naphattharap/machine-learning/blob/master/linear_regression/boston_housing/BostonHousingLinearRegression.ipynb" target="_blank">
+						Regression: Linear Regression for Boston Housing Dataset</a> 
+						</li>
+						<li>To be continued</li>
+					</ul>
+			</div>
+			
+			<div id="div_app">
+				<img class="img-main-category" src='{% static "images/home/app_cate.jpg" %}' alt="Application" />
+				<p id="title_app"><font color="" size="4">Application</font></p>
+				<div class="center_button" style="margin-top: 50px">
+					<div>
+					<form action="{%url 'main' %}">
+						<button id="btn_enter_insight" type="submit" class="btn_app_home">The Insight</button>
+					</form>
 			</div>
 		</div>
-
-
-		<div class="center_button" style="margin-top: 50px">
-			<div>
-				<form action="{%url 'main' %}">
-					<button id="btn_enter" type="submit" class="btn btn-primary">Enter
-						to the application</button>
-				</form>
-
+			</div>
+		</div>
+	
+		<p><font>This website is under construction</font></p>
+		<button  type="button" class="btn btn-default btn-lg" data-toggle="modal" data-target="#my_modal">
+		&nbsp;&nbsp;&nbsp;&nbsp;About&nbsp;&nbsp;&nbsp;&nbsp;</button>
+		<!-- 
+		<font id="btn_about" size="4"><strong>About</strong></font> -->
+		<div id="my_modal" class="modal fade" role="dialog" align="center">
+			<div id="my_message" class="modal-content"align="left" style="margin: 20px">
+				<div class="modal-header">
+       			 	<button type="button" class="close" data-dismiss="modal">&times;</button>
+        			<h4 class="modal-title">
+						My inspiration for this application. 
+					</h4>
+      			</div>
+      			<div class="modal-body">
+					
+					<p>
+						&nbsp;&nbsp;&nbsp;&nbsp;As we have known that to build Machine
+						Learning models, it is trial and error. <br> Instead of
+						modifying, writing similar source code or doing the same kind of
+						tasks again and again, I am summarizing basic steps in Machine
+						Learning and developing this application to help Machine Learning
+						Engineers or Data Scientists do some basic tasks e.g. basic
+						analysis data, visualize data, model selection pipeline etc.
+					<p>
+						Here is an example that I used this tool for finding features based
+						on target variable. <br> It is customized for selecting
+						radiomics features based on selected clinical outcomes<br> For
+						more details, please visit my master's thesis at <a
+							href="https://repositori.upf.edu/handle/10230/42547"
+							target="_blank">https://repositori.upf.edu/handle/10230/42547</a>
+					</p>
+	
+					<p>
+						I would be more than happy if anyone has any ideas or suggestions
+						to make it be an awesome free platform. <br>
+	
+					</p>
+					<div align="center">
+						Contact: <a href="mailto:theinsight.ad@gmail.com">theinsight.ad@gmail.com</a>
+					</div>
+				</div>
+				
+				
+				<div class="modal-footer">
+        			<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      			</div>
 			</div>
 		</div>
 	</div>
-
-
 </body>
 </html>
