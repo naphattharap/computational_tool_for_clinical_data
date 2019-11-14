@@ -11,29 +11,61 @@
 
 </head>
 <body>
-
+	<nav class="navbar navbar-default">
+		<div class="container-fluid nav-container" >
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle collapsed"
+					data-toggle="collapse" data-target="#navbar" aria-expanded="false"
+					aria-controls="navbar">
+					<span class="sr-only">Toggle navigation</span> <span
+						class="icon-bar"></span> <span class="icon-bar"></span> <span
+						class="icon-bar"></span>
+				</button>
+				<div><a class="navbar-brand font_header" >THE INSIGHT</a></div>
+			</div>
+			
+			<!-- Right menu -->
+			<ul class="nav navbar-nav navbar-right">
+	            <li>
+	            	<a href="#" data-toggle="modal" data-target="#my_modal">
+	            		<font class="font_header">About</font>
+	            	</a>
+	            </li>
+            <!-- <li><a href="../navbar-static-top/">Static top</a></li> -->
+            <!-- <li class="active"><a href="./">Fixed top <span class="sr-only">(current)</span></a></li> -->
+          </ul>
+			
+		</div>
+	</nav>
 	<!-- Container for content -->
 	<div class="container-fluid" align="center">
+		<p><font color="red">***This website is under construction***</font></p>
 		<div id="category" class="cate-display-inline space-top">
 			<div id="div_edu">
-				<img class="img-main-category" src='{% static "images/home/coffee-com-book.jpg" %}' alt="Education" />
-				<p id="edu_title"><font color="" size="4">Learning Path</font></p>
-				<ul>
-					<li>Artificial Intelligence Introduction(Thai version) <br>
-						<iframe width="" height="" src="https://www.youtube.com/embed/op_VjbkdsOw"></iframe>
-					</li>
-					<li>Machine Learning for Beginners (Thai version) <br>
-						<iframe width="" height="" src="https://www.youtube.com/embed/JBkj1Dax4AE"></iframe>
-					</li>
-				</ul>
+				<img class="img-main-category" src='{% static "images/home/coffee-com-book.jpg" %}' alt="Education"/>
+				<p id="edu_title">
+					<font size="4">
+						<strong>Learning Path</strong>
+					</font>
+				</p>
+				
+				<div class="preview-youtube">
+					<div class="preview-youtube-text">Artificial Intelligence Introduction <br> (Thai version)</div>
+					<div class="preview-youtube-video"><iframe width="150" height="120" src="https://www.youtube.com/embed/op_VjbkdsOw"></iframe></div>
+				</div>
+				<div class="preview-youtube">
+					<div class="preview-youtube-text">Machine Learning for Beginners <br> (Thai version)</div>
+					<div class="preview-youtube-video"><iframe width="150" height="120" src="https://www.youtube.com/embed/JBkj1Dax4AE"></iframe></div>
+				</div>
 			</div>
 			
 			<div id="div_prog">
 				<img class="img-main-category" src='{% static "images/home/programming.jpg" %}' alt="Application" />
-				<p id="title_prog"><font color="" size="4">Programming (Jupyter Notebook)</font></p>
-					<ul>
+				<p id="title_prog"><font size="4"><strong>Programming</strong></font></p>
+				<p id="title_prog"><font size="3">Machine Learning and Python</font></p>
+					<ul class="ul-prog-list">
 						<li><a href="https://github.com/naphattharap/machine-learning/blob/master/linear_regression/boston_housing/BostonHousingLinearRegression.ipynb" target="_blank">
-						Regression: Linear Regression for Boston Housing Dataset</a> 
+						Regression: Linear Regression for Boston Housing Dataset (Jupyter Notebook)</a> 
 						</li>
 						<li>To be continued</li>
 					</ul>
@@ -41,22 +73,18 @@
 			
 			<div id="div_app">
 				<img class="img-main-category" src='{% static "images/home/app_cate.jpg" %}' alt="Application" />
-				<p id="title_app"><font color="" size="4">Application</font></p>
-				<div class="center_button" style="margin-top: 50px">
+				<p id="title_app"><font size="4"><strong>Application</strong></font></p>
+				<div class="center_button">
 					<div>
-					<form action="{%url 'main' %}">
-						<button id="btn_enter_insight" type="submit" class="btn_app_home">The Insight</button>
-					</form>
+						<form action="{%url 'main' %}">
+							<button id="btn_enter_insight" type="submit" class="btn_app_home">Enter The Insight</button>
+						</form>
+					</div>
+				</div>
 			</div>
 		</div>
-			</div>
-		</div>
-	
-		<p><font>This website is under construction</font></p>
-		<button  type="button" class="btn btn-default btn-lg" data-toggle="modal" data-target="#my_modal">
-		&nbsp;&nbsp;&nbsp;&nbsp;About&nbsp;&nbsp;&nbsp;&nbsp;</button>
-		<!-- 
-		<font id="btn_about" size="4"><strong>About</strong></font> -->
+
+		<!--  Modal Dialog About -->
 		<div id="my_modal" class="modal fade" role="dialog" align="center">
 			<div id="my_message" class="modal-content"align="left" style="margin: 20px">
 				<div class="modal-header">
@@ -68,7 +96,7 @@
       			<div class="modal-body">
 					
 					<p>
-						&nbsp;&nbsp;&nbsp;&nbsp;As we have known that to build Machine
+						As we have known that to build Machine
 						Learning models, it is trial and error. <br> Instead of
 						modifying, writing similar source code or doing the same kind of
 						tasks again and again, I am summarizing basic steps in Machine
@@ -93,13 +121,12 @@
 						Contact: <a href="mailto:theinsight.ad@gmail.com">theinsight.ad@gmail.com</a>
 					</div>
 				</div>
-				
-				
 				<div class="modal-footer">
         			<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
       			</div>
 			</div>
 		</div>
+		<!-- Modal Dialog About: End -->
 	</div>
 </body>
 </html>

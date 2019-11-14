@@ -4,7 +4,7 @@
     object-fit: cover;
     border-radius: 50%;
     border-color: initial;
-    border-width: 4px;
+    border-width: 3px;
     border-style: outset;
     margin-left: 35px;
     margin-right: 35px;
@@ -18,7 +18,7 @@
 }
 
 .space-top{
-	margin-top:80px;
+	margin-top:40px;
 }
 
 .btn_app_home{
@@ -28,6 +28,56 @@
     border-radius: 1em;
     padding-bottom: 10px;
     width: 250px;
-    background-color: crimson;
+    background-color: #008b8b;
     color: white;
+}
+
+.nav-container{
+	background-color: #afeeee;
+}
+.font_header{
+	font-weight: bolder;
+    color: #008b8b !important;
+    font-size: x-large;
+}
+.font_header:hover{
+	color:#ffffff !important;
+}
+
+#div_edu{
+    width: 40%;
+}
+
+#div_prog, #div_app{
+	width: 30%;
+}
+
+.preview-youtube{
+	width: 100%;
+    display: inline-flex;
+    border-width: 1px;
+    border-color: gray;
+    border-style: dashed;
+    vertical-align: middle;
+    padding: 10px;
+    margin-bottom: 5px;
+}
+.preview-youtube-text{
+    display: flex;
+    justify-content: center;
+    /* align-content: center; */
+    flex-direction: column;
+    width: 60%;
+}
+.preview-youtube-video{
+    display: flex;
+    justify-content: center;
+    /* align-content: center; */
+    flex-direction: column;
+    width: 40%;
+}
+
+
+.ul-prog-list{
+	text-align:left;
 }
