@@ -10,7 +10,7 @@
 						class="icon-bar"></span> <span class="icon-bar"></span> <span
 						class="icon-bar"></span>
 				</button>
-				<a class="navbar-brand" href="{%url 'home' %}">THE INSIGHT</a>
+				<a class="navbar-brand" href="{%url 'home' %}"><strong><font color="#fff">AI-INSIGHT.COM</font></strong></a>
 			</div>
 			<div id="navbar" class="navbar-collapse collapse">
 				<ul class="nav navbar-nav">
@@ -46,45 +46,63 @@
 					
 					<!-- Feature Selection -->
 					<li class="dropdown">
-			            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true"> <span class="nav-label">Services</span> <span class="caret"></span></a>
-			            <ul class="dropdown-menu">
-			                <li><a href="#">Service A</a></li>
-			                <li><a href="#">Service B</a></li>
-			                <li class="dropdown-submenu">
-			                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> <span class="nav-label">Service C</span><span class="caret"></span></a>
-			                    <ul class="dropdown-menu">
-			                        <li><a href="#">Service C1</a></li>
-			                        <li><a href="#">Service C2</a></li>
-			                        <li><a href="#">Service C3</a></li>
-			                        <li><a href="#">Service C4</a></li>
-			                        <li><a href="#">Service C5</a></li>
-			                    </ul>
-			                </li>
-			            </ul>
-			        </li>
-			        
-					<li class="dropdown">
 						<a href="#" class="dropdown-toggle"
 							data-toggle="dropdown" role="button" aria-haspopup="true"
-							aria-expanded="false">Feature Selection<span class="caret"></span>
+							aria-expanded="false">
+							<span class="nav-label">Feature Selection</span>
+			                <span class="caret"></span>
 						</a>
-						
 						<ul class="dropdown-menu">
-							<li><a id="menu-upload" href="{%url 'feature_analysis_home' %}">Feature Importance</a></li>
-							
+							<li><a href="#">Variance Threshold</a></li>
+							<li><a href="#">Peason's correlation</a></li>
+							<li><a href="#">Chi-squared</a></li>
+							<li><a href="{%url 'feature_analysis_home' %}">Feature Importance</a></li>
 						</ul>
 					</li>
+<!-- 					<li class="dropdown">
+						<a href="#" class="dropdown-toggle"
+							data-toggle="dropdown" role="button" aria-haspopup="true"
+							aria-expanded="false">
+								<span class="nav-label">Feature Selection</span>
+			                    <span class="caret"></span>
+						</a>
+						<ul class="dropdown-menu">
+							<li class="dropdown-submenu">
+			                    <a class="test" tabindex="-1" href="#" class="dropdown-toggle" 
+			                    	data-toggle="dropdown" role="button" aria-haspopup="true" 
+			                    	aria-expanded="false"> 
+			                    	<span class="nav-label">Filter Method</span>
+			                    	<span class="caret"></span>
+			                    </a>
+			                    <ul class="dropdown-menu">
+			                        <li><a href="#">Variance Threshold</a></li>
+			                        <li><a href="#">Correlation</a></li>
+			                    </ul>
+			                </li>
+							<li><a id="menu-upload" href="#">Wrapper Method</a></li>
+							<li class="dropdown-submenu">
+								<a class="test" tabindex="-1" href="#" class="dropdown-toggle" 
+			                    	data-toggle="dropdown" role="button" aria-haspopup="true" 
+			                    	aria-expanded="false"> 
+			                    	<span class="nav-label">Embeded Method</span>
+			                    	<span class="caret"></span>
+			                    </a>
+			                    <ul class="dropdown-menu">
+			                        <li><a id="menu-upload" href="{%url 'feature_analysis_home' %}">Feature Importance</a></li> 
+			                    </ul>
+							</li>
+						</ul>
+					</li> -->
 					
 					
 					<li class="dropdown">
 						<a href="#" class="dropdown-toggle"
 							data-toggle="dropdown" role="button" aria-haspopup="true"
-							aria-expanded="false">Dimensionality Reduction Analysis<span class="caret"></span></a>
+							aria-expanded="false">Dimensionality Reduction<span class="caret"></span></a>
 						<ul class="dropdown-menu">
-							<li><a id="" href="{%url 'pca_home' %}">Principal Component Analysis</a></li>
-							<li><a id="" href="{%url 'lda_home' %}">Linear Discriminant Analysis</a></li>
-							<li><a id="" href="{%url 'tsne_home' %}">t-Distributed Stochastic Neighbor Embedding</a></li>
-							
+							<li><a id="" href="{%url 'pca_home' %}">PCA</a></li>
+							<li><a id="" href="{%url 'lda_home' %}">LDA</a></li>
+							<li><a id="" href="{%url 'tsne_home' %}">T-SNE</a></li>
 						</ul>
 					</li>
 					
@@ -139,11 +157,31 @@
 							<li><a id="radiomic_stratified" href="{%url 'vis_stratified_radiomic_home' %}">Patient's Radiomics Analysis(under construction)</a></li>
 						</ul>
 					</li>
-					
-					
-					
-					
 				</ul>
+				
+<!-- 
+<div class="dropdown">
+    <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">Tutorials
+    <span class="caret"></span></button>
+    <ul class="dropdown-menu">
+      <li><a tabindex="-1" href="#">HTML</a></li>
+      <li><a tabindex="-1" href="#">CSS</a></li>
+      <li class="dropdown-submenu">
+        <a class="test" tabindex="-1" href="#">New dropdown <span class="caret"></span></a>
+        <ul class="dropdown-menu">
+          <li><a tabindex="-1" href="#">2nd level dropdown</a></li>
+          <li><a tabindex="-1" href="#">2nd level dropdown</a></li>
+          <li class="dropdown-submenu">
+            <a class="test" href="#">Another dropdown <span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li><a href="#">3rd level dropdown</a></li>
+              <li><a href="#">3rd level dropdown</a></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </div>  -->
 				<!-- <ul class="nav navbar-nav navbar-right">
 					<li class="active"><a href="./">Default <span
 							class="sr-only">(current)</span></a></li>
@@ -164,26 +202,33 @@
 			<!--/.nav-collapse -->
 		</div>
 	</nav> 
-	   <ul class="nav navbar-nav">
-        <li class="active"><a href="#">Home</a></li>
-        <li><a href="#about">About</a></li>
-        <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true"> <span class="nav-label">Services</span> <span class="caret"></span></a>
+	 
+	 
+<!-- Example of sub-submenus, don't delete -->
+<!-- class level: dropdown - dropdown-menu - dropdown-submenu - dropdown-menu - dropdown-submenu -->
+<!-- add class="test" tabindex="-1" to <a> under class="dropdown-submenu" -->
+<!-- <div class="dropdown">
+    <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">Tutorials
+    <span class="caret"></span></button>
+    <ul class="dropdown-menu">
+      <li><a tabindex="-1" href="#">HTML</a></li>
+      <li><a tabindex="-1" href="#">CSS</a></li>
+      <li class="dropdown-submenu">
+        <a class="test" tabindex="-1" href="#">New dropdown <span class="caret"></span></a>
+        <ul class="dropdown-menu">
+          <li><a tabindex="-1" href="#">2nd level dropdown</a></li>
+          <li><a tabindex="-1" href="#">2nd level dropdown</a></li>
+          <li class="dropdown-submenu">
+            <a class="test" href="#">Another dropdown <span class="caret"></span></a>
             <ul class="dropdown-menu">
-                <li><a href="#">Service A</a></li>
-                <li><a href="#">Service B</a></li>
-                <li class="dropdown-submenu">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> <span class="nav-label">Service C</span><span class="caret"></span></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="#">Service C1</a></li>
-                        <li><a href="#">Service C2</a></li>
-                        <li><a href="#">Service C3</a></li>
-                        <li><a href="#">Service C4</a></li>
-                        <li><a href="#">Service C5</a></li>
-                    </ul>
-                </li>
+              <li><a href="#">3rd level dropdown</a></li>
+              <li><a href="#">3rd level dropdown</a></li>
             </ul>
-        </li>
+          </li>
+        </ul>
+      </li>
     </ul>
-	{% load static %}
-	<script src="{% static "main_menu/main_menu_action.js" %}"></script>
+  </div> -->
+  
+{% load static %}
+<script src="{% static "main_menu/main_menu_action.js" %}"></script>
