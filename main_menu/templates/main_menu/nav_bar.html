@@ -1,5 +1,5 @@
-
-	<nav class="navbar navbar-default">
+<!-- https://www.w3schools.com/bootstrap/bootstrap_navbar.asp -->
+	<nav class="navbar navbar-inverse">
 		<div class="container-fluid">
 			<div class="navbar-header">
 				<button type="button" class="navbar-toggle collapsed"
@@ -14,30 +14,45 @@
 			<div id="navbar" class="navbar-collapse collapse">
 				<ul class="nav navbar-nav">
 					<li><a href="{%url 'main' %}">Home</a></li>
-					
+
+					<!-- Data Pre-processing -->
 					<li class="dropdown">
 						<a href="#" class="dropdown-toggle"
 							data-toggle="dropdown" role="button" aria-haspopup="true"
-							aria-expanded="false">Data<span class="caret"></span>
+							aria-expanded="false">Data Preprocessing<span class="caret"></span>
 						</a>
-						
 						<ul class="dropdown-menu">
-							<li><a id="menu-upload" href="{%url 'data_upload_init' %}">Upload</a></li>
-							<li><a id="menu-data-cleanup" href="{%url 'data_cleanup' %}">Data Preparation</a></li>
-							<li><a id="menu-data-matching" href="{%url 'data_matching_home' %}">Data Selection by Matched Keys</a></li>
+							<!-- <li><a id="menu-upload" href="{%url 'data_upload_init' %}">Upload</a></li> -->
+							<li><a id="menu-data-cleanup" href="{%url 'data_cleanup' %}">Data Cleanup</a></li>
+							<li><a id="menu-data-matching" href="{%url 'data_matching_home' %}">Data Matching</a></li>
+						</ul>
+					</li>
+
+					
+					<!-- Exploratory data  analysis (EDA) -->
+					<li class="dropdown">
+						<a href="#" class="dropdown-toggle"
+							data-toggle="dropdown" role="button" aria-haspopup="true"
+							aria-expanded="false">Exploratory data  analysis (EDA)<span class="caret"></span>
+						</a>
+						<ul class="dropdown-menu">
+							<li><a id="eda-hist" href="#">Histogram</a></li>
+							<li><a id="eda-scatter" href="#">Scatter Plot</a></li>
+							<li><a id="eda-pareto" href="#">Pareto</a></li>
 						</ul>
 					</li>
 					
 					
+					<!-- Feature Selection -->
 					<li class="dropdown">
 						<a href="#" class="dropdown-toggle"
 							data-toggle="dropdown" role="button" aria-haspopup="true"
-							aria-expanded="false">Feature<span class="caret"></span>
+							aria-expanded="false">Feature Selection<span class="caret"></span>
 						</a>
 						
 						<ul class="dropdown-menu">
-							<li><a id="menu-upload" href="{%url 'feature_analysis_home' %}">Feature Analysis</a></li>
-							<li><a id="menu-upload" href="{%url 'corr_explore_home' %}">Correlation Exploration</a></li>
+							<li><a id="menu-upload" href="{%url 'feature_analysis_home' %}">Feature Importance</a></li>
+							
 						</ul>
 					</li>
 					
@@ -57,43 +72,35 @@
 					<li class="dropdown">
 						<a href="#" class="dropdown-toggle"
 							data-toggle="dropdown" role="button" aria-haspopup="true"
-							aria-expanded="false">Supervised Learning<span class="caret"></span></a>
+							aria-expanded="false">Model Selection<span class="caret"></span></a>
 						<ul class="dropdown-menu">
-							<li><a id="" href="{%url 'pipeline_home' %}">Model Selection</a></li>
-						</ul>
-					</li>
-					<!-- <li class="dropdown">
-						<a href="#" class="dropdown-toggle"
-							data-toggle="dropdown" role="button" aria-haspopup="true"
-							aria-expanded="false">Supervised Learning<span class="caret"></span></a>
-						<ul class="dropdown-menu">
-							<li><a id="" href="%url 'supervised_home' %">Model Creation</a></li>
-							
-						</ul>
-					</li> -->
-					<li class="dropdown">
-						<a href="#" class="dropdown-toggle"
-							data-toggle="dropdown" role="button" aria-haspopup="true"
-							aria-expanded="false">Unsupervised Learning<span class="caret"></span></a>
-						<ul class="dropdown-menu">
+							<li><a id="" href="#">Model Selection</a></li>
+							<li><a id="" href="{%url 'pipeline_home' %}">Model Creation  (Pipeline)</a></li>
 							<li><a id="" href="{%url 'cluster_analysis_home' %}">Cluster Analysis</a></li>
-							<li><a id="" href="{%url 'unsupervised_home' %}">Model Creation</a></li>
+							<li><a id="" href="{%url 'unsupervised_home' %}">Model Creation (Individual)</a></li>
 						</ul>
 					</li>
-					<li class="dropdown"><a href="#" class="dropdown-toggle"
+	
+
+					
+					
+					<!-- <li class="dropdown"><a href="#" class="dropdown-toggle"
 						data-toggle="dropdown" role="button" aria-haspopup="true"
 						aria-expanded="false">Visualization Settings<span class="caret"></span></a>
 						<ul class="dropdown-menu">
 							<li><a id="flex_model_analysis" href="{%url 'flex_vis_home' %}">Data and Model Setting</a></li>
 						</ul>
-					</li>
+					</li> -->
+					
+					
 					<li class="dropdown"><a href="#" class="dropdown-toggle"
 						data-toggle="dropdown" role="button" aria-haspopup="true"
 						aria-expanded="false">Visualization<span class="caret"></span></a>
 						<ul class="dropdown-menu">
+							<li><a id="flex_model_analysis" href="{%url 'flex_vis_home' %}">Data and Model Setting</a></li>
 							<li><a id="flex_model_analysis" href="{%url 'flex_vis_home' %}">Flexible View</a></li>
-							<li><a id="radiomic_result" href="{%url 'vis_radiomic_result_home' %}">Radiomic Result Analysis</a></li>
-							<li><a id="radiomic_stratified" href="{%url 'vis_stratified_radiomic_home' %}">Radiomic#2</a></li>
+							<!-- <li><a id="radiomic_result" href="{%url 'vis_radiomic_result_home' %}">Radiomic Result Analysis</a></li> -->
+							
 							<!-- <li><a id="vis_diabetes_class" href="%url 'vis_diabetes_class' %">Data Table</a></li>
 							<li><a id="radiomic_brain" href="%url 'radiomic_brain' %">Lasso Tool</a></li>
 							<li><a id="vis_multi_tabs" href="%url 'vis_multi_tabs' %">Multi-tab</a></li>
@@ -105,6 +112,18 @@
 						</ul>
 					</li>
 					
+					<li class="dropdown"><a href="#" class="dropdown-toggle"
+						data-toggle="dropdown" role="button" aria-haspopup="true"
+						aria-expanded="false">Sample Work<span class="caret"></span></a>
+						<ul class="dropdown-menu">
+							<li><a id="menu-upload" href="{%url 'corr_explore_radiomics' %}">Radiomics and Clinical <br> Outcomes  Association <br> Exploration</a></li>
+							<li><a id="radiomic_stratified" href="{%url 'vis_stratified_radiomic_home' %}">Patient's Radiomics Analysis(under construction)</a></li>
+						</ul>
+					</li>
+					
+					
+					
+					
 				</ul>
 				<!-- <ul class="nav navbar-nav navbar-right">
 					<li class="active"><a href="./">Default <span
@@ -112,6 +131,16 @@
 					<li><a href="../navbar-static-top/">Static top</a></li>
 					<li><a href="../navbar-fixed-top/">Fixed top</a></li>
 				</ul> -->
+				
+								<!-- <li class="dropdown">
+						<a href="#" class="dropdown-toggle"
+							data-toggle="dropdown" role="button" aria-haspopup="true"
+							aria-expanded="false">Supervised Learning<span class="caret"></span></a>
+						<ul class="dropdown-menu">
+							<li><a id="" href="%url 'supervised_home' %">Model Creation</a></li>
+							
+						</ul>
+					</li> -->
 			</div>
 			<!--/.nav-collapse -->
 		</div>

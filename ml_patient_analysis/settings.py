@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'corr_explore.apps.CorrExploreConfig',
     # 'vis_brain.apps.VisBrainConfig',
     'main_menu.apps.MainMenuConfig',
-    'dataset_management.apps.DatasetManagementConfig',
+    'data_preprocess.apps.DatasetManagementConfig',
     'core_bokeh.apps.CoreBokehConfig',
     'model_mgt.apps.ModelMgtConfig',
     'dimreduction.apps.DimreductionConfig',
