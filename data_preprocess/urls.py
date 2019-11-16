@@ -1,7 +1,7 @@
 from django.urls import path
 from . import views
 
- # dataset_management_upload is refered from html and navigation bar
+ # data_preprocess_upload is refered from html and navigation bar
 urlpatterns = [
     path("data/upload/home", views.init_data_upload_handler, name="data_upload_init"),
     path("data/upload/", views.upload_file_as_handler, name="data_upload"),

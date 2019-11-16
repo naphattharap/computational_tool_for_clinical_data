@@ -47,6 +47,13 @@ body{
     padding-bottom: 20px;
     height: 620px;
 }
+.cate_prog_title{
+	width: 70%;
+    border-color: #777;
+    border-style: dashed;
+    border-radius: 0.5em;
+    border-width: thin;
+}
 .img-main-category{
     width: 150px;
     height: 150px;
@@ -78,11 +85,11 @@ body{
     color: white;
 }
 
-.nav-container{
-	/* background-color: #afeeee; */
+/*.nav-container{
+ 	 background-color: #afeeee; 
 	background-color: #48d1cc;
-	background-color: #333333;
-}
+	background-color: #333333; 
+}*/
 .font_header{
 	font-weight: bolder;
     /* color: #008b8b !important; */

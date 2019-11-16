@@ -5,8 +5,8 @@ from django.views import View
 from django.utils.html import escape
 from django.views.decorators.csrf import csrf_exempt
 
-from dataset_management.forms import UploadFileForm, CleanUpSettingsForm, ProcessFileForm, SaveFileForm, UploadFileAsForm
-from dataset_management.logic import ProcessDataset
+from data_preprocess.forms import UploadFileForm, CleanUpSettingsForm, ProcessFileForm, SaveFileForm, UploadFileAsForm
+from data_preprocess.logic import ProcessDataset
 from naphyutils.file import FileStorage
 from naphyutils.dataframe import DataFrameUtil
 import simplejson as json

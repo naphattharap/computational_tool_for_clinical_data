@@ -26,7 +26,7 @@ import sys, traceback
 
 # Path under template folder
 
-MAIN_PAGE = "corr_explore.html"
+MAIN_PAGE = "corr_explore_radiomics.html"
 
 
 def home_hander(request):

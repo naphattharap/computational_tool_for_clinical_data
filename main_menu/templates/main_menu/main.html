@@ -6,6 +6,13 @@
 <meta charset="utf-8"/>
 {% include "main_menu/global_script.html" %}
 <script src="{% static "main_menu/main_menu_action.js" %}"></script>
+<!--  <style>
+.dropdown:hover > .dropdown-menu{
+display: block;
+} 
+</style>  -->
+
+
 </head>
 <body>
 {% include "main_menu/nav_bar.html" %}
@@ -21,7 +28,7 @@
 			<p>
 				<font color="black" size="3">
 					Quick access to a computational tool for finding association between radiomics data and clinical outcomes
-					<a href="{%url 'feature_analysis_home' %}">[click]</a>
+					<a href="{%url 'corr_explore_radiomics' %}">[click]</a>
 					<br>For more details: <a href="https://repositori.upf.edu/handle/10230/42547" target="_blank">
 					https://repositori.upf.edu/handle/10230/42547
 					</a>

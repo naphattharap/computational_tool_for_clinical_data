@@ -18,7 +18,7 @@ from django.urls import path, include
 
 # from vis_brain import urls as vis_brain_urls
 from main_menu import urls as main_menu_urls
-from dataset_management import urls as dataset_management_urls
+from data_preprocess import urls as data_preprocess_urls
 from model_mgt import urls as model_mgt_urls
 from dimreduction import urls as dimreduction_urls
 from db import urls as db_urls
@@ -38,7 +38,7 @@ urlpatterns = [
     # our project app urls path
    # path("", include(vis_brain_urls)),
     path("", include(main_menu_urls)),
-    path("", include(dataset_management_urls)),
+    path("", include(data_preprocess_urls)),
     path("", include(model_mgt_urls)),
     path("", include(dimreduction_urls)),
     path("", include(db_urls)),

@@ -1,3 +1,8 @@
+.nav-tabs li.active  a{
+  display: block;
+  background-color: tomato !important;
+}
+
 .form-group-border {
 	border-style: solid;
 	border-color: #e7e7e7;
