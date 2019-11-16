@@ -47,6 +47,13 @@ body{
     padding-bottom: 20px;
     height: 620px;
 }
+.cate_prog_title{
+	width: 70%;
+    border-color: #777;
+    border-style: dashed;
+    border-radius: 0.5em;
+    border-width: thin;
+}
 .img-main-category{
     width: 150px;
     height: 150px;
