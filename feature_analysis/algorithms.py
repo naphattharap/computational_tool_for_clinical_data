@@ -12,35 +12,44 @@ def feature_selection_random_forest_regressor(X, y):
     
     # https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html
     
-    regr = RandomForestRegressor(n_estimators=100)
+    regr = RandomForestRegressor(n_estimators=20)
     regr.fit(X_train, y_train)
     y_predict = regr.predict(X_test)
     
     # print(y_predict)
-    # Return the feature importances (the higher, the more important the feature)
-    print(regr.feature_importances_)
+    # Return the feature importance (the higher, the more important the feature)
+    print()
+    print("Feature importance:", regr.feature_importances_)
     
     important_features_dict = {}
     for x, i in enumerate(regr.feature_importances_):
         important_features_dict[x] = i
     
+    # sorted from max to min
     important_features_list = sorted(important_features_dict,
                                      key=important_features_dict.get,
                                      reverse=True)
     
     print('Most important features: ', important_features_list)
     col_names = list(X_train.columns)
-    max3_importance = []
-    max3_col_names = []
-    for idx in range(0, 3):
-        col_idx = important_features_list[idx]
-        max3_importance.append(col_idx)
-        max3_col_names.append(col_names[col_idx])
+    n_columns = 0
+    if len(col_names) > 2:
+        n_columns = 3
+    elif len(col_names) == 2:
+        n_columns = 2
+    else:
+        raise ValueError("Number of columns are less then 2.")
     
-    print("Select 3 most important columns: ", max3_col_names)
-    X_selected = pd.DataFrame(data=X[max3_col_names])  
-    # pd.DataFrame(data=df_radiomic.loc[:, max3_col_names], columns=max3_col_names)
-    # selected_features = selected_features.reset_index()
+    max_importance = []
+    max_col_names = []
+    for idx in range(0, n_columns):
+        col_idx = important_features_list[idx]
+        max_importance.append(col_idx)
+        max_col_names.append(col_names[col_idx])
+    
+    print("The most important columns: ", max_col_names)
+        
+    X_selected = pd.DataFrame(data=X[max_col_names])  
     
     print("max importance feature column names: ", X_selected.columns)
     print(X_selected.head())

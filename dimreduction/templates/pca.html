@@ -9,7 +9,7 @@
 {% include "core_bokeh/common_bokeh_script.html" %}
 <!-- Jquery UI for autocomplete -->
 <script src="{% static "external_library/jquery/ui/1.12.1/jquery-ui.js"%}"></script>
-<link rel="stylesheet" type="text/css" href="{% static "jquery/ui/1.12.1/jquery-ui.min.css"%}"></link>
+<link rel="stylesheet" type="text/css" href="{% static "external_library/jquery/ui/1.12.1/jquery-ui.min.css"%}"></link>
 
 <!-- JExcel Scripts -->
 <script src="{% static "jexcel/2.0.2/js/jquery.jexcel.js"%}"></script>
@@ -19,16 +19,31 @@
 <script type="text/javascript" src="{% static "dimreduction/dimreduction.js"%}"></script>
 <link rel="stylesheet" type="text/css" href="{% static "dimreduction/dimreduction.css"%}"></link>
 
+<script type="text/javascript" src="{% static "theme/common_graph.js"%}"></script>
 <script type="text/javascript" src="{% static "theme/common-jexcel-ext.js"%}"></script>
+
+
+<!--  Plotly -->
+<script type="text/javascript" src="{% static "external_library/plotly/plotly-1.47.3.min.js"%}"></script>
+
+<style>
+/* overidden for adding bottom line of tab to make it be the same as Bokeh style*/
+.nav-tabs>li.active>a, .nav-tabs>li.active>a:focus, .nav-tabs>li.active>a:hover {
+    color: #555;
+    cursor: default;
+    background-color: #fff;
+    border: 1px solid #ddd;
+</style>
 </head>
 <body>
 	{% include "main_menu/nav_bar.html" %}
 	
 	
 	<!-- Hidden URL used in javascript -->
-	<input type="hidden" id="url_list_all_file" data-url="{%url 'db_list_all_files' %}" />
-	<input type="hidden" id="url_get_file_data" data-url="{%url 'get_file_data' %}" />
+<!-- 	<input type="hidden" id="url_list_all_file" data-url="{%url 'db_list_all_files' %}" />
+	<input type="hidden" id="url_get_file_data" data-url="{%url 'get_file_data' %}" /> -->
 	<input type="hidden" id="url_pca_elbow_plot" data-url="{%url 'pca_elbow_plot' %}" />
+	<input type="hidden" id="url_pca_plot" data-url="{%url 'pca_plot' %}" />
 	
 	
 	<h3 class="page_title">Principal Component Analysis (PCA)</h3>
@@ -36,7 +51,6 @@
 	<div class="container-fluid">
 		<div id="pca_dataset_search_section">
 		
-				
 				<!-- Search dataset section -->
 				<div id="search_section" class="form-group-border">
 					<p>
@@ -45,14 +59,18 @@
 					<div id="seach_criterion_section" class="form-group row">
 						<label  for="label_file" class="col-sm-2">Data File</label>
 						<div class="col-sm-10">
-							<input id="inp_dataset_name" name="inp_dataset_name" class="form-control" placeholder="Enter dataset file name"/>
-							<!-- Default checked -->
-							<div class="custom-control custom-checkbox">
-							  	<input type="checkbox" id="column_header"  name="column_header" class="custom-control-input" checked>
-							  	<label class="custom-control-label" for="defaultChecked2">Data file contains table header</label>
-							  	<!-- <input type="text" id="column_header"  name="column_header_idx" class="custom-control-input"> -->
-							</div>
-							<button id="btn_load_data" class="btn btn-primary">View data</button>
+							<form id="form_upload_file" method="post" action="{% url 'pca_plot' %}" enctype="multipart/form-data">
+								{% csrf_token %}
+								<!-- <input id="inp_dataset_name" name="inp_dataset_name" class="form-control" placeholder="Enter dataset file name"/> -->
+								<!-- Default checked -->
+<!-- 								<div class="custom-control custom-checkbox">
+								  	<input type="checkbox" id="column_header"  name="column_header" class="custom-control-input" checked>
+								  	<label class="custom-control-label" for="defaultChecked2">Data file contains table header</label>
+								</div> -->
+								<input id="data_file" name="data_file" type="file" />
+							</form>
+							<br>
+							<button id="btn_view_data" class="btn btn-primary">View 3D</button>
 							<button id="btn_elbow" name="btn_elbow" class="btn btn-primary">View Elbow Plot</button>
 						</div>
 						
@@ -61,14 +79,29 @@
 				</div>
 			
 		</div>
-		<div id="data_table_section" class="form-group-border">
+		
+		<div id="process_result_tabs" class="container-fluid">
+			<ul class="nav nav-tabs">
+				<li class="active"><a data-toggle="tab" href="#tab_pca_plot_result">PCA 3D Space</a></li>
+			</ul>
+		
+			<div id="gridContainer">
+				<div id="tab_pca_plot_result" class="tab-pane fade in active">
+					<div id="plotjs_pca_plot"></div>
+			</div>
+			</div>
+		</div>
+		
+		<!-- <div id="plotjs_pca_plot"></div> -->
+		
+<!-- 		<div id="data_table_section" class="form-group-border">
 			<p>
 				<a id="data_table_title" href="#">File Data</a>
 			</p>
 			<div id="data_table"></div>
-		</div>
+		</div> -->
 			
-		<!-- =========== Plot ============== -->
+		<!-- =========== Plot by Bokeh============== -->
 		<div align="center" style="padding:10px;">
 			<div id="bokeh_plot">
 				{{ script | safe }}
