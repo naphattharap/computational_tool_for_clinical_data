@@ -41,11 +41,11 @@ class DataFrameUtil():
     
     @staticmethod
     def file_to_dataframe(file, separator=",", header=None):
-        if file.name.endswith('.csv'):
-            df = pd.read_csv(file, sep=separator, header=header)
-        elif file.name.endswith('.txt'):
-            df = pd.read_csv(file, sep=" ", header=header) 
-        return df
+#         if file.name.endswith('.csv'):
+#             df = pd.read_csv(file, sep=separator, header=header)
+#         elif file.name.endswith('.txt'):
+#             df = pd.read_csv(file, sep=" ", header=header) 
+        return pd.read_csv(file, sep=separator, header=header)
     
     @staticmethod
     def dataframe_to_json(df, orient="values"):
