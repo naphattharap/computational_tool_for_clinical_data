@@ -5,10 +5,17 @@
 <title>AI-INSIGHT.COM</title>
 <meta charset="utf-8" />
 <meta name="description" content="Artificial Intelligence Learning Path and Solutions">
+<!-- Google Sign-in (new) -->
+<meta name="google-signin-client_id" content="578244088493-gehtfbk5c61rhcf97mgk06tdi32eg2gr.apps.googleusercontent.com">
 {% include "main_menu/global_script.html" %}
 
 <link rel="stylesheet" href="{% static "home/home.css"%}"></link>
 <script src="{% static "main_menu/main_menu_action.js" %}"></script>
+
+<!--  Google OAuth -->
+<script src="https://apis.google.com/js/platform.js" async defer></script>
+<script src="{% static "home/google_oauth.js" %}"></script>
+<!--  Google OAuth End -->
 
 </head>
 <body>
@@ -30,11 +37,19 @@
 			
 			<!-- Right menu -->
 			<ul class="nav navbar-nav navbar-right">
+				<li>
+	            	 <div class="g-signin2" data-onsuccess="onSignIn" data-onfailure="onSignInFailure">
+					</div>
+	            </li>
+	            <li>
+	            	<a href="#" onclick="signOut();">Sign out</a>
 	            <li>
 	            	<a href="#" data-toggle="modal" data-target="#my_modal">
 	            		<font class="font_header">About</font>
 	            	</a>
 	            </li>
+	            
+	           
             <!-- <li><a href="../navbar-static-top/">Static top</a></li> -->
             <!-- <li class="active"><a href="./">Fixed top <span class="sr-only">(current)</span></a></li> -->
           </ul>
