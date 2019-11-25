@@ -9,7 +9,10 @@
 
 <link rel="stylesheet" href="{% static "home/home.css"%}"></link>
 <script src="{% static "main_menu/main_menu_action.js" %}"></script>
-
+<style>
+.tab { margin-left: 40px; }
+.two_tab { margin-left: 80px; }
+</style>
 </head>
 <body>
 	<nav class="navbar navbar-inverse">
@@ -114,29 +117,43 @@
 				<div class="modal-header">
        			 	<button type="button" class="close" data-dismiss="modal">&times;</button>
         			<h4 class="modal-title">
-						My inspiration for this application
+						About this website
 					</h4>
       			</div>
       			<div class="modal-body">
 					
 					<p>
-						Building Machine Learning Models is a trial and error, and some steps are like a set of pattern of tasks ex. statistical analysis, correlation of attributes, etc.<br><br>
-						
-						<strong>Isn't it better to summarize those basic steps and visualize data quickly through the FREE software?</strong> 
-						<br> 
-						My intention to develop this software is to support tasks in Machine Learning Pipeline. <br>
-						The ultimate goal is to do automatic model selection (it's still long way to go...) <br>
-						<br>
-						I have a special interest in applying Artificial Intelligence in Healthcare domain. <br>
-						Therefore, I developed 
-							<strong>The computational tool for finding an association between radiomics data and clinical outcomes</strong> for my master thesis in AI.
-						<br>
-						The tool is integrated to this platform for sample work in applying machine learning.
-						<br>
-						<br>
-						If you are interested in my project, please visit this link:
-						<a href="https://repositori.upf.edu/handle/10230/42547"
-							target="_blank">https://repositori.upf.edu/handle/10230/42547</a>
+						This website is for collecting my works and contributions in software development.
+						There aren't so many content so far as I just started.<br><br>
+						There are 3 categories for now: <br>
+						1. Tutorial videos for basic knowledge 
+						in Machine Learning in Thai language (not finished all content yet) <br>
+						2. Shared source code on GitHub (there are more to upload...)<br>
+						3. Sample web application <br>
+					</p>
+					
+					<p class="tab"><strong>The Insight (being developed)</strong></p>
+					<p class="two_tab">
+							Inspiration:<br>
+							As we have known that building Machine Learning models is a trial and error and we have some kinds of patterns to start working e.g. data cleanup, EDA and so on. <br>
+							I am developing this application to reduce time for writing program in some steps of work
+							and my ultimate goals are to do model selection and configurable visualization (still long way to go)<br>
+					</p>
+					
+					<p class="tab"><strong>Sample work for applied machine learning in real-world problem</strong></p>
+					<p class="two_tab">
+						<strong>The computational tool for finding an association between radiomics data and clinical outcomes</strong><br>
+						I integrated my work for my master's thesis into this application. <br>
+						It is the computational tool for finding an association between radiomics data and clinical outcomes. <br>
+						The dataset are cardiovascular radimics data which comes with 8xx features and 10,xxx columns of clinical outcomes data. <br>
+						Since the dataset are large and it is not easy to find association of those data. <br>
+						To solve this problem, I implemented the tool for finding related features based on selected target in clinical outcomes 
+						so that a clinician can see what features are related to frequency of hard exercise, smoking status, age, gender and so on. 
+						In addition, Framingham Risk Score for cardiovascular disease is also calculated for selected the input dataset. <br><br>
+						If you are interested in this project, please visit this link for more details or email to me for dataset to play with the tool.<br>
+						Link: <a href="https://repositori.upf.edu/handle/10230/42547"
+							target="_blank">https://repositori.upf.edu/handle/10230/42547
+						</a>
 					</p>
 	
 					<div align="center">
