@@ -1,0 +1,26 @@
+.form-group-border {
+	border-style: solid;
+	border-color: #e7e7e7;
+	border-radius: 1em;
+	padding-left: 10px; padding-top : 10px;
+	border-width: 2px;
+	margin: 10px;
+	padding-top: 10px;
+}
+
+#data_table {
+	width: 100%;
+	height: 500px;
+	overflow: scroll;
+	border: gray;
+	border-width: thin;
+	padding: 5px;
+}
+
+#btn_search_dataset {
+	width: 100px;
+}
+
+#inp_dataset_name {
+	width: 300px;
+}

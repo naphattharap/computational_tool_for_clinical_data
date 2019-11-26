@@ -10,6 +10,7 @@ urlpatterns = [
     path("dimreduction/pca/pca_plot/", views.pca_plot, name="pca_plot"),
     path("dimreduction/pca/elbow/", views.elbow_plot_handler, name="pca_elbow_plot"),
     path("dimreduction/lda/home/", views_lda.init_view, name="lda_home"),
+    path("dimreduction/lda/plot/", views_lda.lda_plot, name="lda_plot"),
     path("dimreduction/tsne/home/", views_tsne.init_view, name="tsne_home"),
    # path("dimreduction/pca/load/", views.pca_process, name="dimreduction_pca_search_dataset"),
 

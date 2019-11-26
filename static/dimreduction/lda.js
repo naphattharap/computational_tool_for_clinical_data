@@ -5,7 +5,7 @@ var len_data = 0;
 var len_load = 20;
 var current_selected_file;
 var _plot_data;
-var div_pca_plot; //Div object to display graph
+var div_plot; //Div object to display graph
 
 var _data_traces = [];
 var marker_size = 5;
@@ -18,22 +18,6 @@ var plot3d_marker = {
 	          color: 'rgb(8, 47, 251)',
 	          width: 6
 	        },
-//	      color: [],
-//	      colorscale: 'Blues', 
-//	      showscale: true,
-	      reversescale:true,
-//	      colorbar:{
-//			        thickness: 10,
-//			        titleside: 'right',
-//			        outlinecolor: 'rgba(68,68,68,0)',
-//			        ticks: 'outside',
-//			        //ticklen: 5,
-//			        shoticksuffix: 'last',
-//			        ticksuffix: '',
-//			        //dtick: 0.1,
-//			        nticks: 10
-//			        
-//	    }
 	};
 
 
@@ -87,20 +71,20 @@ $(document).ready(function() {
 	});
 
 	//URL for listing all files
-	var url_list_files = $("#url_list_all_file").attr("data-url");
-	$("#inp_dataset_name").autocomplete({
-		source : function(request, response) {
-			$.get(url_list_files, {
-				query : request.term
-			}, function(data) {
-				response(data.file_names);
-			});
-		},
-		select : function(event, term, item) {
-			current_selected_file = term.item.value;
-		},
-		minLength : 3
-	});
+//	var url_list_files = $("#url_list_all_file").attr("data-url");
+//	$("#inp_dataset_name").autocomplete({
+//		source : function(request, response) {
+//			$.get(url_list_files, {
+//				query : request.term
+//			}, function(data) {
+//				response(data.file_names);
+//			});
+//		},
+//		select : function(event, term, item) {
+//			current_selected_file = term.item.value;
+//		},
+//		minLength : 3
+//	});
 	
 	// View PCA 3D
 	$("#btn_view_data").bind("click",function(){
@@ -109,7 +93,7 @@ $(document).ready(function() {
 		
 		// submit file to server and does PCA then return to plot on screen
 		var formData = get_form_view_data();
-		var url_pca_plot = $("#url_pca_plot").attr("data-url");
+		var url_pca_plot = $("#url_plot").attr("data-url");
 		$.ajax({
 			type: "POST",
 	        enctype: 'multipart/form-data',
@@ -129,7 +113,7 @@ $(document).ready(function() {
 					$("#process_result_tabs").show();
 					_data_traces = [];
 					_plot_data = resp.plot //JSON.parse(resp.plot);
-					graphDiv = document.getElementById('plotjs_pca_plot');
+					graphDiv = document.getElementById('plotjs_plot');
 					plot_3d(graphDiv);
 				}
 				alert_message(resp);
