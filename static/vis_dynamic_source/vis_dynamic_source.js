@@ -3,7 +3,6 @@
 var graphDiv; //Div object to display graph
 var data_traces = [];
 var is_hidden_marker_text = true; // Toggle text on dots
-
 /* Plot configuration settings */
 var marker_size = 8;
 var marker_opacity = 0.7;
@@ -70,6 +69,10 @@ $(document).ready(function() {
 			formData.append('general_data_file', general_data_file);
 		}
 		
+		// Add trained model ID
+		formData.append('model_id', $('#model_id').val());
+		
+		
 		
 		$.ajax({
 			url : form.action,
@@ -99,7 +102,7 @@ $(document).ready(function() {
 				plot_2d(graphDiv, resp.plot);
 				
 				data_tables = resp.data_tables;
-				
+				var feature_columns = resp.feature_columns;
 				
 				if (data_tables.table1 != undefined 
 						&& data_tables.table1.table_data != undefined){
@@ -114,10 +117,10 @@ $(document).ready(function() {
 							// skip slick grid id column
 							continue;
 						}else if(i == 0){
-							selected_columns.push({id:i, field: "id", name: radiomic_view_columns_name[i], width: 80 });
+							selected_columns.push({id:i, field: "id", name: feature_columns[i], width: 80 });
 							continue;
 						}else{
-							selected_columns.push({id:i, field: field_name, name: radiomic_view_columns_name[i], width: 200});
+							selected_columns.push({id:i, field: field_name, name: feature_columns[i], width: 200});
 							
 						}
 					}
@@ -204,7 +207,11 @@ $(document).ready(function() {
 	});
 
 	$('#plotjs_container').on('plotly_selected', function(e, data){
-	    console.log('plotly_selected:'+ e.points + "-" + data);
+	    console.log('plotly_selected:' + e, data);
+	    
+//	    if(e.points == undefined){
+//	    	data.points = e.lassoPoints;
+//	    }
 	    
 	    if(data_tables != undefined){
 	    	var selected_data_id = current_selected_data(data);
@@ -461,19 +468,19 @@ function get_data_traces(data, trace_options){
 function get_layout(){
 	var layout = {
 			  autosize : true,
-			  title: 'Radiomic Space',
+			  title: '2D Space',
 			  xaxis: {
-			    title: '',
+			    title: 'X',
 			    showgrid: true,
 			    zeroline: false
 			  },
 			  yaxis: {
-			    title: '',
+			    title: 'Y',
 			    showgrid: true,
 			    showline: false,
 			    zeroline: false
 			  },
-			  //dragmode: 'lasso', /* Set default selection tool to lasso*/
+			  dragmode: 'lasso', /* Set default selection tool to lasso*/
 			  hovermode: 'closest', /*Change default on hover to the data point itself*/
 			  showlegend: true,
 			  

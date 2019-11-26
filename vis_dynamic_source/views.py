@@ -14,12 +14,11 @@ from naphyutils.pca import PcaUtil
 from naphyutils.standardization import PreProcessingUtil
 import naphyutils.algorithm_pipeline
 from . import views
-from .forms import VisInputForm
+from .forms import VisDynamicSourceInputForm
 import constants.const_msg as msg
 import numpy as np
 
-MAIN_PAGE = "vis_stratified_radiomic.html"
-# MAIN_PAGE = "vis_stratified_radiomic-backup-before-add-main.html"
+MAIN_PAGE = "vis_dynamic_source.html"
 
 
 def home_hander(request):
@@ -42,7 +41,7 @@ def process_data_handler(request):
         
         data_tables: {table1: { table_columns: [..,..] , table_data: [[..]], point_id: [...]}, table2: {...}}
     """
-    form = VisInputForm(request.POST, request.FILES)
+    form = VisDynamicSourceInputForm(request.POST, request.FILES)
     resp_data = dict();
     plot = dict()
     data_tables = dict();
@@ -50,6 +49,8 @@ def process_data_handler(request):
         data_file = form.cleaned_data["data_file"]
         label_file = form.cleaned_data["label_file"]
         add_data_file = form.cleaned_data["add_data_file"]
+        
+        model_id = form.cleaned_data["model_id"]
         predict_data_file = form.cleaned_data["new_data_file"]
         general_data_file = form.cleaned_data["general_data_file"]
         
@@ -73,7 +74,16 @@ def process_data_handler(request):
             
             if data_column_header == "on":
                 data_column_header_idx = 0
+            
             df_data = DataFrameUtil.file_to_dataframe(data_file, header=data_column_header_idx)
+            
+            if data_column_header_idx:
+                resp_data['feature_columns'] = df_data.columns.values
+            else: 
+                # generate column from index
+                resp_data['feature_columns'] = [str(i) for i in range(1, df_data.shape[1] + 1)]
+                
+            print("column: ", resp_data['feature_columns'])
             # Reduce dimension for visualization
             X_scaled = PreProcessingUtil.fit_transform(df_data)
             X_ori2d, pca = PcaUtil.reduce_dimension(X_scaled, n_components=2)
@@ -126,7 +136,7 @@ def process_data_handler(request):
                 label_column_header_idx = 0
             df_new_data = DataFrameUtil.file_to_dataframe(predict_data_file, header=new_column_header_idx)   
             # Process data with pipeline of selected algorithm
-            X_new_scaled, y_predict = predict_new_data(df_new_data)
+            X_new_scaled, y_predict = predict_new_data(df_new_data, model_id)
             X_new2d, new_pca = PcaUtil.reduce_dimension(X_new_scaled, n_components=2)
             df_plot_predict = pd.DataFrame(data=X_new2d, columns=['x', 'y'])
             df_plot_predict['label'] = y_predict
@@ -194,18 +204,13 @@ def process_data_handler(request):
     return JsonResponse(resp_data)
 
 
-def predict_new_data(df_new_data):
+def predict_new_data(df_new_data, model_id):
     """
-    Test algorithm
+    Predict new data based on selected model
     """
-    # TODO change this algorithm to final algo
-#     array_pipeline = [PIPELINE_SCALE, PIPELINE_SVM_OVO, PIPELINE_K_FOLD, PIPELINE_PCA]
-#     parameters = dict()
-#     parameters['n_folds'] = 5 
-#     parameters['pca_n_components'] = 2
-    model = ModelUtils.load_model(model_file_name="uci_breast_cancer_svmovo3.joblib")
+    model = ModelUtils.load_model(model_file_name=model_id)
     # Process data with selected algorithm pipeline
-    print(df_new_data)
+    # print(df_new_data)
     X_new_scaled = PreProcessingUtil.fit_transform(df_new_data)  
     y_predict = model.predict(X_new_scaled)
     

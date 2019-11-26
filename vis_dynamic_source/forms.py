@@ -1,13 +1,14 @@
 from django import forms
 
 
-class VisInputForm(forms.Form):
+class VisDynamicSourceInputForm(forms.Form):
     # base space
     data_file = forms.FileField()
     label_file = forms.FileField()
     add_data_file = forms.FileField(required=False)
     
     # new data
+    model_id = forms.CharField(required=False)
     new_data_file = forms.FileField(required=False)
     general_data_file = forms.FileField(required=False)
         
