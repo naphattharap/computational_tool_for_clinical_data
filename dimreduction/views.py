@@ -2,7 +2,8 @@ from django.shortcuts import render
 from django.views import View
 from sklearn.decomposition import PCA
 from sklearn import preprocessing
-
+from django.utils.html import escape
+from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from diabetes_logic.diabetes_logic import DiabetesLogic
 import codecs, json 
@@ -20,10 +21,12 @@ from bokeh.embed import components
 from bokeh.models import ColumnDataSource
 from bokeh.layouts import widgetbox, layout
 
+import constants.const_msg as msg
+from .forms import PcaPlotForm
+
 import pandas as pd
 
 
-# Create your views here.
 def init_view(request):
     """
     Display home page of PCA
@@ -31,7 +34,69 @@ def init_view(request):
     return render(request, template_name='pca.html')
 
 
+@csrf_exempt  
+def pca_plot(request):
+    """
+    Display home page of PCA
+    """
+    form = PcaPlotForm(request.POST, request.FILES)
+    resp_data = dict();
+    # PCA 3D
+    plot = dict()
+    
+    if form.is_valid():
+        # Get input files
+        data_file = form.cleaned_data["data_file"]
+        df_input = DataFrameUtil.file_to_dataframe(data_file, header=None)
+        X, pca = PcaUtil.reduce_dimension(df_input, n_components=3)
+        plot['x'] = list(X[:, 0])
+        plot['y'] = list(X[:, 1])
+        plot['z'] = list(X[:, 2])
+        resp_data['plot'] = plot
+        # print(resp_data)
+    else:
+        resp_data[msg.ERROR] = escape(form._errors)
+    
+    return JsonResponse(resp_data)
+
+
+@csrf_exempt
 def elbow_plot_handler(request):
+    form = PcaPlotForm(request.POST, request.FILES)
+    resp_data = dict();
+    if form.is_valid():
+         # Get input files
+        data_file = form.cleaned_data["data_file"]
+        df_input = DataFrameUtil.file_to_dataframe(data_file, header=None)
+        
+        X_scaled = PreProcessingUtil.standardize(df_input)
+            
+        # Get explain variance ratio
+        pca_helper = PcaUtil()
+        pca = pca_helper.get_fit_transfrom_pca(X_scaled)
+        arr_variance_ratio = pca.explained_variance_ratio_
+        
+        # Prepare all tabs to display Plot, Table by Bokeh
+        # Add ratio to bokeh line graph
+        elbow_plot = draw_elbow_plot(arr_variance_ratio)
+
+        # Add line to a panel
+        tab1 = Panel(child=elbow_plot, title="Elbow Curve Plot")
+        # tab2 = Panel(child=df_describe_table, title="Data Description")
+        # Add a panel to tab
+        tabs = Tabs(tabs=[ tab1 ])
+
+        script, div = components(tabs)
+        plots = { 'script': script, 'div': div}
+        resp_data["bokeh_plot"] = plots
+        
+    else:
+        resp_data[msg.ERROR] = escape(form._errors)
+    
+    return JsonResponse(resp_data)
+
+
+def elbow_plot_handler_old(request):
     resp_data = dict()
     file_name = request.GET.get("file_name")
     column_header = request.GET.get("column_header")

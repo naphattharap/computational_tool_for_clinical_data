@@ -37,9 +37,10 @@
 							aria-expanded="false">Exploratory data  analysis (EDA)<span class="caret"></span>
 						</a>
 						<ul class="dropdown-menu">
-							<li><a id="eda-hist" href="#">Histogram</a></li>
-							<li><a id="eda-scatter" href="#">Scatter Plot</a></li>
-							<li><a id="eda-pareto" href="#">Pareto</a></li>
+							<li><a id="eda-hist" href="#">Histogram (not yet)</a></li>
+							<li><a id="eda-scatter" href="#">Scatter Plot (not yet)</a></li>
+							<li><a id="eda-heatmap" href="#">Heatmap (not yet)</a></li>
+							<!-- <li><a id="eda-pareto" href="#">Pareto (not yet)</a></li> -->
 						</ul>
 					</li>
 					
@@ -53,10 +54,11 @@
 			                <span class="caret"></span>
 						</a>
 						<ul class="dropdown-menu">
-							<li><a href="#">Variance Threshold</a></li>
-							<li><a href="#">Peason's correlation</a></li>
-							<li><a href="#">Chi-squared</a></li>
 							<li><a href="{%url 'feature_analysis_home' %}">Feature Importance</a></li>
+							<li><a href="#">Variance Threshold (not yet)</a></li>
+							<li><a href="#">Peason's correlation (not yet)</a></li>
+							<li><a href="#">Chi-squared (not yet)</a></li>
+							
 						</ul>
 					</li>
 <!-- 					<li class="dropdown">
@@ -101,8 +103,17 @@
 							aria-expanded="false">Dimensionality Reduction<span class="caret"></span></a>
 						<ul class="dropdown-menu">
 							<li><a id="" href="{%url 'pca_home' %}">PCA</a></li>
-							<li><a id="" href="{%url 'lda_home' %}">LDA</a></li>
-							<li><a id="" href="{%url 'tsne_home' %}">T-SNE</a></li>
+							<li><a id="" href="{%url 'lda_home' %}">LDA (not yet)</a></li>
+							<li><a id="" href="{%url 'tsne_home' %}">T-SNE (not yet)</a></li>
+						</ul>
+					</li>
+					
+					<li class="dropdown">
+						<a href="#" class="dropdown-toggle"
+							data-toggle="dropdown" role="button" aria-haspopup="true"
+							aria-expanded="false">Cluster Analysis<span class="caret"></span></a>
+						<ul class="dropdown-menu">
+							<li><a id="" href="{%url 'cluster_analysis_home' %}">Cluster Analysis (being updated)</a></li>
 						</ul>
 					</li>
 					
@@ -111,10 +122,8 @@
 							data-toggle="dropdown" role="button" aria-haspopup="true"
 							aria-expanded="false">Model Selection<span class="caret"></span></a>
 						<ul class="dropdown-menu">
-							<li><a id="" href="#">Model Selection</a></li>
-							<li><a id="" href="{%url 'pipeline_home' %}">Model Creation  (Pipeline)</a></li>
-							<li><a id="" href="{%url 'cluster_analysis_home' %}">Cluster Analysis</a></li>
-							<li><a id="" href="{%url 'unsupervised_home' %}">Model Creation (Individual)</a></li>
+							<li><a id="" href="{%url 'pipeline_home' %}">Model Creation Pipeline</a></li>
+							<li><a id="" href="{%url 'unsupervised_home' %}">Model Creation (Individual) (not yet)</a></li>
 						</ul>
 					</li>
 	
@@ -130,30 +139,21 @@
 					</li> -->
 					
 					
-					<li class="dropdown"><a href="#" class="dropdown-toggle"
+				<!-- 	<li class="dropdown"><a href="#" class="dropdown-toggle"
 						data-toggle="dropdown" role="button" aria-haspopup="true"
 						aria-expanded="false">Visualization<span class="caret"></span></a>
 						<ul class="dropdown-menu">
 							<li><a id="flex_model_analysis" href="{%url 'flex_vis_home' %}">Data and Model Setting</a></li>
 							<li><a id="flex_model_analysis" href="{%url 'flex_vis_home' %}">Flexible View</a></li>
-							<!-- <li><a id="radiomic_result" href="{%url 'vis_radiomic_result_home' %}">Radiomic Result Analysis</a></li> -->
-							
-							<!-- <li><a id="vis_diabetes_class" href="%url 'vis_diabetes_class' %">Data Table</a></li>
-							<li><a id="radiomic_brain" href="%url 'radiomic_brain' %">Lasso Tool</a></li>
-							<li><a id="vis_multi_tabs" href="%url 'vis_multi_tabs' %">Multi-tab</a></li>
-							<li><a id="vis_call_back" href="%url 'vis_call_back' %">Callback</a></li>
-							<li role="separator" class="divider"></li>
-							<li class="dropdown-header">Nav header</li>
-							<li><a href="#">Separated link</a></li>
-							<li><a href="#">One more separated link</a></li> -->
 						</ul>
-					</li>
+					</li> -->
 					
 					<li class="dropdown"><a href="#" class="dropdown-toggle"
 						data-toggle="dropdown" role="button" aria-haspopup="true"
 						aria-expanded="false">Sample Work<span class="caret"></span></a>
 						<ul class="dropdown-menu">
 							<li><a id="menu-upload" href="{%url 'corr_explore_radiomics' %}">Radiomics and Clinical <br> Outcomes  Association <br> Exploration</a></li>
+							<li><a id="vis_dynamic_source_home" href="{%url 'vis_dynamic_source_home' %}">Dynamic Dataset Prediction</a></li>
 							<li><a id="radiomic_stratified" href="{%url 'vis_stratified_radiomic_home' %}">Patient's Radiomics Analysis(under construction)</a></li>
 						</ul>
 					</li>

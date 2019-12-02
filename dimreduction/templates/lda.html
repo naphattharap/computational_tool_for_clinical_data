@@ -15,41 +15,54 @@
 <link rel="stylesheet" href="{% static "jexcel/2.0.2/css/jquery.jexcel.css"%}" type="text/css" />
 
 
-<script type="text/javascript" src="{% static "dimreduction/dimreduction.js"%}"></script>
-<link rel="stylesheet" type="text/css" href="{% static "dimreduction/dimreduction.css"%}"></link>
+<script type="text/javascript" src="{% static "dimreduction/lda.js"%}"></script>
+<link rel="stylesheet" type="text/css" href="{% static "dimreduction/lda.css"%}"></link>
 
 <script type="text/javascript" src="{% static "theme/common-jexcel-ext.js"%}"></script>
 </head>
 <body>
 	{% include "main_menu/nav_bar.html" %}
 	
+	<input type="hidden" id="url_plot" data-url="{%url 'lda_plot' %}" />
 	
-	<!-- Hidden URL used in javascript -->
-	<input type="hidden" id="url_list_all_file" data-url="{%url 'db_list_all_files' %}" />
-
-
-	<h3 class="page_title">Linear Discriminant Analysis</h3>
+	<h3 class="page_title">Linear Discriminant Analysis (LDA) - Supervised (under construction)</h3>
 	{% include "main_menu/alert_msg.html" %}
 	<div class="container-fluid">
-		<div id="pca_dataset_search_section">
+		<div id="lda_dataset_search_section">
 			
-				
 				<!-- Search dataset section -->
 				<div id="search_section" class="form-group-border">
 					<p>
-						<a id="search_title" href="#">Search Dataset</a>
+						<a id="search_title" href="#">Upload dataset</a>
 					</p>
 					<div id="seach_criterion_section" class="form-group row">
-						<label  for="label_file" class="col-sm-2">Data File</label>
-						<div class="col-sm-10">
-							<input id="inp_dataset_name" name="inp_dataset_name" class="form-control" placeholder="Enter dataset file name"/>
-							<!-- Default checked -->
-							<div class="custom-control custom-checkbox">
-							  	<input type="checkbox" id="column_header"  name="column_header" class="custom-control-input" checked>
-							  	<label class="custom-control-label" for="defaultChecked2">Data file contains table header</label>
+					
+						<form id="form_upload_file" method="post" action="{% url 'lda_plot' %}" enctype="multipart/form-data">
+							{% csrf_token %}
+							<div class="col-sm-10">
+								<label  for="data_file" class="col-sm-3">Input data</label>
+								<div class="col-sm-7">
+									<input id="data_file" name="data_file" type="file" />
+								</div>
 							</div>
-							<button id="btn_load_data" class="btn btn-primary">View data</button>
+							
+							<div class="col-sm-10">
+								<label  for="label_file" class="col-sm-3">Label</label>
+								<div class="col-sm-7">
+									<input id="label_file" name="data_file" type="file" />
+								</div>
+							</div>
+						</form>
+						
+						<div class="col-sm-10">
+								<label  for="label_file" class="col-sm-3"></label>
+								<div class="col-sm-7">
+									<br>
+									<!-- button must be outside the form, otherwise error when AJAX is fired. -->
+									<button id="btn_view_data" class="btn btn-primary">View 3D</button>
+								</div>
 						</div>
+						
 					</div>
 				</div>
 		</div>
@@ -58,13 +71,6 @@
 				<a id="data_table_title" href="#">File Data</a>
 			</p>
 			<div id="data_table"></div>
-		</div>
-			
-		<!-- =========== Plot ============== -->
-		<div align="center" style="padding:10px;">
-			<div id="bokeh_plot">
-				{{ script | safe }}
-			</div>
 		</div>
 
 	</div>

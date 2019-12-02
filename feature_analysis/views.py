@@ -52,37 +52,48 @@ def process_data_handler(request):
         
         # Get input files
         data_file = form.cleaned_data["data_file"]
-        outcomes_file = form.cleaned_data["outcomes_file"]
+        output_file = form.cleaned_data["output_file"]
         
         data_column_header = form.cleaned_data['data_column_header']
-        outcomes_column_header = form.cleaned_data['outcomes_column_header']
+        output_column_header = form.cleaned_data['output_column_header']
+        
+        # print(data_column_header, output_column_header)
         
         # Declare empty dataframe to store uploaded data.
-        df_data = pd.DataFrame()  # Radiomic Data
-        df_outcomes = pd.DataFrame()  # Clinical outcomes
+        df_data = pd.DataFrame()  
+        df_output = pd.DataFrame()  
         
         # Convert files to dataframe
         # Check if data contain table header or not.
         # Then select data with/without table header to generate dataframe.
 
         # Check if both required input files are valid.
-        if data_file and outcomes_file:
+        if data_file and output_file:
             # Convert radiomic data to dataframe
             data_column_header_idx = None
             if data_column_header == "on":
                 data_column_header_idx = 0
             
             df_data = DataFrameUtil.file_to_dataframe(data_file, header=data_column_header_idx)
-            
+            if data_column_header_idx == None:
+                # generate from 0 to len
+                gen_cols = np.arange(0, df_data.shape[1]).astype(str)
+                df_data.columns = gen_cols    
+                       
             # Convert clinical outcomes data to dataframe
-            outcomes_column_header_idx = None
-            if outcomes_column_header == "on":
-                outcomes_column_header_idx = 0
+            output_column_header_idx = None
+            if output_column_header == "on":
+                output_column_header_idx = 0
             
-            df_outcomes = DataFrameUtil.file_to_dataframe(outcomes_file, header=outcomes_column_header_idx)
+            if output_column_header_idx == None:
+                # generate from 0 to len
+                gen_cols_output = np.arange(0, df_output.shape[1]).astype(str)
+                df_output.columns = gen_cols_output
             
-            # Apply feature selection model to select most 3 relevant features with clinical outcomes
-            X_selected, arr_sorted_columns, arr_sorted_importance, arr_cate_columns = feature_selection_random_forest_regressor(df_data, df_outcomes)   
+            df_output = DataFrameUtil.file_to_dataframe(output_file, header=output_column_header_idx)
+            
+            # Apply feature selection model to select most 2 or 3 relevant features with clinical outcomes
+            X_selected, arr_sorted_columns, arr_sorted_importance, arr_cate_columns = feature_selection_random_forest_regressor(df_data, df_output)   
             
             # Prepare result for plotting 3D and grid tables for uploaded data
             # e.g. plot -  selected feature, grids - radiomic, outcomes
@@ -90,8 +101,13 @@ def process_data_handler(request):
             # Generate unique id for each row since it is required for slickgrid
             # TODO change unique_ids to patient ID or etc (confirm with Carlos)
             unique_ids = np.arange(0, df_data.shape[0])
-            
-            plot_data = pd.DataFrame(data=X_selected.values, columns=['x', 'y', 'z'])
+
+            if df_data.shape[1] > 2:
+                space_col_names = ['x', 'y', 'z']
+            else:
+                space_col_names = ['x', 'y']
+                
+            plot_data = pd.DataFrame(data=X_selected.values, columns=space_col_names)
             plot_data['label'] = unique_ids
             plot['column_names'] = list(X_selected.columns.values)
             
@@ -109,11 +125,11 @@ def process_data_handler(request):
                                         'point_id':  str(unique_ids)}
             
             # Original outcomes column names are used for generating group of colorscale button in UI part.
-            # original_outcomes_columns = df_outcomes.columns.value
+            # original_outcomes_columns = df_output.columns.value
             
-            df_outcomes.insert(loc=0, column='id', value=unique_ids)
-            data_tables['table2'] = {  'table_data': df_outcomes.to_json(orient='records'), \
-                                       'column_names': list(df_outcomes.columns.values), \
+            df_output.insert(loc=0, column='id', value=unique_ids)
+            data_tables['table2'] = {  'table_data': df_output.to_json(orient='records'), \
+                                       'column_names': list(df_output.columns.values), \
                                        'point_id':  str(unique_ids),  # not used in frontend
                                        'cate_columns': arr_cate_columns}
                 

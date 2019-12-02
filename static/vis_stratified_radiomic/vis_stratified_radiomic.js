@@ -202,6 +202,10 @@ $(document).ready(function() {
 	$('#plotjs_container').on('plotly_selected', function(e, data){
 	    console.log('plotly_selected:'+ e.points + "-" + data);
 	    
+	    if(e.points == undefined){
+	    	data.points = e.lassoPoints;
+	    }
+	    
 	    if(data_tables != undefined){
 	    	var selected_data_id = current_selected_data(data);
 		    if(selected_data_id != undefined && selected_data_id.length > 0){

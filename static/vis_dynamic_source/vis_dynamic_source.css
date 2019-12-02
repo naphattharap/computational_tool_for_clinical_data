@@ -1,0 +1,268 @@
+/* height is related to svg canvas height here = svg + 20
+see #plotjs_container height
+*/
+#process_result{
+/* 	display: -webkit-inline-box; enable when the search box is implemented */
+    height: 420px;
+}
+
+#process_result_tabs{
+	margin-top: 30px;
+}
+
+/* #main_left_result{
+	width: 30%;
+    height: 100%;
+} */
+
+#main_right_result{
+	/* width: 70%; */
+	width: 100%;
+    height: 100%;
+   /*  padding: 10px; */
+}
+
+/* #main_left_result .row{
+	margin-bottom: 5px;
+    width: 100%;
+    display: -webkit-inline-box;
+
+}
+
+#main_left_result .col_label{
+    width: 30%;
+} */
+
+#plotjs_container{
+	height: 400px;
+}
+
+.center_button{
+	margin: auto;
+    /* width: 50%; */
+    margin-bottom: 10px;
+}
+
+#btn_reset_filter{
+	width: 150px;
+	margin-top: 15px;
+}
+/*overwrite width from 0 to 100%*/
+.jexcel > div > table{
+	width: 100% !important;
+}
+
+#tab_medical_history, #tab_radiomic_result{
+	overflow: scroll;
+    height: 800px;
+}
+
+#tab_dashboard_analytic1{
+    width: 100%;
+    /* height: 500px; */
+        height: fit-content;
+}
+
+/* .tab-content>.tab-pane {
+    display: none;
+}
+
+.tab-content>.active {
+    display: block;
+} */
+
+/*overwrite default*/
+.row{
+    margin-left: 10px !important;
+    margin-top: 5px;
+    margin-bottom: 5px !important;
+}
+
+.h_section_title{
+	color: #2196f3;
+    margin-top: 20px;
+    margin-left: 10px;
+}
+
+.file_chooser{
+	width: 100%;
+    border-color: #ddd;
+    border-width: thin;
+    border-style: solid;
+    height: 30px;
+    background-color: #f6f6f6;;
+    border-radius: 0.25em;
+}
+
+::-webkit-file-upload-button {
+  padding: 5px;
+  width: 150px
+}
+
+
+    .cell-title {
+      font-weight: bold;
+    }
+    .cell-effort-driven {
+      text-align: center;
+    }
+    .cell-selection {
+      border-right-color: silver;
+      border-right-style: solid;
+      background: #f5f5f5;
+      color: gray;
+      text-align: right;
+      font-size: 10px;
+    }
+    .slick-row.selected .cell-selection {
+      background-color: transparent; /* show default selected row background */
+    }
+    
+/* ============== Dashboard ================= */
+#dashboard{
+	margin: 10px;
+    width: 100%;
+    border-style: solid;
+    border-width: thin;
+    border-color: #c5c5c5;
+	  background-color: #e8e8e8;
+}
+
+.dashboard_group_title{
+	margin-left: 20px;
+    margin-top: 20px;
+    font-weight: 700;
+    font-size: larger;
+    color: #1f97f4;
+}
+
+.dashboard_row{
+	position: relative;
+    height: 300px;
+    /*display: -webkit-inline-box; display: table-row;*/
+    display: inline-table;
+    width: 100%;
+    border-style: solid;
+    border-color: #cccccc;
+}
+
+.dashboard_column{
+	position: relative;
+    display: table-cell;
+    background: white;
+
+}
+.dashboard_row_block{
+	/* margin: 5px; */
+    /* border: 3px solid #d9edf7; */
+    height: fit-content;
+    padding: 5px;
+    background-color: white;
+}
+.dashboard_row_block_body{
+	display: inline-flex;
+	height: 300px;
+}
+
+#plot_gender{
+	width: 250px;
+	
+}
+
+#plot_gender_age{
+	width: 400px;
+}
+#plot_bmi{
+	width:400;
+	height:300;
+}
+
+#plot_pulse_rate{
+	width: 130px;
+	height: 100px;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 100px;
+    display: -webkit-inline-box;
+     margin-top: 30px; /* to align with BMI */
+}
+#pulse_rate{
+	font-size: 50px;
+    color: dimgray;
+}
+
+#blood_pressure{
+	font-size: 50px;
+    color: dimgray;	
+}
+
+.block_pulse_rate_blood_pressure{
+	display: inline-grid;
+    height: fit-content;
+    width: fit-content;
+    margin-top: 30px;
+    margin-left: 20px;
+   
+}
+/* #plot_pulse_rate:before{
+	background-image: url(../images/cardiogram.png);
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.5;
+    background-size: 80px;
+    content: "";
+} */
+
+#plot_blood_pressure{
+	/* width: 150px;  follow width of pulse rate*/
+	height: 100px;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 100px;
+    display: -webkit-inline-box;
+}
+
+#tab_grid_radiomic_result{
+	height: 500px;	
+	
+}
+
+
+#grid_radiomic_result, #grid_medical_history{
+	border: 1px solid #c5c5c5;
+	margin-top: 5px;
+	width: 100%;
+    height: 500px;
+    overflow: hidden;
+    outline: 0px;
+    position: relative;
+}
+
+/* Overwrite slickgrid style for 3 rows text*/
+.slick-header-column {
+  height: 40px !important;
+  text-align: center;
+}
+
+.slick-row.odd {
+    background: #eef7fb !important;
+}
+
+/*Make 2 rows of column name*/
+.slick-column-name {
+    white-space: normal;
+    overflow: auto;
+    word-break: break-word;
+}
+/*To see gredient of header background*/
+#grid_radiomic_result .ui-state-default{
+	background: none !important;
+}
+#grid_medical_history .ui-state-default{
+	background: none !important;
+}
+/* Remove border of header row, it's thick*/
+.slick-header.ui-state-default {
+    overflow: inherit;
+    border: 0px;
+}

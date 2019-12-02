@@ -29,6 +29,10 @@ $(document).ready(function() {
 		$("#preprocess_group_section").toggle();
 	});
 	
+	
+	
+	
+	// ==========   Submit the file to server and render the file in table ==========
 	//based on: http://stackoverflow.com/a/9622978
 	$('#form_upload_file').on('submit', function(e) {
 		// Hide Download Data button.
@@ -36,9 +40,6 @@ $(document).ready(function() {
 		e.preventDefault();
 		var form = e.target;
 		var data = new FormData(form);
-		//var data_file = document.getElementById('data_file').files[0];
-		//formData.append('data_file', data_file);
-		// form.append('csrfmiddlewaretoken', $("csrfmiddlewaretoken").val())
 		$.ajax({
 			url : form.action,
 			method : form.method,
@@ -84,6 +85,10 @@ $(document).ready(function() {
 		})
 	});
 	
+	
+	
+	// ==========    Process file based on selected criteria ==========
+	var processed_data = null;
 	// When user clicks on process button.
 	// Process data from current file name and show analysis result.
 	var url_data_cleanup_process = $("#url_data_cleanup_process").attr("data-url");
@@ -104,14 +109,13 @@ $(document).ready(function() {
 			},
 			success : function(resp) {
 				if(resp.msg_error == undefined){
-					upload_data = JSON.parse(resp.table_data);
+					//upload_data = JSON.parse(resp.table_data);
+					processed_data = JSON.parse(resp.table_data);
 					columns = resp.table_columns;
 					current_last_row_idx = 0;
 					len_data = upload_data.length;
-					current_last_row_idx = render_by_jexcel(columns, upload_data, current_last_row_idx, len_data);
+					current_last_row_idx = render_by_jexcel(columns, processed_data, current_last_row_idx, len_data);
 					render_analysis_result(resp.analysis);
-					
-					
 				}
 				alert_message(resp);
 			},
@@ -122,89 +126,115 @@ $(document).ready(function() {
 	});
 	
 	
+	// ========== Download Processed Data ==========
 	// Save as.. button
 	$("#save_dataset").bind("click", function(){
-		var save_as_name = prompt("Please enter file name and file extension (default is .csv)","");
+		var save_as_name = prompt("Please enter csv file name","");
 		if(save_as_name != null && save_as_name != ""){
+			var contentType = 'application/csv';
+			var row_len = processed_data.length;
+			var text_result = '';
+			for(var r = 0; r < row_len; r++ ){
+				text_result += processed_data[r] + "\n";
+			}
+			
+
+			processed_data = ''
+			var a = document.createElement("a");
+			var file = new Blob([text_result], {type: contentType});
+			a.href = URL.createObjectURL(file);
+			a.download = save_as_name + ".csv";
+			a.click();
+			//download(jsonData, 'json.txt', 'text/plain');
+			
+			
 			// Send settings information to process original data and save as a new file.
 			// then enable download button.
-			var url_data_cleanup_save = $("#url_data_cleanup_save").attr("data-url");
-			var formData = get_form_process_data();
-			formData.append('save_as_name', save_as_name);
-			$.ajax({
-				type: "POST",
-		        enctype: 'multipart/form-data',
-				processData : false,
-				contentType : false,
-				data : formData,
-				url : url_data_cleanup_save,
-				beforeSend: function(e){
-					$(".spinner").show();
-				},
-				complete:function(){
-					$(".spinner").hide();
-				},
-				success : function(resp) {
-					// Set download file name to be able to refer later.
-					$("#download_file").attr("data-download-name", save_as_name);
-					
-					var process_data = JSON.parse(resp.table_data);
-					current_last_row_idx = 0;
-					len_data = process_data.length;
-					var columns = resp.table_columns;
-					current_last_row_idx = render_by_jexcel(columns, process_data, current_last_row_idx, len_data);
-					render_analysis_result(resp.analysis);
-					
-					// Enable Download Data button.
-					$("#dowload_dataset").show();
-					
-					alert_message(resp);
-				},
-				error : function(resp) {
-					alert_error_message(resp);
-				}
-			});
+//			var url_data_cleanup_save = $("#url_data_cleanup_save").attr("data-url");
+//			var formData = get_form_process_data();
+//			formData.append('save_as_name', save_as_name);
+//			$.ajax({
+//				type: "POST",
+//		        enctype: 'multipart/form-data',
+//				processData : false,
+//				contentType : false,
+//				data : formData,
+//				url : url_data_cleanup_save,
+//				beforeSend: function(e){
+//					$(".spinner").show();
+//				},
+//				complete:function(){
+//					$(".spinner").hide();
+//				},
+//				success : function(resp) {
+//					// Set download file name to be able to refer later.
+//					$("#download_file").attr("data-download-name", save_as_name);
+//					
+//					var process_data = JSON.parse(resp.table_data);
+//					current_last_row_idx = 0;
+//					len_data = process_data.length;
+//					var columns = resp.table_columns;
+//					current_last_row_idx = render_by_jexcel(columns, process_data, current_last_row_idx, len_data);
+//					render_analysis_result(resp.analysis);
+//					
+//					// Enable Download Data button.
+//					//$("#dowload_dataset").show();
+//					
+//					var a = document.createElement('a');
+//		            var url = window.URL.createObjectURL(data);
+//		            a.href = url;
+//		            a.download = save_as_name;
+//		            a.click();
+//		            window.URL.revokeObjectURL(url);
+//		            
+//					alert_message(resp);
+//				},
+//				error : function(resp) {
+//					alert_error_message(resp);
+//				}
+//			});
 		}
 	});
 	
-	$("#dowload_dataset").bind("click", function(){
-		// Check if the file does exist.
-		//$('#data_table').jexcel('download');
-		var download_file_name = $("#download_file").attr("data-download-name");
-		if(download_file_name != undefined && download_file_name != ""){
-			var url_download_file = $("#download_file").attr("data-url");
-			var data = {file_name: download_file_name};
-		    $.ajax({
-		        url: url_download_file,
-		        method: 'GET',
-		        data: data,
-		        xhrFields: {
-		            responseType: 'blob'
-		        },
-		        beforeSend: function(e){
-					$(".spinner").show();
-				},
-				complete:function(){
-					$(".spinner").hide();
-				},
-		        success: function (data) {
-		            var a = document.createElement('a');
-		            var url = window.URL.createObjectURL(data);
-		            a.href = url;
-		            a.download = download_file_name;
-		            a.click();
-		            window.URL.revokeObjectURL(url);
-		        }
-		    });
-		}
-	});
+	
+//	$("#dowload_dataset").bind("click", function(){
+//		// Check if the file does exist.
+//		//$('#data_table').jexcel('download');
+//		var download_file_name = $("#download_file").attr("data-download-name");
+//		if(download_file_name != undefined && download_file_name != ""){
+//			var url_download_file = $("#download_file").attr("data-url");
+//			var data = {file_name: download_file_name};
+//		    $.ajax({
+//		        url: url_download_file,
+//		        method: 'GET',
+//		        data: data,
+//		        xhrFields: {
+//		            responseType: 'blob'
+//		        },
+//		        beforeSend: function(e){
+//					$(".spinner").show();
+//				},
+//				complete:function(){
+//					$(".spinner").hide();
+//				},
+//		        success: function (data) {
+//		            var a = document.createElement('a');
+//		            var url = window.URL.createObjectURL(data);
+//		            a.href = url;
+//		            a.download = download_file_name;
+//		            a.click();
+//		            window.URL.revokeObjectURL(url);
+//		        }
+//		    });
+//		}
+//	});
 
 	var scrollBottom = Math.max($('.jexcel-content').height() - $('#jexcel-content').height(), 0);
     $('#jexcel-content').scrollTop(scrollBottom);
 	// When table is scrolled
 	$("#data_table").scroll(function(e){
 		var lim_scroll = Math.max($('.jexcel-content').height() - $('#data_table').height() + 20, 0);
-		console.log("scoll is fired" + $("#data_table").scrollTop() + "lim: "+ lim_scroll);
+		//console.log("scoll is fired" + $("#data_table").scrollTop() + "lim: "+ lim_scroll);
 		if($("#data_table").scrollTop() > lim_scroll){
 			if (current_last_row_idx != (len_data -1)) {
 				$(".spinner").show();

@@ -11,18 +11,20 @@
 }
 
 .widget{
-    width: 50px;
+	width: 50px;
     height: 50px;
-    border: #138ef8;;
-    background: #8ee3fc;
+    border: #ccc;
+    background: #333;
     border-style: solid;
-    border-radius: 0.5em;
+    border-radius: 1em;
+    padding: 3px;
     border-width: thin;
     text-align: center;
     font-size: 10px;
     font-weight: 600;
     margin: 5px;
     cursor: pointer;
+    color: white;
    }
 
 
@@ -114,7 +116,7 @@
 .header_section{
 	background: #ccc;
     color: #333;
-    /* border-radius: 0.5em; */
+    border-radius: 0.5em;
     padding: 5px;
     text-align: left;
     font-size: large;

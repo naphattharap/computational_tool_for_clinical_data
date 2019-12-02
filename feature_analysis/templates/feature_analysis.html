@@ -55,7 +55,7 @@
 	<!-- Hidden fields used in JS -->
 	<input type="hidden" id="process_data_url" data-url="{%url 'feature_analysis_process' %}" />
 	{% include "main_menu/nav_bar.html" %}
-	<h3 class="page_title">Feature Analysis</h3>
+	<h3 class="page_title">Feature Analysis (Feature Importance by Random Forest Regressor)</h3>
 	{% include "main_menu/alert_msg.html" %}
 	
 	<div class="container-fluid">
@@ -72,11 +72,11 @@
 						</p>
 						<div  id="upload_file_section">
 							
-							<h4 class="h_section_title">UPLOAD DATA</h4>
+							<!-- <h4 class="h_section_title">UPLOAD DATA</h4> -->
 							
 							<!-- Radiomic -->
 							<div class="form-group row">
-								<label class="col-sm-3">Radiomic Data</label>
+								<label class="col-sm-3">Input Data</label>
 								<div class="col-sm-7">
 									
 									<!-- Default checked -->
@@ -84,21 +84,21 @@
 									  	<input type="checkbox" id="data_column_header"  name="data_column_header" class="custom-control-input" checked>
 									  	<label class="custom-control-label" for="data_column_header">Data file contains table header</label>
 									</div>
-									<input id="data_file" name="data_file" type="file" class="file_chooser"/>
+									<input id="data_file" name="data_file" type="file" />
 								</div>
 							</div>
 							
 				
 							<!-- Outcomes -->
 							<div class="form-group row">
-								<label  class="col-sm-3">Clinical Outcomes</label>
+								<label  class="col-sm-3">Output Data</label>
 								<div class="col-sm-7">
 									<!-- Default checked -->
 									<div class="custom-control custom-checkbox">
-									  	<input type="checkbox" id="outcomes_column_header"  name="outcomes_column_header" class="custom-control-input" checked>
-									  	<label class="custom-control-label" for="outcomes_column_header">Data file contains table header</label>
+									  	<input type="checkbox" id="output_column_header"  name="output_column_header" class="custom-control-input" checked>
+									  	<label class="custom-control-label" for="output_column_header">Data file contains table header</label>
 									</div>
-									<input id="outcomes_file" name="outcomes_file" type="file" class="file_chooser"/>
+									<input id="output_file" name="output_file" type="file"/>
 								</div>
 							</div>
 							
@@ -230,8 +230,8 @@
 		
 		<div id="process_result_tabs" class="container-fluid">
 			<ul class="nav nav-tabs">
-				<li><a data-toggle="tab" href="#tab_dashboard_analytic1">Analytic Dashboard</a></li>
-				<li class="active"><a data-toggle="tab" href="#tab_grid_radiomic_result">Radiomic Result</a></li>
+				<!-- <li><a data-toggle="tab" href="#tab_dashboard_analytic1">Analytic Dashboard</a></li> -->
+				<li class="active"><a data-toggle="tab" href="#tab_grid_radiomic_result">Data</a></li>
 				<!-- <li><a data-toggle="tab" href="#tab_grid_clinical_outcomes">Clinical Outcomes</a></li> -->
 				<!-- <li><a data-toggle="tab" href="#tab_grid_similar_properties">Mutual Information(Not yet)</a></li> -->
 				

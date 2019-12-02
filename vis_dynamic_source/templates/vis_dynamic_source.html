@@ -32,12 +32,12 @@
 
 
 
-<script type="text/javascript" src="{% static "vis_stratified_radiomic/vis_stratified_radiomic_grid.js"%}"></script>
-<script type="text/javascript" src="{% static "vis_stratified_radiomic/vis_stratified_radiomic.js"%}"></script>
+<script type="text/javascript" src="{% static "vis_dynamic_source/vis_dynamic_source_grid.js"%}"></script>
+<script type="text/javascript" src="{% static "vis_dynamic_source/vis_dynamic_source.js"%}"></script>
 
 <!--  Dashboard -->
 <!-- <script type="text/javascript" src="{% static "vis_stratified_radiomic/vis_stratified_radiomic_dashboard.js"%}"></script> -->
-<link rel="stylesheet" type="text/css" href="{% static "vis_stratified_radiomic/vis_stratified_radiomic.css"%}"></link>
+<link rel="stylesheet" type="text/css" href="{% static "vis_dynamic_source/vis_dynamic_source.css"%}"></link>
 
 <!-- JExcel Scripts -->
 <script src="{% static "jexcel/2.0.2/js/jquery.jexcel.js"%}"></script>
@@ -55,29 +55,30 @@
 </head>
 <body>
 	<!-- Hidden fields used in JS -->
-	<input type="hidden" id="process_data_url" data-url="{%url 'vis_stratified_radiomic_process' %}" />
+	<input type="hidden" id="process_data_url" data-url="{%url 'vis_dynamic_source_process' %}" />
 	{% include "main_menu/nav_bar.html" %}
-	<h3 class="page_title">Cardivascular disease prediction (radiomics data)</h3>
+	<h3 class="page_title">Dynamic dataset prediction</h3>
 	{% include "main_menu/alert_msg.html" %}
 	
 	<div class="container-fluid">
 		<div>
 			<div id="dataset_group">
 				<form id="form_upload_file" method="post"
-					action="{% url 'vis_stratified_radiomic_process' %}" enctype="multipart/form-data">
+					action="{% url 'vis_dynamic_source_process' %}" enctype="multipart/form-data">
 					{% csrf_token %}
 					
 					<!-- Upload file section -->
 					<div id="upload_file_group" class="form-group-border">
 						<p>
-							<a id="upload_file_title" href="#">Dataset Hide/Show</a>
+							<a id="upload_file_title" href="#">Upload dataset and select model</a>
 						</p>
 						<div  id="upload_file_section">
 							
-							<h4 class="h_section_title">Base Patient Space</h4>
+							<h4 class="h_section_title">Base Space</h4>
+							
 							<!-- Row 1 -->
 							<div class="form-group row">
-								<label for="data_file" class="col-sm-3">Radiomics data (required)</label>
+								<label for="data_file" class="col-sm-3">Input features (required)</label>
 								<div class="col-sm-7">
 									
 									<!-- Default checked -->
@@ -91,7 +92,7 @@
 							
 							<!-- Row 2 -->
 							<div class="form-group row">
-								<label for="label_file" class="col-sm-3">Diagnosed result (required)</label>
+								<label for="label_file" class="col-sm-3">Label (required)</label>
 								<div class="col-sm-7">
 									
 									<!-- Default checked -->
@@ -105,7 +106,7 @@
 							
 							<!-- Additional Data for Base Space -->
 							<div class="form-group row">
-								<label for="label_file" class="col-sm-3">Medical history<br>(first column is patient's ID)</label>
+								<label for="label_file" class="col-sm-3">Additional information<br>(first column is a corresponding ID)</label>
 								<div class="col-sm-7">
 									<!-- Default checked -->
 									<div class="custom-control custom-checkbox">
@@ -116,9 +117,23 @@
 								</div>
 							</div>
 							
-							<h4 class="h_section_title">New Patient Data</h4>
+							
+							
+							<!-- New data for plotting in space (not required)  -->
+							<h4 class="h_section_title">Prediction</h4>
+							
+								<div class="form-group row">
+								  <label for="model_id" class="col-sm-3">Trained model (required)</label>
+								  <div class="col-sm-7">
+								  	<select class="form-control" id="model_id">
+								    	<option value="uci_breast_cancer_svmovo3.joblib">SVM (OVO): UCI Breast Cancer</option>
+								  	</select>
+								  </div>
+								</div>
+							
+							
 							<div class="form-group row">
-								<label for="data_file" class="col-sm-3">Radiomics calculated result</label>
+								<label for="data_file" class="col-sm-3">Input data (required)</label>
 								<div class="col-sm-7">
 									
 									<!-- Default checked -->
@@ -131,7 +146,7 @@
 							</div>				
 							<!-- Row 4 -->
 							<div  class="form-group row">
-								<label for="general_data_file" class="col-sm-3">Medical history<br> (first column is patient's ID)</label>
+								<label for="general_data_file" class="col-sm-3">Additional information<br> (first column is a corresponding ID)</label>
 								<div class="col-sm-7">
 									
 									<!-- Default checked -->
@@ -152,13 +167,11 @@
 		</div>
 
 	<div id="process_result">
-		<div id="main_left_result" class="form-group-border">
-			<!-- Graph search -->
+	
+		<!-- custom search area -->
+<!-- 		<div id="main_left_result" class="form-group-border">
+			Graph search
 			<div id="search_group" >
-				<p>
-					<!-- <a id="search_group_title" href="#">Filter Hide/Show</a> -->
-				</p>
-				
 				<div id="search_group_section">
 						<div class="form-group" style="margin-bottom: 5px;">
 							<div class="col-sm-8">
@@ -247,10 +260,13 @@
 						</div>
 				</div>
 			</div>
-		</div>
+		</div> -->
 		
-		<div id="main_right_result" class="form-group-border" style="margin-left: 5px;">
 		
+		
+		
+		
+		<div id="main_right_result" class="form-group-border">
 			<div id="plotjs_container"></div>
 		</div>
 	</div>
@@ -258,8 +274,8 @@
 		<div id="process_result_tabs" class="container-fluid">
 			<ul class="nav nav-tabs">
 				<!-- <li class="active"><a data-toggle="tab" href="#tab_dashboard_analytic1">Analytic Dashboard</a></li> -->
-				<li><a data-toggle="tab" href="#tab_grid_radiomic_result">Radiomic Result</a></li>
-				<li><a data-toggle="tab" href="#tab_grid_medical_history">Medical History</a></li>
+				<li><a data-toggle="tab" href="#tab_grid_radiomic_result">Selected data point on plot</a></li>
+				<li><a data-toggle="tab" href="#tab_grid_medical_history">Additional information</a></li>
 				<!-- <li><a data-toggle="tab" href="#tab_grid_similar_properties">Mutual Information(Not yet)</a></li> -->
 				
 			</ul>

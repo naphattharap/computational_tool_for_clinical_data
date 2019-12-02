@@ -19,16 +19,16 @@ import constants.const_msg as msg
 
 fs = FileStorage()
     
- # ====== Upload Menu =====
+# ====== Upload Menu =====
 
- 
+  
 def init_data_upload_handler(request):
         """
         Forward to main page of data management module.
         """
         return render(request, template_name='upload.html')
 
-    
+     
 @csrf_exempt    
 def upload_file_as_handler(request):
     """
@@ -43,14 +43,14 @@ def upload_file_as_handler(request):
         # create a form instance and populate it with data from the request:
         # form = DatasetFileForm(request.POST)
         # form = DatasetFileForm(request.POST, request.FILES)
-
+ 
         # process the data in form.cleaned_data as required
         data_file = request.FILES['data_file']
         file_name = form.cleaned_data['file_name']
         file_name = fs.save_file_as(data_file, file_name)
         resp_data[msg.SUCCESS] = 'The file has been uploaded successfully as ' + file_name
         return JsonResponse(resp_data)
-
+ 
     else:
         resp_data[msg.ERROR] = escape(form._errors)
         return JsonResponse(resp_data)
@@ -307,10 +307,16 @@ def download_matched_key_handler(request):
 
 def extract_matched_key(key_file, data_file):
     # Process matching between keys from both file and write a new file for result.
-    df_keys = DataFrameUtil.file_to_dataframe(key_file, header=0)
-    df_data = DataFrameUtil.file_to_dataframe(data_file, header=0)
-    # TODO change ix 0 to user define
-    df_result = df_data.loc[df_data.ix[:, 0].isin(df_keys.values.astype('int').ravel())]
+    df_keys = DataFrameUtil.file_to_dataframe(key_file, header=None)
+    df_data = DataFrameUtil.file_to_dataframe(data_file, header=None)
+    
+    # select data from df_data where the first column (keys) exist in df_keys
+    keys = list(df_keys.iloc[:, 0].values)
+#     print("Key", keys)
+#     print("df data\n", df_data.iloc[:, 0])
+#     print("df data\n", df_data.iloc[:, 1])
+    df_result = df_data[ df_data.iloc[:, 0].isin(keys)]
+#     print("Result", df_result)
     return df_result
 
 
