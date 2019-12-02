@@ -16,9 +16,7 @@ html{
 }
 
 body{
-  background: 
-	linear-gradient(0deg,#cccccc38,#e7fbfb)
-    ,url('../images/home/artificial-intelligence-bg.jpg');
+  background: linear-gradient(0deg,#ccccccab,#ffffff) ,url(../images/home/abstract-1278017_1920.jpg);
   min-height: 100%;
 }
 .logo-area{
@@ -145,7 +143,7 @@ body{
 
 footer{
 	/* background-color: #2f4f4f; */
-	background-color: #008b8b;
+	/* background-color: #008b8b; */
     color: white;
     padding: 15px;
 	bottom: 0px !important;
