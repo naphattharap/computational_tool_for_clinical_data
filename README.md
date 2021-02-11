@@ -1,5 +1,6 @@
-# Patient Data Analysis by Machine Learning 
-Machine Learning Application for Analyzing Cinical Data
+# A computational and visualisation tool for investigating associations between cardiac radiomics, risk factors and clinical data
+
+A machine learning-based web application for analyzing and brining the insights in Clinical Data
 
 IDE: Eclipse
 Initial setting:
