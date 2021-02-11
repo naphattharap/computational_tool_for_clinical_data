@@ -1,6 +1,18 @@
 # A computational and visualisation tool for investigating associations between cardiac radiomics, risk factors and clinical data
 
-A machine learning-based web application for analyzing and brining the insights in Clinical Data
+A machine learning-based web application for analyzing and brining the insights of Clinical Data.
+
+This ML-based web application was developed for helping users to find significant hidden pattern of data in a large dataset which we can't find by naked eyes.
+The target dataset used in the findings was clinical data in size of  ~5000x~10,000 values (number of patients x patient's data).
+I applied machine learning algorithms such as PCA, LDA, XGBoost for finding hidden patterns.
+DJango and Plotly are used for visualization part. 
+In the finding, I especially focused on data stratification to find correlations in the data.
+The tool shows great results in different way. 
+Ex. 
+LDA + XGBoost clearly shows clusters disease and their relation.
+Age and gender have strong correlation with Radiomic's feature.
+
+For more information: [publish repository](https://repositori.upf.edu/handle/10230/42547)
 
 IDE: Eclipse
 Initial setting:
@@ -30,4 +42,4 @@ Install required libraries listed in requirments.txt file.
 
 pip install -r requirements.txt
 
-For more information: [publish repository](https://repositori.upf.edu/handle/10230/42547)
+I hope this work would be useful to anyone who want to contribute to our society in developing and making healthcare system better.
