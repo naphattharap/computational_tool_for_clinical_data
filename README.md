@@ -12,6 +12,12 @@ Ex.
 LDA + XGBoost clearly shows clusters disease and their relation.
 Age and gender have strong correlation with Radiomic's feature.
 
+## Dynamically generating stratification options based on input datatype
+![App](./images/app1.png)
+
+## Stratification Result
+![Stratification](./images/sample_viz1.png)
+
 For more information: [publish repository](https://repositori.upf.edu/handle/10230/42547)
 
 IDE: Eclipse
