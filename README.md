@@ -1,5 +1,5 @@
 # Patient Data Analysis by Machine Learning 
-Machine Learning Application for Analyzing Patient Blood Test
+Machine Learning Application for Analyzing Cinical Data
 
 IDE: Eclipse
 Initial setting:
@@ -28,3 +28,5 @@ $ python manage.py startapp <module name>
 Install required libraries listed in requirments.txt file.
 
 pip install -r requirements.txt
+
+For more information: [publish repository](https://repositori.upf.edu/handle/10230/42547)
