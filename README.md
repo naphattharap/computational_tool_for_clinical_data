@@ -3,7 +3,7 @@
 A machine learning-based web application for analyzing and brining the insights of Clinical Data.
 
 This ML-based web application was developed for helping users to find significant hidden pattern of data in a large dataset which we can't find by naked eyes.
-The target dataset used in the findings was clinical data in size of  ~5000x~10,000 values (number of patients x patient's data).
+The target dataset used in the findings was clinical data in size of  \~5000x~10,000 values (number of patients x patient's data).
 I applied machine learning algorithms such as PCA, LDA, XGBoost for finding hidden patterns.
 DJango and Plotly are used for visualization part. 
 In the finding, I especially focused on data stratification to find correlations in the data.
