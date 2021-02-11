@@ -4,7 +4,7 @@ django_plotly_dash==0.9.8
 simplejson==3.16.0
 joblib==0.13.1
 dash_core_components==0.46.0
-Django==2.1.4
+Django==2.2.13
 ipywidgets==7.1.1
 mlxtend==0.13.0
 pandas==0.22.0
