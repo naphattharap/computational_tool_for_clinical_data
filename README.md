@@ -37,10 +37,10 @@ $ django-admin.py startproject <project name>
 $ python manage.py runserver
 
 ## Create a new module
-###Change directory to the place where a new module will be created.
+### Change directory to the place where a new module will be created.
 $ python manage.py startapp <module name>
 
-###Manually add urls.py, forms.py and serializers.py(optional) inside the module folder.
+### Manually add urls.py, forms.py and serializers.py(optional) inside the module folder.
 - Add urls.py, forms.py and and serializers.py into a new module folder	
 - Configure config file path to settings.py by adding path to INSTALLED_APP. Ex. data_mgt.apps.DataMgtConfig
 - Register a newly created urls.py in the package to urls.py in the config folder.
