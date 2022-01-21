@@ -10,7 +10,7 @@ mlxtend==0.13.0
 pandas==0.22.0
 dash==0.41.0
 numpy==1.14.6
-ipython==7.6.0
+ipython==7.16.3
 djangorestframework==3.9.4
 scikit_learn==0.21.2
 xgboost==0.90
